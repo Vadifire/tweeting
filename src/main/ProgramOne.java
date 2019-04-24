@@ -37,6 +37,7 @@ public class ProgramOne {
             Status status = twitter.updateStatus(post.getText());
         } catch (TwitterException e) {
             e.printStackTrace();
+            System.out.println("Could not update status because connection to Twitter API failed.");
             return false;
         }
         return true;

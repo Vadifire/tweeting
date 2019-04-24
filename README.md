@@ -9,26 +9,33 @@ This codebase depends on the [Twitter4J API](http://twitter4j.org/). You can dow
 
 Create an /out/ folder and run the following command to compile:
 
+```
 javac -cp twitter4j-core-4.0.7.jar src/main/*.java -d out
+```
 
-Create a MANIFEST.FM file for the Program(s) you want to run. The Main-Class must be specified as ProgramOne or ProgramTwo. The Class-Path must include the twitter4j-core-x.x.x.jar file. 
+Create a MANIFEST.MF file for the Program(s) you want to run. The Main-Class must be specified as ProgramOne or ProgramTwo. The Class-Path must include the twitter4j-core-x.x.x.jar file. 
 
 For example:
-
+```
 Manifest-Version: 1.0
 Main-Class: main.ProgramOne
 Class-Path: lib/twitter4j-core-4.0.7.jar
+```
 
 Next run the following command to build the jar file(s):
+```
 jar cvfm [jar-file] [manifest-file] [dirs/files]
+```
 
 For example: 
 
+```
 jar cvfm ProgramOne.jar src/META-INF/MANIFEST.MF src out lib
+```
 
 To use the Twitter API, authentication is required.  API keys and tokens for authentication can be generated here: https://apps.twitter.com. Please follow the configuration instructions here: http://twitter4j.org/en/configuration.html. The twitter4j.properties should be placed in the same directory as the jar files if used.
 
-To execute the jar file, run "java -jar JarName.jar". 
+To execute the jar file, run ``` "java -jar JarName.jar". ```
 
 Note: ProgramOne requires at least one argument which denotes the status(es) to be posted. 
 

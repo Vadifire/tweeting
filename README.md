@@ -38,7 +38,7 @@ jar cvfm ProgramOne.jar MANIFEST.MF main
 
 To use the Twitter API, authentication is required.  API keys and tokens for authentication can be generated here: https://apps.twitter.com. Please follow the configuration instructions here: http://twitter4j.org/en/configuration.html. The twitter4j.properties should be placed in the same directory as the jar files if used.
 
-To execute the jar file, run ``` "java -jar JarName.jar". ```
+To execute the jar file, run ```java -jar [jar-name].jar```
 
 Note: ProgramOne requires at least one argument which denotes the status(es) to be posted. 
 

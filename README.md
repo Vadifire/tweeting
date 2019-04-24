@@ -5,6 +5,8 @@ ProgramTwo is used to retrieve and print statuses from the home timeline. The st
 
 ## How To Run
 
+Begin by cloning the repository using ```git clone https://github.com/Vadifire/tweeting.git```
+
 This codebase depends on the [Twitter4J API](http://twitter4j.org/). You can download the API here: http://twitter4j.org/en/index.html#download. 
 
 Create an /out/ folder and run the following command to compile:

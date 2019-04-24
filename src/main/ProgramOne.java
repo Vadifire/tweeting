@@ -13,7 +13,9 @@ public class ProgramOne {
             return;
         }
         for (String updateText : args) {
-            System.out.println(updateStatus(new Post(updateText)));
+            if(updateStatus(new Post(updateText))){
+                System.out.println("Successfully updated status.");
+            }
         }
     }
 

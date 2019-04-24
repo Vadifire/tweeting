@@ -5,6 +5,8 @@
  * but this Post class supports simply specifying a String as the post body
  */
 
+package main;
+
 public class Post {
     private String text;
 

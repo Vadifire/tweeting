@@ -1,3 +1,5 @@
+package main;
+
 import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;

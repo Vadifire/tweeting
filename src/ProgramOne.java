@@ -6,8 +6,12 @@ import twitter4j.TwitterFactory;
 public class ProgramOne {
 
     public static void main (String[] args){
-
-        System.out.println(updateStatus(new Post(args[0])));
+        if (args.length == 0){
+            System.out.println("Must input at least one String argument for posting.");
+        }
+        for (String updateText : args){
+            System.out.println(updateStatus(new Post(updateText)));
+        }
     }
 
 

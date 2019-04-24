@@ -9,13 +9,10 @@ This codebase depends on the [Twitter4J API](http://twitter4j.org/).
 
 Begin by cloning the repository using ```git clone https://github.com/Vadifire/tweeting.git```
 
-CD to the /out/ directory and run the following command to compile:
-
-```
-javac -cp lib/twitter4j-core-4.0.7.jar src/main/*.java -d out/
-```
+To compile the code, run: ```javac -cp lib/twitter4j-core-4.0.7.jar src/main/*.java -d out/```
 
 CD into the /out/ directory and run the following commands to build the jar files:
+
 ```
 jar cvfm ProgramOne.jar ProgramOne.mf main
 jar cvfm ProgramTwo.jar ProgramTwo.mf main

@@ -9,7 +9,7 @@ Begin by cloning the repository using ```git clone https://github.com/Vadifire/t
 
 This codebase depends on the [Twitter4J API](http://twitter4j.org/). You can download the API here: http://twitter4j.org/en/index.html#download. Create a /lib/ folder and place the twitter4j-core.x.x.x.jar file inside of it. This jar file can be found in the lib directory of the aforementioned download.
 
-Create the /out/main directory and run the following command to compile:
+Create the /out/ directory and run the following command to compile:
 
 ```
 javac -cp lib/twitter4j-core-x.x.x.jar src/main/*.java -d out/

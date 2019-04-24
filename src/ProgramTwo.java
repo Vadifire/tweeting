@@ -9,7 +9,7 @@ public class ProgramTwo {
 
     public static void main(String args[]){
         List<Status> statuses = getHomeTimelineStatuses();
-        printStasues(statuses);
+        printStatuses(statuses);
     }
 
     /*
@@ -27,7 +27,7 @@ public class ProgramTwo {
         }
     }
 
-    public static void printStasues(List<Status> statuses){
+    public static void printStatuses(List<Status> statuses){
         if (statuses == null){
             return;
         }

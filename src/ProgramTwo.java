@@ -28,6 +28,9 @@ public class ProgramTwo {
     }
 
     public static void printStasues(List<Status> statuses){
+        if (statuses == null){
+            return;
+        }
         for (Status status : statuses){
             System.out.println(status.getUser().getName() + ":" +
                     status.getText());

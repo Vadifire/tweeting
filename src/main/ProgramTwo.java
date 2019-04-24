@@ -9,7 +9,7 @@ import java.util.List;
 
 public class ProgramTwo {
 
-    public static void main(String args[]){
+    public static void main(String args[]) {
         List<Status> statuses = getHomeTimelineStatuses();
         printStatuses(statuses);
     }
@@ -18,22 +18,22 @@ public class ProgramTwo {
      * Returns List of Status objects from Home Timeline
      * Returns null if TwitterException occurs when trying to retrieve statuses
      */
-    public static List<Status> getHomeTimelineStatuses(){
+    public static List<Status> getHomeTimelineStatuses() {
         Twitter twitter = TwitterFactory.getSingleton();
         try {
             List<Status> statuses = twitter.getHomeTimeline();
             return statuses;
-        } catch (TwitterException e){
+        } catch (TwitterException e) {
             e.printStackTrace();
             return null;
         }
     }
 
-    public static void printStatuses(List<Status> statuses){
-        if (statuses == null){
+    public static void printStatuses(List<Status> statuses) {
+        if (statuses == null) {
             return;
         }
-        for (Status status : statuses){
+        for (Status status : statuses) {
             System.out.println(status.getUser().getName() + ":" +
                     status.getText());
         }

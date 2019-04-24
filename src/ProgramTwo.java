@@ -8,25 +8,29 @@ import java.util.List;
 public class ProgramTwo {
 
     public static void main(String args[]){
-        printHomeTimeline();
+        List<Status> statuses = getHomeTimelineStatuses();
+        printStasues(statuses);
     }
 
     /*
-     * Returns false iff Twitter service or network is unavailable.
+     * Returns List of Status objects from Home Timeline
+     * Returns null if TwitterException occurs when trying to retrieve statuses
      */
-    public static boolean printHomeTimeline(){
+    public static List<Status> getHomeTimelineStatuses(){
         Twitter twitter = TwitterFactory.getSingleton();
         try {
             List<Status> statuses = twitter.getHomeTimeline();
-            System.out.println("Printing Home Timeline...");
-            for (Status status : statuses){
-                System.out.println(status.getUser().getName() + ":" +
-                        status.getText());
-            }
+            return statuses;
         } catch (TwitterException e){
             e.printStackTrace();
-            return false;
+            return null;
         }
-        return true;
+    }
+
+    public static void printStasues(List<Status> statuses){
+        for (Status status : statuses){
+            System.out.println(status.getUser().getName() + ":" +
+                    status.getText());
+        }
     }
 }

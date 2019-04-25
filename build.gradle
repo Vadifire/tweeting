@@ -8,6 +8,14 @@
 
 plugins {
     // Apply the java plugin to add support for Java
+    /* 
+     * Adding the java plugin provides these features:
+     * A compileJava task that compiles all the Java source files under src/main/java
+     * A compileTestJava task for source files under src/test/java
+     * A test task that runs the tests from src/test/java
+     * A jar task that packages the main compiled classes and resources from src/main/resources into a single JAR named <project>-<version>.jar
+     * A javadoc task that generates Javadoc for the main classes
+     */
     id 'java'
 
     // Apply the application plugin to add support for building an application
@@ -27,9 +35,18 @@ dependencies {
     // Use JUnit test framework
     testImplementation 'junit:junit:4.12'
 
-    //Include Twitter4J dependency
+    // Include Twitter4J dependency
     implementation 'org.twitter4j:twitter4j-core:4.0.7'
+
+    // implementation: used for compile and run time
+    // testImplementation: (^ equivalent, but for tests)
 }
+
 
 // Define the main class for the application
 mainClassName = 'main.ProgramOne'
+//manifest.mainAttributes("Main-Class" : "main.ProgramOne")
+
+// Java Version
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'

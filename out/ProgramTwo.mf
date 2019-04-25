@@ -1,3 +1,0 @@
-Manifest-Version: 1.0
-Main-Class: main.ProgramTwo
-Class-Path: ../lib/twitter4j-core-4.0.7.jar

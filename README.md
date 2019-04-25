@@ -13,7 +13,7 @@ To build the project, open build.gradle and set the ```mainClassName``` attribut
 
 Next, run the build command: ```./gradlew build```
 
-To use the Twitter API, authentication is required.  API keys and tokens for authentication can be generated here: https://apps.twitter.com. Please follow the configuration instructions here: http://twitter4j.org/en/configuration.html. The twitter4j.properties should be placed in the /build/libs/ directory.
+To use the Twitter API, authentication is required.  API keys and tokens for authentication can be generated here: https://apps.twitter.com. Please follow the configuration instructions here: http://twitter4j.org/en/configuration.html. The twitter4j.properties should be placed in project's root directory.
 
 To run ProgramOne run: ```./gradlew run --args 'Hello World'```
 To run ProgramTwo run: ```./gradlew run```

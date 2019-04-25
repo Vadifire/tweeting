@@ -9,7 +9,7 @@ This codebase depends on the [Twitter4J API](http://twitter4j.org/).
 
 Begin by cloning the repository using ```git clone https://github.com/Vadifire/tweeting.git```
 
-To build the project, open build.gradle and set the ```mainClassName``` attribute to ```ProgramOne``` or ```ProgramTwo```, depending on which project you want to build and run.
+To build the project, open build.gradle and set the ```mainClassName``` attribute to ```main.ProgramOne``` or ```main.ProgramTwo```, depending on which project you want to build and run.
 
 Next, run the build command: ```./gradlew build```
 

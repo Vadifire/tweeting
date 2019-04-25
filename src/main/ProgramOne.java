@@ -32,7 +32,7 @@ public class ProgramOne {
             System.out.println("Could not update status because post contained over 280 characters.");
             return false;
         }
-        if (post.getText().length() == 0){
+        if (post.getText().length() == 0) {
             System.out.println("Could not update status because post's text has 0 characters.");
             return false;
         }

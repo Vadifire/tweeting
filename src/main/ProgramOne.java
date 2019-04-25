@@ -7,28 +7,41 @@ import twitter4j.TwitterFactory;
 
 public class ProgramOne {
 
-    public static void main (String[] args){
-        if (args.length == 0){
+    public static void main (String[] args) {
+        if (args.length == 0) {
             System.out.println("Must input at least one String argument for posting.");
+            return;
         }
-        for (String updateText : args){
-            System.out.println(updateStatus(new Post(updateText)));
+        for (String updateText : args) {
+            if(updateStatus(new Post(updateText))){
+                System.out.println("Successfully updated status.");
+            }
         }
     }
-
 
     /*
      * Returns true iff successfully posted Status update
      */
-    public static boolean updateStatus(Post post){
-        if (post == null || post.getText() == null){
+    public static boolean updateStatus(Post post) {
+        if (post == null || post.getText() == null) {
+            System.out.println("Could not update status without valid Post object containing text.");
+            return false;
+        }
+        if (post.getText().length() > 280) {
+            //TODO: verify how to handle posts with over 280 chars with requirements team
+            System.out.println("Could not update status because post contained over 280 characters.");
+            return false;
+        }
+        if (post.getText().length() == 0) {
+            System.out.println("Could not update status because post's text has 0 characters.");
             return false;
         }
         Twitter twitter = TwitterFactory.getSingleton();
         try {
             Status status = twitter.updateStatus(post.getText());
-        } catch (TwitterException e){
+        } catch (TwitterException e) {
             e.printStackTrace();
+            System.out.println("Could not update status because connection to Twitter API failed.");
             return false;
         }
         return true;

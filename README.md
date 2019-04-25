@@ -9,7 +9,7 @@ This codebase depends on the [Twitter4J API](http://twitter4j.org/).
 
 Begin by cloning the repository using ```git clone --single-branch --branch dependency-management https://github.com/Vadifire/tweeting.git``` 
 
-To build the project run: ```./gradlew build```
+To build the project, cd into the downloaded repository and run: ```./gradlew build```
 
 To use the Twitter API, authentication is required.  API keys and tokens for authentication can be generated here: https://apps.twitter.com. Please follow the configuration instructions here: http://twitter4j.org/en/configuration.html. The twitter4j.properties should be placed in project's root directory.
 

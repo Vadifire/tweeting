@@ -27,9 +27,7 @@ plugins {
 }
 
 repositories {
-    // Use jcenter for resolving your dependencies.
-    // You can declare any Maven/Ivy/file repository here.
-    jcenter()
+    mavenCentral()
 }
 
 dependencies {
@@ -61,27 +59,11 @@ task(runTwo, dependsOn: 'classes', type: JavaExec) {
 
 // Define the main class for the application
 mainClassName = 'main.TweetingApplication'
-/*run {
+run {
     args = ['server', 'config.yml']
-}*/
+}
 //manifest.mainAttributes("Main-Class" : "main.ProgramOne")
 
 // Java Version
 sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
-
-/*shadowJar {
-    mergeServiceFiles()
-    exclude 'META-INF/*.DSA', 'META-INF/*.RSA', 'META-INF/*.SF'
-    manifest {
-        attributes 'Implementation-Title': rootProject.name
-        attributes 'Implementation-Version': rootProject.version
-        attributes 'Implementation-Vendor-Id': rootProject.group
-        attributes 'Build-Time': ZonedDateTime.now(ZoneId.of("UTC"))
-                .format(DateTimeFormatter.ISO_ZONED_DATE_TIME)
-        attributes 'Built-By': InetAddress.localHost.hostName
-        attributes 'Created-By': 'Gradle ' + gradle.gradleVersion
-        attributes 'Main-Class': mainClassName
-    }
-    archiveName 'sample-dropwizard-rest-stub.jar'
-}*/

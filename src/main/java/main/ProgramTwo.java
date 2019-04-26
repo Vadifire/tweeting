@@ -1,32 +1,15 @@
 package main;
 
-import twitter4j.Twitter;
-import twitter4j.TwitterFactory;
+import main.resources.GetTimelineResource;
 import twitter4j.Status;
-import twitter4j.TwitterException;
 
 import java.util.List;
 
 public class ProgramTwo {
 
     public static void main(String args[]) {
-        List<Status> statuses = getHomeTimelineStatuses();
+        List<Status> statuses = GetTimelineResource.getHomeTimelineStatuses();
         printStatuses(statuses);
-    }
-
-    /*
-     * Returns List of Status objects from Home Timeline
-     * Returns null if TwitterException occurs when trying to retrieve statuses
-     */
-    public static List<Status> getHomeTimelineStatuses() {
-        Twitter twitter = TwitterFactory.getSingleton();
-        try {
-            List<Status> statuses = twitter.getHomeTimeline();
-            return statuses;
-        } catch (TwitterException e) {
-            e.printStackTrace();
-            return null;
-        }
     }
 
     public static void printStatuses(List<Status> statuses) {
@@ -38,4 +21,5 @@ public class ProgramTwo {
                     status.getText());
         }
     }
+
 }

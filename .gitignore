@@ -1,5 +1,15 @@
+# Ignore class and jar files
+*.class
+*.jar
+
+# The Gradle wrapper jar file is actually needed
+!gradle-wrapper.jar
+
 # Ignore Gradle project-specific cache directory
 .gradle
+
+# Cache of project
+.gradletasknamecache
 
 # Ignore Gradle build output directory
 build

@@ -34,7 +34,7 @@ public class TweetingApplication extends Application<TweetingConfiguration> {
 		final GetTimelineResource timelineResource = new GetTimelineResource();
 		env.jersey().register(timelineResource);
 
-		/*final PostTweetResource tweetResource = new PostTweetResource(config.getTemplate(), config.getDefaultMessage());
-		env.jersey().register(tweetResource);*/
+		final PostTweetResource tweetResource = new PostTweetResource(config.getTemplate(), config.getDefaultMessage());
+		env.jersey().register(tweetResource);
 	}
 }

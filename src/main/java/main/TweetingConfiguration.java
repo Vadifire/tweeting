@@ -29,7 +29,7 @@ public class TweetingConfiguration extends Configuration {
 	}
 
 	@JsonProperty
-	public void setDefaulMessage(String message){
+	public void setDefaulMessage(String message) {
 		this.defaultMessage = message;
 	}
 }

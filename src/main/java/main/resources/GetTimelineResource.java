@@ -40,4 +40,9 @@ public class GetTimelineResource {
     	return new Timeline(counter.incrementAndGet(), value);
     }
 
+	/*
+	 * How to use: //TODO: make this more readable
+	 * curl -i -X GET http://localhost:8080/api/1.0/twitter/timeline
+	 */
+
 }

@@ -13,7 +13,7 @@ public class ProgramOne {
             return;
         }
         for (String updateText : args) {
-            if(updateStatus(new Post(updateText))){
+            if(updateStatus(updateText)){
                 System.out.println("Successfully updated status.");
             }
         }
@@ -22,23 +22,23 @@ public class ProgramOne {
     /*
      * Returns true iff successfully posted Status update
      */
-    public static boolean updateStatus(Post post) {
-        if (post == null || post.getText() == null) {
-            System.out.println("Could not update status without valid Post object containing text.");
+    public static boolean updateStatus(String updateText) {
+        if (updateText == null) {
+            System.out.println("Could not update status to null String");
             return false;
         }
-        if (post.getText().length() > 280) {
+        if (updateText.length() > 280) {
             //TODO: verify how to handle posts with over 280 chars with requirements team
-            System.out.println("Could not update status because post contained over 280 characters.");
+            System.out.println("Could not update status to String over 280 characters in length.");
             return false;
         }
-        if (post.getText().length() == 0) {
-            System.out.println("Could not update status because post's text has 0 characters.");
+        if (updateText.length() == 0) {
+            System.out.println("Could not update status to 0 length String.");
             return false;
         }
         Twitter twitter = TwitterFactory.getSingleton();
         try {
-            Status status = twitter.updateStatus(post.getText());
+            Status status = twitter.updateStatus(updateText);
         } catch (TwitterException e) {
             e.printStackTrace();
             System.out.println("Could not update status because connection to Twitter API failed.");

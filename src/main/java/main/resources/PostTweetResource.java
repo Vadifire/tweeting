@@ -2,7 +2,6 @@ package main.resources;
 
 //TODO check imports
 import main.ProgramOne;
-import main.Post;
 import com.codahale.metrics.annotation.Timed;
 
 import javax.ws.rs.POST;
@@ -31,7 +30,7 @@ public class PostTweetResource {
 	@POST
 	@Timed
 	public boolean postTweet(@PathParam("message") String message) { // Change to return HTTP response?
-		return ProgramOne.updateStatus(new Post(message)); //TODO: remove Post class
+		return ProgramOne.updateStatus(message); //TODO: remove Post class
 	}
 
 	/*

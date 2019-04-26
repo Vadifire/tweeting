@@ -29,7 +29,8 @@ repositories {
 
 dependencies {
     // Include dependencies for compile and run time
-    implementation 'com.google.guava:guava:27.0.1-jre', 'org.twitter4j:twitter4j-core:4.0.7'
+    implementation 'com.google.guava:guava:27.0.1-jre', 
+        'org.twitter4j:twitter4j-core:4.0.7'
 
     // Use JUnit test framework
     //testImplementation 'junit:junit:4.12'

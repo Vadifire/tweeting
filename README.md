@@ -7,20 +7,13 @@ This codebase depends on the [Twitter4J API](http://twitter4j.org/).
 
 ## How To Run
 
-Begin by cloning the repository using ```git clone https://github.com/Vadifire/tweeting.git```
+Begin by cloning the repository using ```git clone --single-branch --branch dependency-management https://github.com/Vadifire/tweeting.git``` 
 
-To compile the code, run: ```javac -cp lib/twitter4j-core-4.0.7.jar src/main/*.java -d out/```
+To build the project, cd into the downloaded repository and run: ```./gradlew build```
 
-CD into the /out/ directory and run the following commands to build the jar files:
+To use the Twitter API, authentication is required.  API keys and tokens for authentication can be generated here: https://apps.twitter.com. Please follow the configuration instructions here: http://twitter4j.org/en/configuration.html. The twitter4j.properties should be placed in project's root directory.
 
-```
-jar cvfm ProgramOne.jar ProgramOne.mf main
-jar cvfm ProgramTwo.jar ProgramTwo.mf main
-```
+To run ProgramOne run: ```./gradlew runOne --args "'Hello World'"```
+Note: The string argument must be unique from any previous Twitter Status posted. Change 'Hello World' to a unique message if necessary.
 
-To use the Twitter API, authentication is required.  API keys and tokens for authentication can be generated here: https://apps.twitter.com. Please follow the configuration instructions here: http://twitter4j.org/en/configuration.html. The twitter4j.properties should be placed in the same directory as the jar files if used.
-
-To execute ProgramOne, run ```java -jar ProgramOne.jar 'Hello World'```. To execute ProgramTwo, run ```java -jar ProgramTwo.jar```. 
-
-Note: ProgramOne requires at least one argument which denotes the status(es) to be posted. 
-
+To run ProgramTwo run: ```./gradlew runTwo```

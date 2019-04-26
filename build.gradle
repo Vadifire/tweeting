@@ -28,27 +28,24 @@ repositories {
 }
 
 dependencies {
-    // This dependency is found on compile classpath of this component and consumers.
-    implementation 'com.google.guava:guava:27.0.1-jre'
+    // Include dependencies for compile and run time
+    implementation 'com.google.guava:guava:27.0.1-jre', 'org.twitter4j:twitter4j-core:4.0.7'
 
     // Use JUnit test framework
     //testImplementation 'junit:junit:4.12'
-
-    // Include Twitter4J dependency
-    implementation 'org.twitter4j:twitter4j-core:4.0.7'
 
     // implementation: used for compile and run time
     // testImplementation: (^ equivalent, but for tests)
 }
 
-// Define task to run specific Class File
+// Define task to run ProgramOne
 apply plugin: 'java'
 task(runOne, dependsOn: 'classes', type: JavaExec) {
    main = 'main.ProgramOne'
    classpath = sourceSets.main.runtimeClasspath
 }
 
-// Define task to run specific Class File
+// Define task to run ProgramTwo
 apply plugin: 'java'
 task(runTwo, dependsOn: 'classes', type: JavaExec) {
    main = 'main.ProgramTwo'

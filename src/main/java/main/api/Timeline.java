@@ -8,6 +8,7 @@ package main.api;
 
 //TODO: check imports
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.List;
 
 public class Timeline {
 

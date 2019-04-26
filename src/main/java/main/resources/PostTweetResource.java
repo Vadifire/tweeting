@@ -3,21 +3,22 @@ package main.resources;
 //TODO check imports
 import main.api.Message;
 import main.ProgramTwo;
+import main.Post;
 import com.codahale.metrics.annotation.Timed;
 
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.Optional;
+import javax.ws.rs.PathParam;
 
-@Path("/api/1.0/twitter/tweet")
-@Produces(MediaType.APPLICATION_JSON)
+import java.util.concurrent.atomic.AtomicLong;
+
+//@Path("/api/1.0/twitter/tweet")
+//@Produces(MediaType.APPLICATION_JSON)
 
 public class PostTweetResource {
-
+/*
 	private final String template;
 	private final String defaultMessage;
 	private final AtomicLong counter; //provides thread-safe unique ID
@@ -34,5 +35,5 @@ public class PostTweetResource {
 
 		return ProgramTwo.updateStatus(new Post(message)); //TODO: remove Post class
 		
-	}
+	}*/
 }

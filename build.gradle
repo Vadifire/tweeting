@@ -5,6 +5,11 @@
  * User Manual available at https://docs.gradle.org/5.4/userguide/tutorial_java_projects.html
  */
 
+// Used for human-readability
+import java.time.ZoneId
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
+
 plugins {
     // Apply the java plugin to add support for Java
     /* 
@@ -30,7 +35,8 @@ repositories {
 dependencies {
     // Include dependencies for compile and run time
     implementation 'com.google.guava:guava:27.0.1-jre', 
-        'org.twitter4j:twitter4j-core:4.0.7'
+        'org.twitter4j:twitter4j-core:4.0.7',
+        'io.dropwizard:dropwizard-core:0.8.0'
 
     // Use JUnit test framework
     //testImplementation 'junit:junit:4.12'
@@ -54,9 +60,28 @@ task(runTwo, dependsOn: 'classes', type: JavaExec) {
 }
 
 // Define the main class for the application
-mainClassName = 'main.ProgramOne'
+mainClassName = 'main.TweetingApplication'
+/*run {
+    args = ['server', 'config.yml']
+}*/
 //manifest.mainAttributes("Main-Class" : "main.ProgramOne")
 
 // Java Version
 sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
+
+/*shadowJar {
+    mergeServiceFiles()
+    exclude 'META-INF/*.DSA', 'META-INF/*.RSA', 'META-INF/*.SF'
+    manifest {
+        attributes 'Implementation-Title': rootProject.name
+        attributes 'Implementation-Version': rootProject.version
+        attributes 'Implementation-Vendor-Id': rootProject.group
+        attributes 'Build-Time': ZonedDateTime.now(ZoneId.of("UTC"))
+                .format(DateTimeFormatter.ISO_ZONED_DATE_TIME)
+        attributes 'Built-By': InetAddress.localHost.hostName
+        attributes 'Created-By': 'Gradle ' + gradle.gradleVersion
+        attributes 'Main-Class': mainClassName
+    }
+    archiveName 'sample-dropwizard-rest-stub.jar'
+}*/

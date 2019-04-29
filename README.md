@@ -14,7 +14,7 @@ API keys and tokens for authentication can be generated here: https://apps.twitt
 Please follow the configuration instructions here: http://twitter4j.org/en/configuration.html. 
 The twitter4j.properties should be placed in project's root directory.
 
-To start the application, run ```./gradlw run```. The application will start running locally on port 8080.
+To start the application, run ```./gradlew run```. The application will start running locally on port 8080.
 
 #### Retrieving Home Timeline
 

@@ -21,7 +21,7 @@ public class AuthHealthCheck extends HealthCheck {
         Twitter twitter = TwitterFactory.getSingleton();
         Authorization auth = twitter.getAuthorization();
         if (!auth.isEnabled()){
-            return Result.unhealthy("Twitter authentication is not enabled. " +
+            return Result.unhealthy("Twitter authentication credentials are not set. " +
                     "See http://twitter4j.org/en/configuration.html for help setting up authentication.");
         }
         return Result.healthy();

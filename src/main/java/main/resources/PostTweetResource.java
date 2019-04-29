@@ -38,7 +38,7 @@ public class PostTweetResource {
         Twitter twitter = TwitterFactory.getSingleton();
         if (!twitter.getAuthorization().isEnabled()) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).
-                    entity("Error with posting tweet: authentication not enabled. See " +
+                    entity("Error with posting tweet: Twitter authentication credentials are not set. See " +
                             "http://twitter4j.org/en/configuration.html for help setting up authentication.\n").build();
         }
         try {

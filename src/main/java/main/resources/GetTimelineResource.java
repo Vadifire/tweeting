@@ -23,43 +23,43 @@ import java.util.LinkedList;
 @Produces(MediaType.APPLICATION_JSON)
 
 public class GetTimelineResource {
-	private final AtomicLong counter; //Provides thread-safe unique(ish) ID
+    private final AtomicLong counter; //Provides thread-safe unique(ish) ID
 
     public GetTimelineResource() {
         this.counter = new AtomicLong();
     }
 
-	/*
-	 * How to use: //TODO: make this more readable
-	 * curl -i -X GET http://localhost:8080/api/1.0/twitter/timeline
-	 */
+    /*
+     * How to use: //TODO: make this more readable
+     * curl -i -X GET http://localhost:8080/api/1.0/twitter/timeline
+     */
     @GET
     @Timed
     public Timeline getTweets() { //TODO: add error checking
-    	List<String> value = new LinkedList<>();
-    	List<Status> statuses = getHomeTimelineStatuses();
-    	if (statuses == null){
-    		//TODO: exception
-    	}
-    	for (Status status : statuses) {
-    		value.add(status.getText());
-    	}
-    	return new Timeline(counter.incrementAndGet(), value);
+        List<String> value = new LinkedList<>();
+        List<Status> statuses = getHomeTimelineStatuses();
+        if (statuses == null){
+            //TODO: exception
+        }
+        for (Status status : statuses) {
+            value.add(status.getText());
+        }
+        return new Timeline(counter.incrementAndGet(), value);
     }
 
-	/*
-	 * Returns List of Status objects from Home Timeline
-	 * Returns null if TwitterException occurs when trying to retrieve statuses
-	 */
-	public static List<Status> getHomeTimelineStatuses() {
-		Twitter twitter = TwitterFactory.getSingleton();
-		try {
-			List<Status> statuses = twitter.getHomeTimeline();
-			return statuses;
-		} catch (TwitterException e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
+    /*
+     * Returns List of Status objects from Home Timeline
+     * Returns null if TwitterException occurs when trying to retrieve statuses
+     */
+    public static List<Status> getHomeTimelineStatuses() {
+        Twitter twitter = TwitterFactory.getSingleton();
+        try {
+            List<Status> statuses = twitter.getHomeTimeline();
+            return statuses;
+        } catch (TwitterException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
 }

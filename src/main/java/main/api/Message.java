@@ -1,4 +1,4 @@
-/* 
+/*
  * Representation Class for a Message
  *
  * JSON serialization is done by Jackson
@@ -12,19 +12,19 @@ import org.hibernate.validator.constraints.Length;
 
 public class Message {
 
-	private long id;
+    private long id;
 
-	@Length(max = 280)
-	private String content;
+    @Length(max = 280)
+    private String content;
 
-	public Message() {
+    public Message() {
 
-	}
+    }
 
-	public Message(long id, String content) {
-		this.id = id;
-		this.content = content;
-	}
+    public Message(long id, String content) {
+        this.id = id;
+        this.content = content;
+    }
 
     @JsonProperty
     public long getId() {
@@ -35,5 +35,5 @@ public class Message {
     public String getContent() {
         return content;
     }
-    
+
 }

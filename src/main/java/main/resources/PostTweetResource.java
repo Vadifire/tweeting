@@ -44,7 +44,7 @@ public class PostTweetResource {
                     entity("Error with posting tweet: message was 0 characters.\n").build();
         }
         Twitter twitter = TwitterFactory.getSingleton();
-        if (twitter.getAuthorization().getClass() == NullAuthorization.class){
+        if (twitter.getAuthorization().getClass() == NullAuthorization.class) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).
                     entity("Error with posting tweet: authentication failed. See " +
                             "http://twitter4j.org/en/configuration.html for help setting up authentication.\n").build();

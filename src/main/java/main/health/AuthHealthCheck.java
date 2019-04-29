@@ -6,7 +6,7 @@ import twitter4j.TwitterFactory;
 import twitter4j.auth.Authorization;
 import twitter4j.auth.NullAuthorization;
 
-public class AuthHealthCheck extends HealthCheck{
+public class AuthHealthCheck extends HealthCheck {
 
     @Override
     protected Result check() {

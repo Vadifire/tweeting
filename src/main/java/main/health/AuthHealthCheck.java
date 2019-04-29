@@ -6,6 +6,13 @@ import twitter4j.TwitterFactory;
 import twitter4j.auth.Authorization;
 import twitter4j.auth.NullAuthorization;
 
+/*
+ * This Health check reports 'unhealthy' if Twitter authentication is missing (null) and healthy otherwise.
+ *
+ * Run the following the view the health check status:
+ * curl -i -X GET http://localhost:8081/healthcheck
+ */
+
 public class AuthHealthCheck extends HealthCheck {
 
     @Override

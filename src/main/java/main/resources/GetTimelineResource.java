@@ -39,7 +39,7 @@ public class GetTimelineResource {
     public Response getTweets() {
 
         Twitter twitter = TwitterFactory.getSingleton();
-        if (twitter.getAuthorization().getClass() == NullAuthorization.class){
+        if (twitter.getAuthorization().getClass() == NullAuthorization.class) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).
                     entity("Error with retrieving home timeline: authentication failed. See " +
                             "http://twitter4j.org/en/configuration.html for help setting up authentication.\n").build();

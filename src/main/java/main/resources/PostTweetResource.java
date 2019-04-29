@@ -9,18 +9,10 @@ import twitter4j.auth.NullAuthorization;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.concurrent.atomic.AtomicLong;
 
 @Path("/api/1.0/twitter/tweet/")
 @Consumes(MediaType.APPLICATION_JSON)
 public class PostTweetResource {
-
-	private final AtomicLong counter; //provides thread-safe unique ID
-
-	public PostTweetResource() {
-		this.counter = new AtomicLong();
-	}
-
     /*
      * How to use:
      * curl -i -X POST -H 'Content-Type: application/json' http://localhost:8080/api/1.0/twitter/tweet/message

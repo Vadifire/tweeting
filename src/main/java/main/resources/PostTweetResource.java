@@ -4,7 +4,6 @@ import com.codahale.metrics.annotation.Timed;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
-import twitter4j.auth.NullAuthorization;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;

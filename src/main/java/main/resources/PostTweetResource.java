@@ -15,9 +15,9 @@ import javax.ws.rs.core.Response;
 public class PostTweetResource {
     /*
      * How to use:
-     * curl -i -X POST -H 'Content-Type: application/json' http://localhost:8080/api/1.0/twitter/tweet/message
+     * curl -i -X POST -H 'Content-Type: application/json' http://localhost:8080/api/1.0/twitter/tweet/?message=message
      *
-     * Replace 'message' with message desired.
+     * Replace the last 'message' with desired message.
      */
 	@POST
 	@Timed

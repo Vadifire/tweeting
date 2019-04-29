@@ -20,8 +20,8 @@ public class AuthHealthCheck extends HealthCheck {
         System.out.println("Checking authorization...");
         Twitter twitter = TwitterFactory.getSingleton();
         Authorization auth = twitter.getAuthorization();
-        if (auth.getClass() == NullAuthorization.class){
-            return Result.unhealthy("Twitter authentication failed. " +
+        if (!auth.isEnabled()){
+            return Result.unhealthy("Twitter authentication is not enabled. " +
                     "See http://twitter4j.org/en/configuration.html for help setting up authentication.");
         }
         return Result.healthy();

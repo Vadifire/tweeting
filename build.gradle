@@ -43,20 +43,6 @@ dependencies {
     // testImplementation: (^ equivalent, but for tests)
 }
 
-// Define task to run ProgramOne
-apply plugin: 'java'
-task(runOne, dependsOn: 'classes', type: JavaExec) {
-   main = 'main.ProgramOne'
-   classpath = sourceSets.main.runtimeClasspath
-}
-
-// Define task to run ProgramTwo
-apply plugin: 'java'
-task(runTwo, dependsOn: 'classes', type: JavaExec) {
-   main = 'main.ProgramTwo'
-   classpath = sourceSets.main.runtimeClasspath
-}
-
 // Define the main class for the application
 mainClassName = 'main.TweetingApplication'
 run {

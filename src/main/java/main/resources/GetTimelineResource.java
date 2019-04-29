@@ -2,7 +2,6 @@ package main.resources;
 
 //TODO check imports
 import main.api.Timeline;
-import main.ProgramTwo;
 import com.codahale.metrics.annotation.Timed;
 
 import twitter4j.Status;
@@ -18,6 +17,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import java.util.List;
 import java.util.LinkedList;
+import javax.ws.rs.core.Response;
 
 @Path("/api/1.0/twitter/timeline")
 @Produces(MediaType.APPLICATION_JSON)
@@ -30,35 +30,33 @@ public class GetTimelineResource {
     }
 
     /*
-     * How to use: //TODO: make this more readable
+     * How to use:
      * curl -i -X GET http://localhost:8080/api/1.0/twitter/timeline
      */
     @GET
     @Timed
-    public Timeline getTweets() { //TODO: add error checking
-        List<String> value = new LinkedList<>();
-        List<Status> statuses = getHomeTimelineStatuses();
-        if (statuses == null){
-            //TODO: exception
-        }
-        for (Status status : statuses) {
-            value.add(status.getText());
-        }
-        return new Timeline(counter.incrementAndGet(), value);
-    }
+    public Response getTweets() {
 
-    /*
-     * Returns List of Status objects from Home Timeline
-     * Returns null if TwitterException occurs when trying to retrieve statuses
-     */
-    public static List<Status> getHomeTimelineStatuses() {
         Twitter twitter = TwitterFactory.getSingleton();
         try {
+            //Retrieve Statuses using Twitter4J
             List<Status> statuses = twitter.getHomeTimeline();
-            return statuses;
+            if (statuses == null){ //this might never actually return true
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).
+                        entity("Error with retrieving home timeline: home timeline was null.").build();
+            }
+
+            // Build timeline Response from Status List
+            List<String> timelineValue = new LinkedList<>();
+            for (Status status : statuses) {
+                timelineValue.add(status.getUser().getName()+": "+status.getText());
+            }
+            Timeline timeline = new Timeline(counter.incrementAndGet(), timelineValue);
+            return Response.ok(timeline).build();
+
         } catch (TwitterException e) {
-            e.printStackTrace();
-            return null;
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).
+                    entity("Error with retrieving home timeline: "+e.getErrorMessage()).build();
         }
     }
 

@@ -1,6 +1,5 @@
 package main;
 
-//TODO: check imports
 import main.resources.GetTimelineResource;
 import main.resources.PostTweetResource;
 

@@ -31,7 +31,7 @@ public class PostTweetResource {
 	public Response postTweet(@QueryParam("message") String message) { // Change to return HTTP response?
         if (message == null) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).
-                    entity("Error with posting tweet: message was null.\n").build();
+                    entity("Error with posting tweet: message was null. Add message as a post parameter.\n").build();
         }
         if (message.length() > 280) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).

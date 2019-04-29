@@ -44,7 +44,7 @@ public class GetTimelineResource {
             List<Status> statuses = twitter.getHomeTimeline();
             if (statuses == null){ //this might never actually return true
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).
-                        entity("Error with retrieving home timeline: home timeline was null\n.").build();
+                        entity("Error with retrieving home timeline: home timeline was null.\n").build();
             }
 
             // Build timeline Response from Status List

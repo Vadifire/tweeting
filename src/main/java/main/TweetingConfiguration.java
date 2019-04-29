@@ -3,32 +3,25 @@ package main;
 import io.dropwizard.Configuration;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.validator.constraints.NotEmpty;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.Max;
 
 public class TweetingConfiguration extends Configuration {
 
-	@NotEmpty 
-	private String template;
-
 	@NotEmpty
-	private String defaultMessage = "Hello World";
-
 	@JsonProperty
-	public String getTemplate() {
-		return template;
+	private String host;
+
+	@Min(1)
+	@Max(65535)
+	@JsonProperty
+	private int port = 8080;
+
+	public String getHost() {
+		return host;
 	}
 
-	@JsonProperty
-	public void setTemplate() {
-		this.template = template;
-	}
-
-	@JsonProperty
-	public String getDefaultMessage() {
-		return defaultMessage;
-	}
-
-	@JsonProperty
-	public void setDefaulMessage(String message) {
-		this.defaultMessage = message;
+	public int getPort() {
+		return port;
 	}
 }

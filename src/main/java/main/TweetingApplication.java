@@ -28,12 +28,12 @@ public class TweetingApplication extends Application<TweetingConfiguration> {
     public void run(TweetingConfiguration config, Environment env) {
         System.out.println("Running Tweeting Service...");
 
-        /* Register Resources */
-
+        // Register GET timeline resource
         final GetTimelineResource timelineResource = new GetTimelineResource();
         env.jersey().register(timelineResource);
 
-        final PostTweetResource tweetResource = new PostTweetResource(config.getTemplate(), config.getDefaultMessage());
+        //Register POST tweet resource
+        final PostTweetResource tweetResource = new PostTweetResource();
         env.jersey().register(tweetResource);
     }
 }

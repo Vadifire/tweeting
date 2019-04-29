@@ -1,2 +1,2 @@
-template: Posting, %s.
-defaultMessage: Hello World
+host: localhost
+port: 8080

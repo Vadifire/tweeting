@@ -2,6 +2,7 @@ package main.resources;
 
 //TODO check imports
 import main.api.Timeline;
+import main.api.Message;
 import com.codahale.metrics.annotation.Timed;
 
 import twitter4j.Status;
@@ -43,20 +44,21 @@ public class GetTimelineResource {
             List<Status> statuses = twitter.getHomeTimeline();
             if (statuses == null){ //this might never actually return true
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).
-                        entity("Error with retrieving home timeline: home timeline was null.").build();
+                        entity("Error with retrieving home timeline: home timeline was null\n.").build();
             }
 
             // Build timeline Response from Status List
-            List<String> timelineValue = new LinkedList<>();
+            List<Message> timelineValue = new LinkedList<>();
             for (Status status : statuses) {
-                timelineValue.add(status.getUser().getName()+": "+status.getText());
+                Message m = new Message(status.getId(), status.getUser().getName(), status.getText());
+                timelineValue.add(m);
             }
             Timeline timeline = new Timeline(counter.incrementAndGet(), timelineValue);
             return Response.ok(timeline).build();
 
         } catch (TwitterException e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).
-                    entity("Error with retrieving home timeline: "+e.getErrorMessage()).build();
+                    entity("Error with retrieving home timeline: "+e.getErrorMessage()+"\n").build();
         }
     }
 

@@ -6,7 +6,6 @@
 
 package main.api;
 
-//TODO: check imports
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 
@@ -14,15 +13,15 @@ public class Timeline {
 
 	private long id;
 
-	private List<String> messages; //TODO: Pick whether this should be String or Message
+	private List<Message> content; //List of messages
 
 	public Timeline() {
 		
 	}
 
-	public Timeline(long id, List<String> messages) {
+	public Timeline(long id, List<Message> messages) {
 		this.id = id;
-		this.messages = messages;
+		this.content = messages;
 	}
 
     @JsonProperty
@@ -31,8 +30,8 @@ public class Timeline {
     }
 
     @JsonProperty
-    public List<String> getMessages() {
-        return messages;
+    public List<Message> getContent() {
+        return content;
     }
 
 }

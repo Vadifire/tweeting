@@ -39,24 +39,24 @@ public class PostTweetResource {
 	public Response postTweet(@PathParam("message") String message) { // Change to return HTTP response?
         if (message == null) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).
-                    entity("Error with posting tweet: message was null.").build();
+                    entity("Error with posting tweet: message was null\n.").build();
         }
         if (message.length() > 280) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).
-                    entity("Error with posting tweet: message was over the 280 character limit.").build();
+                    entity("Error with posting tweet: message was over the 280 character limit\n.").build();
         }
         if (message.length() == 0) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).
-                    entity("Error with posting tweet: message was 0 characters.").build();
+                    entity("Error with posting tweet: message was 0 characters.\n").build();
         }
         Twitter twitter = TwitterFactory.getSingleton();
         try {
-            Status status = twitter.updateStatus(message);
+            twitter.updateStatus(message);
         } catch (TwitterException e) {
             e.printStackTrace();
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).
-                    entity("Error with posting tweet: "+e.getErrorMessage()).build();
+                    entity("Error with posting tweet: "+e.getErrorMessage()+"\n").build();
         }
-        return Response.status(Response.Status.OK).entity("Successfully posted tweet: "+message).build();
+        return Response.status(Response.Status.OK).entity("Successfully posted tweet: "+message+"\n").build();
 	}
 }

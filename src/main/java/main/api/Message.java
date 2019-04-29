@@ -6,7 +6,6 @@
 
 package main.api;
 
-//TODO: check imports
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.validator.constraints.Length;
 
@@ -14,16 +13,20 @@ public class Message {
 
     private long id;
 
-    @Length(max = 280)
-    private String content;
+    @Length(min = 1, max = 50)
+    private String name;
+
+    @Length(min = 1, max = 280)
+    private String text;
 
     public Message() {
 
     }
 
-    public Message(long id, String content) {
+    public Message(long id, String name, String text) {
         this.id = id;
-        this.content = content;
+        this.name = name;
+        this.text = text;
     }
 
     @JsonProperty
@@ -32,8 +35,12 @@ public class Message {
     }
 
     @JsonProperty
-    public String getContent() {
-        return content;
+    public String getName() {
+        return name;
     }
 
+    @JsonProperty
+    public String getText() {
+        return text;
+    }
 }

@@ -46,8 +46,8 @@ public class PostTweetResource {
         } catch (TwitterException e) {
             e.printStackTrace();
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).
-                    entity("Error with posting tweet: "+e.getErrorMessage()+"\n").build();
+                    entity("Error with posting tweet: " + e.getErrorMessage() + "\n").build();
         }
-        return Response.status(Response.Status.CREATED).entity("Successfully posted tweet: "+message+"\n").build();
+        return Response.status(Response.Status.CREATED).entity("Successfully posted tweet: " + message + "\n").build();
 	}
 }

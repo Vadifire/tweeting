@@ -5,11 +5,6 @@
  * User Manual available at https://docs.gradle.org/5.4/userguide/tutorial_java_projects.html
  */
 
-// Used for human-readability
-import java.time.ZoneId
-import java.time.ZonedDateTime
-import java.time.format.DateTimeFormatter
-
 plugins {
     // Apply the java plugin to add support for Java
     /* 

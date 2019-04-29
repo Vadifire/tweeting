@@ -23,29 +23,28 @@ public class PostTweetResource {
 	public Response postTweet(@QueryParam("message") String message) { // Change to return HTTP response?
         if (message == null) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).
-                    entity("Error with posting tweet: message was null. Add message as a post parameter by " +
-                            "appending ?message= at the end of URI.\n").build();
+                    entity("Could not post tweet because no message was specified.\n").build();
         }
         if (message.length() > 280) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).
-                    entity("Error with posting tweet: message was over the 280 character limit.\n").build();
+                    entity("Could not post tweet because message exceeds 280 character limit.\n").build();
         }
         if (message.length() == 0) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).
-                    entity("Error with posting tweet: message was 0 characters.\n").build();
+                    entity("Could not post tweet because message was empty.\n").build();
         }
         Twitter twitter = TwitterFactory.getSingleton();
         if (!twitter.getAuthorization().isEnabled()) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).
-                    entity("Error with posting tweet: Twitter authentication credentials are not set. See " +
-                            "http://twitter4j.org/en/configuration.html for help setting up authentication.\n").build();
+                    entity("Could not post tweet because Twitter authentication credentials are not set " +
+                            "on the server.\n").build();
         }
         try {
             twitter.updateStatus(message);
         } catch (TwitterException e) {
             e.printStackTrace();
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).
-                    entity("Error with posting tweet: " + e.getErrorMessage() + "\n").build();
+                    entity("Could not post tweet: " + e.getErrorMessage() + "\n").build();
         }
         return Response.status(Response.Status.CREATED).entity("Successfully posted tweet: " + message + "\n").build();
 	}

@@ -11,23 +11,15 @@ import java.util.List;
 
 public class Timeline {
 
-	private long id;
-
 	private List<Message> content; //List of messages
 
 	public Timeline() {
 		
 	}
 
-	public Timeline(long id, List<Message> messages) {
-		this.id = id;
+	public Timeline(List<Message> messages) {
 		this.content = messages;
 	}
-
-    @JsonProperty
-    public long getId() {
-        return id;
-    }
 
     @JsonProperty
     public List<Message> getContent() {

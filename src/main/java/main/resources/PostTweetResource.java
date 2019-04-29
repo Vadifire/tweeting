@@ -4,6 +4,7 @@ import com.codahale.metrics.annotation.Timed;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
+import twitter4j.auth.NullAuthorization;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -31,7 +32,8 @@ public class PostTweetResource {
 	public Response postTweet(@QueryParam("message") String message) { // Change to return HTTP response?
         if (message == null) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).
-                    entity("Error with posting tweet: message was null. Add message as a post parameter.\n").build();
+                    entity("Error with posting tweet: message was null. Add message as a post parameter by " +
+                            "appending ?message= at the end of URI.\n").build();
         }
         if (message.length() > 280) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).
@@ -42,6 +44,11 @@ public class PostTweetResource {
                     entity("Error with posting tweet: message was 0 characters.\n").build();
         }
         Twitter twitter = TwitterFactory.getSingleton();
+        if (twitter.getAuthorization().getClass() == NullAuthorization.class){
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).
+                    entity("Error with posting tweet: authentication failed. See " +
+                            "http://twitter4j.org/en/configuration.html for help setting up authentication.\n").build();
+        }
         try {
             twitter.updateStatus(message);
         } catch (TwitterException e) {

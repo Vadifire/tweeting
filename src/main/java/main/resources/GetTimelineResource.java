@@ -9,6 +9,7 @@ import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
+import twitter4j.auth.NullAuthorization;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -39,6 +40,11 @@ public class GetTimelineResource {
     public Response getTweets() {
 
         Twitter twitter = TwitterFactory.getSingleton();
+        if (twitter.getAuthorization().getClass() == NullAuthorization.class){
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).
+                    entity("Error with retrieving home timeline: authentication failed. See " +
+                            "http://twitter4j.org/en/configuration.html for help setting up authentication.\n").build();
+        }
         try {
             //Retrieve Statuses using Twitter4J
             List<Status> statuses = twitter.getHomeTimeline();

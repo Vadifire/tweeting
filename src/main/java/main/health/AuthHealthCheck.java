@@ -15,7 +15,7 @@ public class AuthHealthCheck extends HealthCheck{
         Authorization auth = twitter.getAuthorization();
         if (auth.getClass() == NullAuthorization.class){
             return Result.unhealthy("Twitter authentication failed. " +
-                    "Check http://twitter4j.org/en/configuration.html for help setting up authentication.");
+                    "See http://twitter4j.org/en/configuration.html for help setting up authentication.");
         }
         return Result.healthy();
     }

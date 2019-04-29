@@ -29,7 +29,7 @@ public class TweetingApplication extends Application<TweetingConfiguration> {
     public void run(TweetingConfiguration config, Environment env) {
         System.out.println("Running Tweeting Service...");
 
-        //Register authentication health check (used to get rid of dropwizard warnings)
+        //Register alive health check
         env.healthChecks().register("AliveHealthCheck", new AliveHealthCheck());
 
         // Register GET timeline resource

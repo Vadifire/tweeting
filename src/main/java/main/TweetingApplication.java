@@ -1,8 +1,8 @@
 package main;
 
+import main.health.AliveHealthCheck;
 import main.resources.GetTimelineResource;
 import main.resources.PostTweetResource;
-import main.health.AuthHealthCheck;
 
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
@@ -30,7 +30,7 @@ public class TweetingApplication extends Application<TweetingConfiguration> {
         System.out.println("Running Tweeting Service...");
 
         //Register authentication health check (used to get rid of dropwizard warnings)
-        env.healthChecks().register("AuthHealthCheck", new AuthHealthCheck());
+        env.healthChecks().register("AliveHealthCheck", new AliveHealthCheck());
 
         // Register GET timeline resource
         final GetTimelineResource timelineResource = new GetTimelineResource();

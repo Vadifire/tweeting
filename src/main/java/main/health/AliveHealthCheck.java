@@ -9,7 +9,7 @@ import com.codahale.metrics.health.HealthCheck;
  * curl -i -X GET http://localhost:8081/healthcheck
  */
 
-public class AuthHealthCheck extends HealthCheck {
+public class AliveHealthCheck extends HealthCheck {
 
     @Override
     protected Result check() {

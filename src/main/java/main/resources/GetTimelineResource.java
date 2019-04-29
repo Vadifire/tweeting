@@ -1,6 +1,5 @@
 package main.resources;
 
-//TODO check imports
 import main.api.Timeline;
 import main.api.Message;
 import com.codahale.metrics.annotation.Timed;
@@ -25,10 +24,10 @@ import javax.ws.rs.core.Response;
 @Produces(MediaType.APPLICATION_JSON)
 
 public class GetTimelineResource {
-    private final AtomicLong counter; //Provides thread-safe unique(ish) ID
+    //private final AtomicLong counter; //Provides thread-safe unique(ish) ID
 
     public GetTimelineResource() {
-        this.counter = new AtomicLong();
+        //this.counter = new AtomicLong();
     }
 
     /*
@@ -60,7 +59,7 @@ public class GetTimelineResource {
                 Message m = new Message(status.getId(), status.getUser().getName(), status.getText());
                 timelineValue.add(m);
             }
-            Timeline timeline = new Timeline(counter.incrementAndGet(), timelineValue);
+            Timeline timeline = new Timeline(timelineValue);
             return Response.ok(timeline).build();
 
         } catch (TwitterException e) {

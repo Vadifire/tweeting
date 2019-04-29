@@ -2,6 +2,7 @@ package main;
 
 import main.resources.GetTimelineResource;
 import main.resources.PostTweetResource;
+import main.health.AuthHealthCheck;
 
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
@@ -27,6 +28,9 @@ public class TweetingApplication extends Application<TweetingConfiguration> {
     @Override
     public void run(TweetingConfiguration config, Environment env) {
         System.out.println("Running Tweeting Service...");
+
+        //Register authentication health check
+        env.healthChecks().register("AuthHealthCheck", new AuthHealthCheck());
 
         // Register GET timeline resource
         final GetTimelineResource timelineResource = new GetTimelineResource();

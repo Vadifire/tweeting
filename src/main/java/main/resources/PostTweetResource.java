@@ -34,14 +34,14 @@ public class PostTweetResource {
                     entity("Could not post tweet because message was empty.\n").build();
         }
         Twitter twitter = TwitterFactory.getSingleton();
-        if (!twitter.getAuthorization().isEnabled()) {
+        /*if (!twitter.getAuthorization().isEnabled()) {
 
             System.out.println("Twitter authentication credentials are not set. Please restart Server with " +
                     "valid credentials. See http://twitter4j.org/en/configuration.html for help.");
 
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).
                     entity("Could not post tweet because because the server is not properly configured.\n").build();
-        }
+        }*/
         try {
             twitter.updateStatus(message);
         } catch (TwitterException e) {
@@ -50,6 +50,7 @@ public class PostTweetResource {
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).
                         entity("Could not post tweet because connection to Twitter failed.\n").build();
             } else {
+
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).
                         entity("Could not post tweet: " + e.getErrorMessage() + "\n").build();
             }

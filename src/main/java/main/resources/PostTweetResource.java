@@ -5,6 +5,7 @@ import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
@@ -14,13 +15,13 @@ import javax.ws.rs.core.Response;
 public class PostTweetResource {
     /*
      * How to use:
-     * curl http://localhost:8080/api/1.0/twitter/tweet -H 'Content-type:text/plain' -d 'Hello World'
+     * curl -i http://localhost:8080/api/1.0/twitter/tweet -d 'message=Hello World'
      *
      * Replace 'Hello World' with desired message.
      */
 	@POST
-    @Consumes(MediaType.TEXT_PLAIN)
-	public Response postTweet(String message) { // Receives message from JSON data
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	public Response postTweet(@FormParam("message") String message) { // Receives message from JSON data
         if (message == null) {
             return Response.status(Response.Status.BAD_REQUEST).
                     entity("Could not post tweet because no message was specified.\n").build();

@@ -22,15 +22,15 @@ public class PostTweetResource {
 	@Timed
 	public Response postTweet(@QueryParam("message") String message) { // Change to return HTTP response?
         if (message == null) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).
+            return Response.status(Response.Status.BAD_REQUEST).
                     entity("Could not post tweet because no message was specified.\n").build();
         }
         if (message.length() > 280) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).
+            return Response.status(Response.Status.BAD_REQUEST).
                     entity("Could not post tweet because message exceeds 280 character limit.\n").build();
         }
         if (message.length() == 0) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).
+            return Response.status(Response.Status.BAD_REQUEST).
                     entity("Could not post tweet because message was empty.\n").build();
         }
         Twitter twitter = TwitterFactory.getSingleton();

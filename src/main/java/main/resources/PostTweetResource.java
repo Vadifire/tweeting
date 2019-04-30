@@ -46,8 +46,13 @@ public class PostTweetResource {
             twitter.updateStatus(message);
         } catch (TwitterException e) {
             e.printStackTrace();
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).
-                    entity("Could not post tweet: " + e.getErrorMessage() + "\n").build();
+            if (e.isCausedByNetworkIssue()) {
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).
+                        entity("Could not post tweet because connection to Twitter failed.\n").build();
+            } else {
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).
+                        entity("Could not post tweet: " + e.getErrorMessage() + "\n").build();
+            }
         }
         return Response.status(Response.Status.CREATED).entity("Successfully posted tweet: " + message + "\n").build();
 	}

@@ -48,8 +48,13 @@ public class GetTimelineResource {
             return Response.ok(statuses).build();
 
         } catch (TwitterException e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).
-                    entity("Could not retrieve home timeline: " + e.getErrorMessage() + "\n").build();
+            if (e.isCausedByNetworkIssue()) {
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).
+                        entity("Could not post tweet because connection to Twitter failed.\n").build();
+            } else {
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).
+                        entity("Could not retrieve home timeline: " + e.getErrorMessage() + "\n").build();
+            }
         }
     }
 

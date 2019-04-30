@@ -15,7 +15,7 @@ public class TweetingConfiguration extends Configuration {
 	@Min(1)
 	@Max(65535)
 	@JsonProperty
-	private int port = 8080;
+	private int port;
 
 	public String getHost() {
 		return host;

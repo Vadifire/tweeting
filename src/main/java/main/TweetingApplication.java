@@ -18,11 +18,6 @@ public class TweetingApplication extends Application<TweetingConfiguration> {
     }
 
     @Override
-    public String getName() {
-        return "tweeting";
-    }
-
-    @Override
     public void initialize(Bootstrap<TweetingConfiguration> bootstrap) {
         System.out.println("Initializing Tweeting Service...");
 

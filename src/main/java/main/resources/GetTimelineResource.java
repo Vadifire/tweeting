@@ -29,7 +29,7 @@ public class GetTimelineResource {
     public Response getTweets() {
 
         Twitter twitter = TwitterFactory.getSingleton();
-        if (!twitter.getAuthorization().isEnabled()) {
+        if (!twitter.getAuthorization().isEnabled()) { //This check is a fail-safe
 
             System.out.println("Twitter authentication credentials are not set. Please restart Server with " +
                     "valid credentials. See http://twitter4j.org/en/configuration.html for help.");

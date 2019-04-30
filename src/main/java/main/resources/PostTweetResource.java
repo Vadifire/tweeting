@@ -1,6 +1,5 @@
 package main.resources;
 
-import com.codahale.metrics.annotation.Timed;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
@@ -8,22 +7,20 @@ import twitter4j.TwitterFactory;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 @Path("/api/1.0/twitter/tweet/")
-@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 public class PostTweetResource {
     /*
      * How to use:
-     * curl -i -X POST -H 'Content-Type: application/json' http://localhost:8080/api/1.0/twitter/tweet/?message=message
+     * curl http://localhost:8080/api/1.0/twitter/tweet -H 'Content-type:text/plain' -d 'Hello World'
      *
-     * Replace the last 'message' with desired message.
+     * Replace 'Hello World' with desired message.
      */
 	@POST
-	@Timed
-	public Response postTweet(@QueryParam("message") String message) { // Change to return HTTP response?
+    @Consumes(MediaType.TEXT_PLAIN)
+	public Response postTweet(String message) { // Receives message from JSON data
         if (message == null) {
             return Response.status(Response.Status.BAD_REQUEST).
                     entity("Could not post tweet because no message was specified.\n").build();

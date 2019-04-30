@@ -1,7 +1,5 @@
 package main.resources;
 
-import com.codahale.metrics.annotation.Timed;
-
 import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
@@ -25,7 +23,6 @@ public class GetTimelineResource {
      * curl -i -X GET http://localhost:8080/api/1.0/twitter/timeline
      */
     @GET
-    @Timed
     public Response getTweets() {
 
         Twitter twitter = TwitterFactory.getSingleton();

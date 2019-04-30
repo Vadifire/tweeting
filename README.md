@@ -19,14 +19,13 @@ To start the application, run ```./gradlew run```. The application will start ru
 #### Retrieving Home Timeline
 
 To retrieve the home timeline , run the following command:
- ```curl -i -X GET http://localhost:8080/api/1.0/twitter/timeline```
+ ```curl -i http://localhost:8080/api/1.0/twitter/timeline```
  
  Alternatively, you can simply access ```http://localhost:8080/api/1.0/twitter/timeline``` in browser.
  
  #### Retrieving Tweets
  
- To post a tweet, run the following command, replacing ```message``` with your desired tweet:
-```curl -i -X POST http://localhost:8080/api/1.0/twitter/tweet/?message=message```
+ To post a tweet, run the following command, replacing ```Hello World``` with your desired tweet:
+```curl -i http://localhost:8080/api/1.0/twitter/tweet -H 'Content-type:text/plain' -d 'Hello World''```
 
-Note: you can use ```%20``` to represent spaces.
 

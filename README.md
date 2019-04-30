@@ -26,6 +26,6 @@ To retrieve the home timeline , run the following command:
  #### Retrieving Tweets
  
  To post a tweet, run the following command, replacing ```Hello World``` with your desired tweet:
-```curl -i http://localhost:8080/api/1.0/twitter/tweet -H 'Content-type:text/plain' -d 'Hello World''```
+```curl -i http://localhost:8080/api/1.0/twitter/tweet -H 'Content-type:text/plain' -d 'Hello World'```
 
 

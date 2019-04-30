@@ -26,7 +26,7 @@ To retrieve the home timeline , run the following command:
  #### Retrieving Tweets
  
  To post a tweet, run the following command, replacing ```message``` with your desired tweet:
-```curl -i -X POST -H 'Content-Type: application/json' http://localhost:8080/api/1.0/twitter/tweet/?message=message```
+```curl -i -X POST http://localhost:8080/api/1.0/twitter/tweet/?message=message```
 
 Note: you can use ```%20``` to represent spaces.
 

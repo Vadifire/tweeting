@@ -41,7 +41,6 @@ public class GetTimelineResource {
             return Response.ok(statuses).build();
 
         } catch (TwitterException e) {
-            e.printStackTrace();
 
             //invalid auth error code (https://developer.twitter.com/en/docs/basics/response-codes.html)
             if (e.getErrorCode() == 32) {
@@ -56,6 +55,7 @@ public class GetTimelineResource {
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).
                         entity("Could not post tweet because connection to Twitter failed.\n").build();
             } else {
+                e.printStackTrace();
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).
                         entity("Could not retrieve home timeline: " + e.getErrorMessage() + "\n").build();
             }

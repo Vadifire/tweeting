@@ -30,9 +30,12 @@ public class GetTimelineResource {
 
         Twitter twitter = TwitterFactory.getSingleton();
         if (!twitter.getAuthorization().isEnabled()) {
+
+            System.out.println("Twitter authentication credentials are not set. Please restart Server with " +
+                    "valid credentials. See http://twitter4j.org/en/configuration.html for help.");
+
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).
-                    entity("Could not retrieve home timeline because Twitter authentication credentials are not set " +
-                            "on the server.\n").build();
+                    entity("Could not retrieve home timeline because the server is not properly configured.\n").build();
         }
         try {
             //Retrieve Statuses using Twitter4J
@@ -40,7 +43,7 @@ public class GetTimelineResource {
 
             if (statuses == null) { //this might never actually return true
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).
-                        entity("Could not retrieve home timeline.\n").build();
+                        entity("Failed to retrieve home timeline from Twitter.\n").build();
             }
             return Response.ok(statuses).build();
 

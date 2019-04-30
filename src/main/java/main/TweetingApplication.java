@@ -7,6 +7,8 @@ import main.resources.PostTweetResource;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import twitter4j.Twitter;
+import twitter4j.TwitterFactory;
 
 public class TweetingApplication extends Application<TweetingConfiguration> {
 
@@ -23,6 +25,13 @@ public class TweetingApplication extends Application<TweetingConfiguration> {
     @Override
     public void initialize(Bootstrap<TweetingConfiguration> bootstrap) {
         System.out.println("Initializing Tweeting Service...");
+
+        Twitter twitter = TwitterFactory.getSingleton();
+        if (!twitter.getAuthorization().isEnabled()) {
+            System.out.println("Twitter authentication credentials are not set. Please restart Server with " +
+                    "valid credentials. See http://twitter4j.org/en/configuration.html for help.");
+            System.exit(1);
+        }
     }
 
     @Override

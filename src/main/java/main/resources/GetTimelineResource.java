@@ -44,12 +44,12 @@ public class GetTimelineResource {
 
             //invalid auth error code (https://developer.twitter.com/en/docs/basics/response-codes.html)
             if (e.getErrorCode() == 32) {
-                System.out.println("Twitter authentication failed. Please restart Server with " +
+                System.out.println("Twitter authentication failed. Please restart server with " +
                         "valid credentials. See http://twitter4j.org/en/configuration.html for help.");
 
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).
-                        entity("Could not retrieve home timeline because the server is not properly " +
-                                "configured.\n").build();
+                        entity("Could not retrieve home timeline because service is temporarily unavailable. " +
+                                "\n").build();
 
             } else if (e.isCausedByNetworkIssue()) {
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).

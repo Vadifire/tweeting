@@ -48,12 +48,12 @@ public class GetTimelineResource {
                         "valid credentials. See http://twitter4j.org/en/configuration.html for help.");
 
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).
-                        entity("Could not retrieve home timeline because service is temporarily unavailable. " +
-                                "\n").build();
+                        entity("Could not retrieve home timeline because service is temporarily unavailable.\n").
+                            build();
 
             } else if (e.isCausedByNetworkIssue()) {
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).
-                        entity("Could not post tweet because connection to Twitter failed.\n").build();
+                        entity("Could not retrieve home timeline because connection to Twitter failed.\n").build();
             } else {
                 e.printStackTrace();
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).

@@ -23,7 +23,7 @@ public class TweetingApplication extends Application<TweetingConfiguration> {
 
         Twitter twitter = TwitterFactory.getSingleton();
         if (!twitter.getAuthorization().isEnabled()) {
-            System.out.println("Twitter authentication credentials are not set. Please restart Server with " +
+            System.out.println("Twitter authentication credentials are not set. Please restart server with " +
                     "valid credentials. See http://twitter4j.org/en/configuration.html for help.");
             System.exit(1);
         }

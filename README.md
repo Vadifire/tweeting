@@ -1,19 +1,31 @@
 # Overview
-ProgramOne is used to post a new status update on Twitter. ProgramOne will output whether a status has been successfully posted.
-
-ProgramTwo is used to retrieve and print statuses from the home timeline. The status author and text will be displayed for each post retrieved.
+This application exposes a RESTful API that supports tweeting and retrieval of the home timeline.
 
 This codebase depends on the [Twitter4J API](http://twitter4j.org/). 
 
 ## How To Run
 
-Begin by cloning the repository using ```git clone --single-branch --branch dependency-management https://github.com/Vadifire/tweeting.git``` 
+Begin by cloning the repository using ```git clone https://github.com/Vadifire/tweeting.git``` 
 
 To build the project, cd into the downloaded repository and run: ```./gradlew build```
 
-To use the Twitter API, authentication is required.  API keys and tokens for authentication can be generated here: https://apps.twitter.com. Please follow the configuration instructions here: http://twitter4j.org/en/configuration.html. The twitter4j.properties should be placed in project's root directory.
+To use the Twitter API, authentication is required. 
+API keys and tokens for authentication can be generated here: https://apps.twitter.com. 
+Please follow the configuration instructions here: http://twitter4j.org/en/configuration.html. 
+The twitter4j.properties should be placed in project's root directory.
 
-To run ProgramOne run: ```./gradlew runOne --args "'Hello World'"```
-Note: The string argument must be unique from any previous Twitter Status posted. Change 'Hello World' to a unique message if necessary.
+To start the application, run ```./gradlew run```. The application will start running locally on port 8080.
 
-To run ProgramTwo run: ```./gradlew runTwo```
+#### Retrieving Home Timeline
+
+To retrieve the home timeline , run the following command:
+ ```curl -i http://localhost:8080/api/1.0/twitter/timeline```
+ 
+ Alternatively, you can simply access ```http://localhost:8080/api/1.0/twitter/timeline``` in browser.
+ 
+ #### Retrieving Tweets
+ 
+ To post a tweet, run the following command, replacing ```Hello World``` with your desired tweet:
+```curl -i http://localhost:8080/api/1.0/twitter/tweet -d 'message=Hello World'```
+
+

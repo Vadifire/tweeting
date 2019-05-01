@@ -22,15 +22,14 @@ plugins {
 }
 
 repositories {
-    // Use jcenter for resolving your dependencies.
-    // You can declare any Maven/Ivy/file repository here.
-    jcenter()
+    mavenCentral()
 }
 
 dependencies {
     // Include dependencies for compile and run time
     implementation 'com.google.guava:guava:27.0.1-jre', 
-        'org.twitter4j:twitter4j-core:4.0.7'
+        'org.twitter4j:twitter4j-core:4.0.7',
+        'io.dropwizard:dropwizard-core:0.8.0'
 
     // Use JUnit test framework
     //testImplementation 'junit:junit:4.12'
@@ -39,22 +38,11 @@ dependencies {
     // testImplementation: (^ equivalent, but for tests)
 }
 
-// Define task to run ProgramOne
-apply plugin: 'java'
-task(runOne, dependsOn: 'classes', type: JavaExec) {
-   main = 'main.ProgramOne'
-   classpath = sourceSets.main.runtimeClasspath
-}
-
-// Define task to run ProgramTwo
-apply plugin: 'java'
-task(runTwo, dependsOn: 'classes', type: JavaExec) {
-   main = 'main.ProgramTwo'
-   classpath = sourceSets.main.runtimeClasspath
-}
-
 // Define the main class for the application
-mainClassName = 'main.ProgramOne'
+mainClassName = 'main.TweetingApplication'
+run {
+    args = ['server', 'config.yml']
+}
 //manifest.mainAttributes("Main-Class" : "main.ProgramOne")
 
 // Java Version

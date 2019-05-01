@@ -1,6 +1,7 @@
 package main.resources;
 
 import main.TwitterErrorCode;
+import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
@@ -35,10 +36,9 @@ public class PostTweetResource {
             return Response.status(Response.Status.BAD_REQUEST).
                     entity("Could not post tweet because message was empty.").build();
         }
-        Twitter twitter = TwitterFactory.getSingleton();
 
         try {
-            twitter.updateStatus(message);
+            updateStatus(message);
         } catch (TwitterException e) {
 
             if (e.getErrorCode() == TwitterErrorCode.AUTH_FAIL.getValue()) {
@@ -59,4 +59,13 @@ public class PostTweetResource {
         }
         return Response.status(Response.Status.CREATED).entity("Successfully posted tweet: " + message).build();
 	}
+
+    /*
+     * Separate call to TwitterAPI from exception handling and Response generating
+     */
+	public Status updateStatus(String message) throws TwitterException {
+        //System.out.println("!!! SHOULD NEVER BE ACCESSED DURING TESTING !!!");
+        Twitter twitter = TwitterFactory.getSingleton();
+        return twitter.updateStatus(message); // Post Status update using Twitter4J API
+    }
 }

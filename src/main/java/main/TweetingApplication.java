@@ -8,6 +8,7 @@ import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import twitter4j.Twitter;
+import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 
 public class TweetingApplication extends Application<TweetingConfiguration> {
@@ -30,7 +31,7 @@ public class TweetingApplication extends Application<TweetingConfiguration> {
     }
 
     @Override
-    public void run(TweetingConfiguration config, Environment env) {
+    public void run(TweetingConfiguration config, Environment env) throws TwitterException {
         System.out.println("Running Tweeting Service...");
 
         //Register alive health check

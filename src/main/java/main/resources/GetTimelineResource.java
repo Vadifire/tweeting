@@ -25,13 +25,8 @@ public class GetTimelineResource {
      */
     @GET
     public Response getTweets() {
-
-        Twitter twitter = TwitterFactory.getSingleton();
-
         try {
-            //Retrieve Statuses using Twitter4J
-            List<Status> statuses = twitter.getHomeTimeline();
-
+            List<Status> statuses = getHomeTimeline();
             if (statuses == null) { //this might never actually return true
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).
                         entity("Failed to retrieve home timeline from Twitter.").build();
@@ -57,6 +52,15 @@ public class GetTimelineResource {
                         entity("Could not retrieve home timeline: " + e.getErrorMessage()).build();
             }
         }
+    }
+
+    /*
+     * Separate call to TwitterAPI from exception handling and Response generating
+     */
+    public List<Status> getHomeTimeline() throws TwitterException {
+        //System.out.println("!!! SHOULD NEVER BE ACCESSED DURING TESTING !!!");
+        Twitter twitter = TwitterFactory.getSingleton();
+        return twitter.getHomeTimeline(); //Retrieve Statuses using Twitter4J
     }
 
 }

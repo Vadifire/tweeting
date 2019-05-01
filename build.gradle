@@ -31,11 +31,23 @@ dependencies {
         'org.twitter4j:twitter4j-core:4.0.7',
         'io.dropwizard:dropwizard-core:0.8.0'
 
-    // Use JUnit test framework
-    //testImplementation 'junit:junit:4.12'
+    // JUnit for unit testing
+    testImplementation 'junit:junit:4.12'
+
+    // Mocking Framework used with unit testing
+    testCompile 'org.mockito:mockito-core:2.27.0'
 
     // implementation: used for compile and run time
     // testImplementation: (^ equivalent, but for tests)
+}
+
+
+// Display test results for individual unit tests
+test {
+    testLogging {
+        events "PASSED", "STARTED", "FAILED", "SKIPPED"
+    }
+    testLogging.showStandardStreams = true //allow print line
 }
 
 // Define the main class for the application
@@ -43,7 +55,7 @@ mainClassName = 'main.TweetingApplication'
 run {
     args = ['server', 'config.yml']
 }
-//manifest.mainAttributes("Main-Class" : "main.ProgramOne")
+// manifest.mainAttributes("Main-Class" : "main.ProgramOne")
 
 // Java Version
 sourceCompatibility = '1.8'

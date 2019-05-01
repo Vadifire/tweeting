@@ -1,11 +1,10 @@
 package main;
 
 import main.resources.PostTweetResource;
-import org.junit.Before;
-import org.junit.Test;
-import twitter4j.Twitter;
+import main.twitter.TwitterAPIWrapper;
+import main.twitter.TwitterErrorCode;
+
 import twitter4j.TwitterException;
-import twitter4j.Status;
 
 import javax.ws.rs.core.Response;
 
@@ -13,20 +12,28 @@ import java.io.IOException;
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
+
+import org.junit.Before;
+import org.junit.Test;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class TweetTest {
 
+    TwitterAPIWrapper api;
     PostTweetResource tweetResource;
 
     @Before
     public void setUp() {
-        tweetResource = mock(PostTweetResource.class); // Resource to be tested
-
-        // Partial Mock Warn: https://static.javadoc.io/org.mockito/mockito-core/2.27.0/org/mockito/Mockito.html#16
-        when(tweetResource.postTweet(any())).thenCallRealMethod();
+        api = mock(TwitterAPIWrapper.class);
+        tweetResource = new PostTweetResource() { //Return the Mocked API instead of the usual TwitterAPIImpl.
+            @Override
+            protected TwitterAPIWrapper getApi() {
+                return api;
+            }
+        };
     }
 
     @Test
@@ -35,7 +42,7 @@ public class TweetTest {
         // updateStatus() can return anything that isn't a TwitterException and getTimeline() should return a
         // successful response.
 
-        when(tweetResource.updateStatus(any())).thenReturn(null); // anything but Twitter Exception
+        when(api.updateStatus(any())).thenReturn(null); // anything but Twitter Exception
 
         Response response = tweetResource.postTweet("No Twitter Exception"); // Simple valid message case
         assertNotNull(response);
@@ -49,7 +56,7 @@ public class TweetTest {
         // updateStatus() can return anything that isn't a TwitterException and getTimeline() should return a
         // successful response.
 
-        when(tweetResource.updateStatus(any())).thenReturn(null); // anything but Twitter Exception
+        when(api.updateStatus(any())).thenReturn(null); // anything but Twitter Exception
 
         Response response = tweetResource.postTweet(null); // Null test case
         assertNotNull(response);
@@ -62,7 +69,7 @@ public class TweetTest {
         // updateStatus() can return anything that isn't a TwitterException and getTimeline() should return a
         // successful response.
 
-        when(tweetResource.updateStatus(any())).thenReturn(null); // anything but Twitter Exception
+        when(api.updateStatus(any())).thenReturn(null); // anything but Twitter Exception
 
         Response response = tweetResource.postTweet(null); // Null test case
         assertNotNull(response);
@@ -93,7 +100,7 @@ public class TweetTest {
         TwitterException authException = new TwitterException("Dummy String", dummyCause,
                 TwitterErrorCode.AUTH_FAIL.getValue());
 
-        when(tweetResource.updateStatus(any())).thenThrow(authException);
+        when(api.updateStatus(any())).thenThrow(authException);
 
         Response response = tweetResource.postTweet("Auth Check");
 
@@ -107,7 +114,7 @@ public class TweetTest {
         IOException networkCause = new IOException(); // Twitter4J considers IO Exceptions as network-caused
         TwitterException networkException = new TwitterException("Dummy String", networkCause, 0);
 
-        when(tweetResource.updateStatus(any())).thenThrow(networkException);
+        when(api.updateStatus(any())).thenThrow(networkException);
 
         Response response = tweetResource.postTweet("Network Check");
 
@@ -120,7 +127,7 @@ public class TweetTest {
 
         TwitterException dummyException = new TwitterException("Dummy String", new Exception(), 0);
 
-        when(tweetResource.updateStatus(any())).thenThrow(dummyException);
+        when(api.updateStatus(any())).thenThrow(dummyException);
 
         Response response = tweetResource.postTweet("Other Check");
 

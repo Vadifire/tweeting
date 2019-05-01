@@ -47,7 +47,7 @@ test {
     testLogging {
         events "PASSED", "STARTED", "FAILED", "SKIPPED"
     }
-    testLogging.showStandardStreams = true //allow print line
+    //testLogging.showStandardStreams = true //allow print line
 }
 
 // Define the main class for the application

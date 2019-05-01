@@ -1,10 +1,10 @@
 package main;
 
 import main.resources.GetTimelineResource;
+import main.twitter.TwitterAPIWrapper;
+import main.twitter.TwitterErrorCode;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
 import twitter4j.*;
 
 import javax.ws.rs.core.Response;
@@ -21,13 +21,18 @@ import static org.mockito.Mockito.when;
 public class TimelineTest {
 
     GetTimelineResource timelineResource;
+    TwitterAPIWrapper api;
 
     @Before
     public void setUp() {
-        timelineResource = mock(GetTimelineResource.class); // Resource to be tested
+        api = mock(TwitterAPIWrapper.class);
+        timelineResource = new GetTimelineResource() { //Return the Mocked API instead of the usual TwitterAPIImpl.
+            @Override
+            protected TwitterAPIWrapper getApi() {
+                return api;
+            }
+        };
 
-        // Partial Mock Warn: https://static.javadoc.io/org.mockito/mockito-core/2.27.0/org/mockito/Mockito.html#16
-        when(timelineResource.getTweets()).thenCallRealMethod(); // Real method to be tested
     }
 
     @Test
@@ -35,7 +40,7 @@ public class TimelineTest {
 
         List<Status> dummyList = new LinkedList<Status>(); // Dummy linked list to return from getHomeTimeline()
 
-        when(timelineResource.getHomeTimeline()).thenReturn(dummyList);
+        when(api.getHomeTimeline()).thenReturn(dummyList);
 
         Response response = timelineResource.getTweets();
 
@@ -50,7 +55,7 @@ public class TimelineTest {
         TwitterException authException = new TwitterException("Dummy String", dummyCause,
                 TwitterErrorCode.AUTH_FAIL.getValue());
 
-        when(timelineResource.getHomeTimeline()).thenThrow(authException);
+        when(api.getHomeTimeline()).thenThrow(authException);
 
         Response response = timelineResource.getTweets();
 
@@ -64,7 +69,7 @@ public class TimelineTest {
         IOException networkCause = new IOException(); // Twitter4J considers IO Exceptions as network-caused
         TwitterException networkException = new TwitterException("Dummy String", networkCause, 0);
 
-        when(timelineResource.getHomeTimeline()).thenThrow(networkException);
+        when(api.getHomeTimeline()).thenThrow(networkException);
 
         Response response = timelineResource.getTweets();
 
@@ -77,13 +82,12 @@ public class TimelineTest {
 
         TwitterException dummyException = new TwitterException("Dummy String", new Exception(), 0);
 
-        when(timelineResource.getHomeTimeline()).thenThrow(dummyException);
+        when(api.getHomeTimeline()).thenThrow(dummyException);
 
         Response response = timelineResource.getTweets();
 
         assertNotNull(response);
         assertEquals(response.getStatus(), Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
     }
-
 
 }

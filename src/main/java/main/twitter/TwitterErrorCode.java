@@ -1,4 +1,4 @@
-package main;
+package main.twitter;
 
 /*
  * Used to represent error codes provided by Twitter

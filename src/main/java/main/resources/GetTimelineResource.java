@@ -1,6 +1,8 @@
 package main.resources;
 
-import main.TwitterErrorCode;
+import main.twitter.TwitterAPIWrapper;
+import main.twitter.TwitterAPIWrapperImpl;
+import main.twitter.TwitterErrorCode;
 import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
@@ -26,7 +28,7 @@ public class GetTimelineResource {
     @GET
     public Response getTweets() {
         try {
-            List<Status> statuses = getHomeTimeline();
+            List<Status> statuses = getApi().getHomeTimeline();
             if (statuses == null) { //this might never actually return true
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).
                         entity("Failed to retrieve home timeline from Twitter.").build();
@@ -54,13 +56,8 @@ public class GetTimelineResource {
         }
     }
 
-    /*
-     * Separate call to TwitterAPI from exception handling and Response generating
-     */
-    public List<Status> getHomeTimeline() throws TwitterException {
-        //System.out.println("!!! SHOULD NEVER BE ACCESSED DURING TESTING !!!");
-        Twitter twitter = TwitterFactory.getSingleton();
-        return twitter.getHomeTimeline(); //Retrieve Statuses using Twitter4J
+    protected TwitterAPIWrapper getApi() {
+        return new TwitterAPIWrapperImpl();
     }
 
 }

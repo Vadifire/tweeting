@@ -31,7 +31,7 @@ public class TweetingApplication extends Application<TweetingConfiguration> {
     }
 
     @Override
-    public void run(TweetingConfiguration config, Environment env) throws TwitterException {
+    public void run(TweetingConfiguration config, Environment env) {
         System.out.println("Running Tweeting Service...");
 
         //Register alive health check

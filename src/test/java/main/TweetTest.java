@@ -17,8 +17,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class TweetTest {
 
@@ -102,7 +101,10 @@ public class TweetTest {
 
         when(api.updateStatus(any())).thenThrow(authException);
 
-        Response response = tweetResource.postTweet("Auth Check");
+        String message = "Auth Check";
+        Response response = tweetResource.postTweet(message);
+
+        verify(api).updateStatus(message); // Verify that updateStatus has been called correctly.
 
         assertNotNull(response);
         assertEquals(response.getStatus(), Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
@@ -116,7 +118,10 @@ public class TweetTest {
 
         when(api.updateStatus(any())).thenThrow(networkException);
 
-        Response response = tweetResource.postTweet("Network Check");
+        String message = "Network Check";
+        Response response = tweetResource.postTweet(message);
+
+        verify(api).updateStatus(message); // Verify that updateStatus has been called correctly.
 
         assertNotNull(response);
         assertEquals(response.getStatus(), Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
@@ -129,7 +134,10 @@ public class TweetTest {
 
         when(api.updateStatus(any())).thenThrow(dummyException);
 
-        Response response = tweetResource.postTweet("Other Check");
+        String message = "Other Check";
+        Response response = tweetResource.postTweet(message);
+
+        verify(api).updateStatus(message); // Verify that updateStatus has been called correctly.
 
         assertNotNull(response);
         assertEquals(response.getStatus(), Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());

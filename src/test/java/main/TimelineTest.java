@@ -14,8 +14,7 @@ import java.util.List;
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 //@RunWith(MockitoJUnitRunner.class)
 public class TimelineTest {
@@ -44,6 +43,8 @@ public class TimelineTest {
 
         Response response = timelineResource.getTweets();
 
+        verify(api).getHomeTimeline(); // Verify we have actually retrieved something
+
         assertNotNull(response);
         assertEquals(response.getStatus(), Response.Status.OK.getStatusCode());
     }
@@ -59,6 +60,8 @@ public class TimelineTest {
 
         Response response = timelineResource.getTweets();
 
+        verify(api).getHomeTimeline(); // Verify we have actually retrieved something
+
         assertNotNull(response);
         assertEquals(response.getStatus(), Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
     }
@@ -73,6 +76,8 @@ public class TimelineTest {
 
         Response response = timelineResource.getTweets();
 
+        verify(api).getHomeTimeline(); // Verify we have actually retrieved something
+
         assertNotNull(response);
         assertEquals(response.getStatus(), Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
     }
@@ -85,6 +90,8 @@ public class TimelineTest {
         when(api.getHomeTimeline()).thenThrow(dummyException);
 
         Response response = timelineResource.getTweets();
+
+        verify(api).getHomeTimeline(); // Verify we have actually retrieved something
 
         assertNotNull(response);
         assertEquals(response.getStatus(), Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());

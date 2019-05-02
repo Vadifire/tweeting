@@ -9,6 +9,7 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import twitter4j.Twitter;
 import twitter4j.TwitterFactory;
+import twitter4j.conf.ConfigurationBuilder;
 
 public class TweetingApplication extends Application<TweetingConfiguration> {
 
@@ -35,6 +36,12 @@ public class TweetingApplication extends Application<TweetingConfiguration> {
 
         // Register alive health check
         env.healthChecks().register("AliveHealthCheck", new AliveHealthCheck());
+
+        ConfigurationBuilder configBuilder = new ConfigurationBuilder();
+        configBuilder.setDebugEnabled(true);
+        cb.setOAuthConsumerKey(config.getConsumerKey());
+        cb.
+        TwitterFactory tf = new TwitterFactory(configBuilder.build());
 
         // Use Default API Impl (Twitter4J)
         Twitter api = TwitterFactory.getSingleton();

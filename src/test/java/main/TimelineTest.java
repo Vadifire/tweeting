@@ -28,7 +28,7 @@ public class TimelineTest {
     }
 
     @Test
-    public void testSuccess() throws TwitterException {
+    public void testTimelineSuccess() throws TwitterException {
 
         List<Status> dummyList = new LinkedList<Status>(); // Dummy linked list to return from getHomeTimeline()
 
@@ -43,7 +43,7 @@ public class TimelineTest {
     }
 
     @Test
-    public void testAuthFail() throws TwitterException {
+    public void testTimelineAuthFail() throws TwitterException {
 
         Exception dummyCause = new Exception();
         TwitterException authException = new TwitterException("Dummy String", dummyCause,
@@ -61,7 +61,7 @@ public class TimelineTest {
     }
 
     @Test
-    public void testNetworkIssue() throws TwitterException {
+    public void testTimelineNetworkIssue() throws TwitterException {
 
         IOException networkCause = new IOException(); // Twitter4J considers IO Exceptions as network-caused
         TwitterException networkException = new TwitterException("Dummy String", networkCause, 0);
@@ -78,7 +78,7 @@ public class TimelineTest {
     }
 
     @Test
-    public void testOtherServerError() throws TwitterException {
+    public void testTimelineOtherServerError() throws TwitterException {
 
         TwitterException dummyException = new TwitterException("Dummy String", new Exception(), 0);
 

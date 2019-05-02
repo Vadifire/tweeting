@@ -30,7 +30,7 @@ public class TweetTest {
     }
 
     @Test
-    public void testValid() throws TwitterException {
+    public void testTweetValid() throws TwitterException {
 
         // updateStatus() can return anything that isn't a TwitterException and getTimeline() should return a
         // successful response.
@@ -44,7 +44,7 @@ public class TweetTest {
 
 
     @Test
-    public void testNullCase() throws TwitterException {
+    public void testTweetNullCase() throws TwitterException {
 
         // updateStatus() can return anything that isn't a TwitterException and getTimeline() should return a
         // successful response.
@@ -58,7 +58,7 @@ public class TweetTest {
     }
 
     @Test
-    public void testMessageLength() throws TwitterException {
+    public void testTweetMessageLength() throws TwitterException {
 
         // updateStatus() can return anything that isn't a TwitterException and getTimeline() should return a
         // successful response.
@@ -86,7 +86,7 @@ public class TweetTest {
     }
 
     @Test
-    public void testAuthFail() throws TwitterException {
+    public void testTweetAuthFail() throws TwitterException {
 
         Exception dummyCause = new Exception();
         TwitterException authException = new TwitterException("Dummy String", dummyCause,
@@ -105,7 +105,7 @@ public class TweetTest {
     }
 
     @Test
-    public void testNetworkIssue() throws TwitterException {
+    public void testTweetNetworkIssue() throws TwitterException {
 
         IOException networkCause = new IOException(); // Twitter4J considers IO Exceptions as network-caused
         TwitterException networkException = new TwitterException("Dummy String", networkCause, 0);
@@ -123,7 +123,7 @@ public class TweetTest {
     }
 
     @Test
-    public void testOtherServerError() throws TwitterException {
+    public void testTweetOtherServerError() throws TwitterException {
 
         TwitterException dummyException = new TwitterException("Dummy String", new Exception(), 0);
 

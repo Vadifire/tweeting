@@ -13,7 +13,7 @@ import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
 import static org.mockito.Mockito.*;
 
-public class TimelineTest {
+public class GetTimelineResourceTest {
 
     // Mocked classes
     Twitter api;

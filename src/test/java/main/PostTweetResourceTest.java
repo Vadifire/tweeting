@@ -17,7 +17,7 @@ import static org.mockito.Mockito.*;
 import org.junit.Before;
 import org.junit.Test;
 
-public class TweetTest {
+public class PostTweetResourceTest {
 
     // Mocked classes
     Twitter api;

@@ -1,7 +1,5 @@
 package main.resources;
 
-import main.resources.GetTimelineResource;
-import main.resources.PostTweetResource;
 import org.junit.Before;
 import org.junit.Test;
 import twitter4j.*;

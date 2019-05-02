@@ -27,37 +27,48 @@ public class PostTweetResourceTest {
     @Before
     public void setUp() {
         api = mock(Twitter.class);
-        tweetResource = new PostTweetResource(api); //Use the Mocked API instead of the usual TwitterAPIImpl
         mockedStatus = mock(Status.class);
+        tweetResource = new PostTweetResource(api); //Use the Mocked API instead of the usual TwitterAPIImpl
     }
 
     @Test
     public void testTweetValid() throws TwitterException {
-
-        // updateStatus() can return anything that isn't a TwitterException and getTimeline() should return a
-        // successful response.
-
         String message = "No Twitter Exception";
 
         when(api.updateStatus(anyString())).thenReturn(mockedStatus); // Return a status without TwitterException
+        when(mockedStatus.getText()).thenReturn(message); // Return successful update's text
 
         Response response = tweetResource.postTweet(message); // Simple valid message case
+
         verify(api).updateStatus(message);
         assertNotNull(response);
         assertEquals(response.getStatus(), Response.Status.CREATED.getStatusCode());
         assertEquals(response.getEntity().toString(), PostTweetResource.ResponseMessage.SUCCESS.getValue(message));
     }
 
+    @Test
+    public void testTweetFailedToUpdate() throws TwitterException {
+        String message = "No Twitter Exception";
+
+        when(api.updateStatus(anyString())).thenReturn(mockedStatus); // Return a status without TwitterException
+        when(mockedStatus.getText()).thenReturn(message + " Twitter failed to update"); // Not correct message
+
+        Response response = tweetResource.postTweet(message); // Simple valid message case
+
+        verify(api).updateStatus(message);
+        assertNotNull(response);
+        assertEquals(response.getStatus(), Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
+        assertEquals(response.getEntity().toString(),
+                PostTweetResource.ResponseMessage.FAILED_UPDATE.getValue());
+    }
 
     @Test
     public void testTweetNullCase() throws TwitterException {
-
-        // updateStatus() can return anything that isn't a TwitterException and getTimeline() should return a
-        // successful response.
-
         when(api.updateStatus(anyString())).thenReturn(mockedStatus); // Return a status without TwitterException
+        when(mockedStatus.getText()).thenReturn(null);
 
         Response response = tweetResource.postTweet(null); // Null test case
+
         assertNotNull(response);
         assertEquals(response.getStatus(), Response.Status.BAD_REQUEST.getStatusCode());
         assertEquals(response.getEntity().toString(), PostTweetResource.ResponseMessage.NULL_MESSAGE.getValue());
@@ -65,9 +76,13 @@ public class PostTweetResourceTest {
 
     @Test
     public void testTweetZeroLength() throws TwitterException {
-        when(api.updateStatus(anyString())).thenReturn(null); // anything but Twitter Exception
+        String message = "";
 
-        Response response = tweetResource.postTweet(""); //0 length test case
+        when(api.updateStatus(anyString())).thenReturn(mockedStatus); // Return a status without TwitterException
+        when(mockedStatus.getText()).thenReturn(message); // Return successful update's text
+
+        Response response = tweetResource.postTweet(message); //0 length test case
+
         assertNotNull(response);
         assertEquals(response.getStatus(), Response.Status.BAD_REQUEST.getStatusCode());
         assertEquals(response.getEntity().toString(), PostTweetResource.ResponseMessage.TOO_SHORT_MESSAGE.getValue());
@@ -79,10 +94,17 @@ public class PostTweetResourceTest {
         for (int i = 0 ; i < PostTweetResource.MAX_TWEET_LENGTH; i++) {
             sb.append("a"); // single character
         }
+
+        when(api.updateStatus(anyString())).thenReturn(mockedStatus); // Return a status without TwitterException
+        when(mockedStatus.getText()).thenReturn(sb.toString()); // Return successful update's text
+
         Response response = tweetResource.postTweet(sb.toString()); // Max length test case
+
         verify(api).updateStatus(sb.toString());
         assertNotNull(response);
         assertEquals(response.getStatus(), Response.Status.CREATED.getStatusCode());
+        assertEquals(response.getEntity().toString(),
+                PostTweetResource.ResponseMessage.SUCCESS.getValue(sb.toString()));
     }
 
     @Test
@@ -91,7 +113,12 @@ public class PostTweetResourceTest {
         for (int i = 0 ; i < PostTweetResource.MAX_TWEET_LENGTH+1; i++) {
             sb.append("a"); // single character
         }
+
+        when(api.updateStatus(anyString())).thenReturn(mockedStatus); // Return a status without TwitterException
+        when(mockedStatus.getText()).thenReturn(sb.toString()); // Return successful update's text
+
         Response response = tweetResource.postTweet(sb.toString());
+
         assertNotNull(response);
         assertEquals(response.getStatus(), Response.Status.BAD_REQUEST.getStatusCode());
         assertEquals(response.getEntity().toString(), PostTweetResource.ResponseMessage.TOO_LONG_MESSAGE.getValue());
@@ -100,7 +127,6 @@ public class PostTweetResourceTest {
 
     @Test
     public void testTweetAuthFail() throws TwitterException {
-
         Exception dummyCause = new Exception();
         TwitterException authException = new TwitterException("Dummy String", dummyCause,
                 Response.Status.UNAUTHORIZED.getStatusCode());
@@ -119,7 +145,6 @@ public class PostTweetResourceTest {
 
     @Test
     public void testTweetNetworkIssue() throws TwitterException {
-
         IOException networkCause = new IOException(); // Twitter4J considers IO Exceptions as network-caused
         TwitterException networkException = new TwitterException("Dummy String", networkCause, 0);
         String message = "Network Check";
@@ -137,7 +162,6 @@ public class PostTweetResourceTest {
 
     @Test
     public void testTweetOtherServerError() throws TwitterException {
-
         TwitterException dummyException = new TwitterException("Dummy String", new Exception(), 0);
         String message = "Other Check";
 

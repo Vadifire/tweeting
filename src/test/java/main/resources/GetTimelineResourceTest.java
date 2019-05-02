@@ -13,7 +13,7 @@ import static org.mockito.Mockito.*;
 
 public class GetTimelineResourceTest {
 
-    // Mocked classes
+    // Mocked class
     Twitter api;
 
     // Resource under test
@@ -27,7 +27,6 @@ public class GetTimelineResourceTest {
 
     @Test
     public void testTimelineSuccess() throws TwitterException {
-
         Status mockedStatus = mock(Status.class);
         ResponseList<Status> dummyList = mock(ResponseList.class); // Dummy linked list to return from getHomeTimeline()
         dummyList.add(mockedStatus);
@@ -45,7 +44,6 @@ public class GetTimelineResourceTest {
 
     @Test
     public void testTimelineAuthFail() throws TwitterException {
-
         Exception dummyCause = new Exception();
         TwitterException authException = new TwitterException("Dummy String", dummyCause,
                 Response.Status.UNAUTHORIZED.getStatusCode());
@@ -63,7 +61,6 @@ public class GetTimelineResourceTest {
 
     @Test
     public void testTimelineNetworkIssue() throws TwitterException {
-
         IOException networkCause = new IOException(); // Twitter4J considers IO Exceptions as network-caused
         TwitterException networkException = new TwitterException("Dummy String", networkCause, 0);
 
@@ -80,7 +77,6 @@ public class GetTimelineResourceTest {
 
     @Test
     public void testTimelineOtherServerError() throws TwitterException {
-
         TwitterException dummyException = new TwitterException("Dummy String", new Exception(), 0);
 
         when(api.getHomeTimeline()).thenThrow(dummyException);

@@ -35,7 +35,7 @@ public class GetTimelineResourceTest {
 
         Response response = timelineResource.getTweets();
 
-        verify(api).getHomeTimeline(); // Verify we made an attempt to actually retrieve something
+        verify(api).getHomeTimeline(); // Verify we have actually made the call to getHomeTimeline()
 
         assertNotNull(response);
         assertEquals(response.getStatus(), Response.Status.OK.getStatusCode());
@@ -52,7 +52,7 @@ public class GetTimelineResourceTest {
 
         Response response = timelineResource.getTweets();
 
-        verify(api).getHomeTimeline(); // Verify we made an attempt to actually retrieve something
+        verify(api).getHomeTimeline(); // Verify we have actually made the call to getHomeTimeline()
 
         assertNotNull(response);
         assertEquals(response.getStatus(), Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
@@ -68,7 +68,7 @@ public class GetTimelineResourceTest {
 
         Response response = timelineResource.getTweets();
 
-        verify(api).getHomeTimeline(); // Verify we have actually retrieved something
+        verify(api).getHomeTimeline(); // Verify we have actually made the call to getHomeTimeline()
 
         assertNotNull(response);
         assertEquals(response.getStatus(), Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
@@ -83,7 +83,7 @@ public class GetTimelineResourceTest {
 
         Response response = timelineResource.getTweets();
 
-        verify(api).getHomeTimeline(); // Verify we have actually retrieved something
+        verify(api).getHomeTimeline(); // Verify we have actually made the call to getHomeTimeline()
 
         assertNotNull(response);
         assertEquals(response.getStatus(), Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());

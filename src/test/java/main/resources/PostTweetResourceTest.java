@@ -69,6 +69,7 @@ public class PostTweetResourceTest {
 
         Response response = tweetResource.postTweet(null); // Null test case
 
+        verify(api, never()).updateStatus(anyString()); // Make sure not to call updateStatus()
         assertNotNull(response);
         assertEquals(response.getStatus(), Response.Status.BAD_REQUEST.getStatusCode());
         assertEquals(response.getEntity().toString(), PostTweetResource.ResponseMessage.NULL_MESSAGE.getValue());
@@ -83,6 +84,7 @@ public class PostTweetResourceTest {
 
         Response response = tweetResource.postTweet(message); //0 length test case
 
+        verify(api, never()).updateStatus(anyString()); // Make sure not to call updateStatus()
         assertNotNull(response);
         assertEquals(response.getStatus(), Response.Status.BAD_REQUEST.getStatusCode());
         assertEquals(response.getEntity().toString(), PostTweetResource.ResponseMessage.TOO_SHORT_MESSAGE.getValue());
@@ -119,6 +121,7 @@ public class PostTweetResourceTest {
 
         Response response = tweetResource.postTweet(sb.toString());
 
+        verify(api, never()).updateStatus(anyString()); // Make sure not to call updateStatus()
         assertNotNull(response);
         assertEquals(response.getStatus(), Response.Status.BAD_REQUEST.getStatusCode());
         assertEquals(response.getEntity().toString(), PostTweetResource.ResponseMessage.TOO_LONG_MESSAGE.getValue());

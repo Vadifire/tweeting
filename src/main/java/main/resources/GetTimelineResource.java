@@ -1,7 +1,6 @@
 package main.resources;
 
 import main.twitter.TwitterAPIWrapper;
-import main.twitter.TwitterErrorCode;
 import twitter4j.Status;
 import twitter4j.TwitterException;
 
@@ -25,6 +24,26 @@ public class GetTimelineResource {
     }
 
     /*
+     * Separate response messages to enum to facilitate correct response message unit testing
+     */
+    public enum ResponseMessage {
+
+        NULL_TIMELINE("Failed to retrieve home timeline from Twitter."),
+        AUTH_FAIL("Could not retrieve home timeline because service is temporarily unavailable."),
+        NETWORK_ISSUE("Could not retrieve home timeline because connection to Twitter failed.");
+
+        private final String message;
+
+        ResponseMessage(String message) {
+            this.message = message;
+        }
+
+        public String getValue() {
+            return message;
+        }
+    }
+
+    /*
      * How to use:
      * curl -i -X GET http://localhost:8080/api/1.0/twitter/timeline
      */
@@ -34,24 +53,22 @@ public class GetTimelineResource {
             List<Status> statuses = api.getHomeTimeline();
             if (statuses == null) { //this might never actually return true
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).
-                        entity("Failed to retrieve home timeline from Twitter.").build();
+                        entity(ResponseMessage.NULL_TIMELINE.getValue()).build();
             }
             return Response.ok(statuses).build();
 
         } catch (TwitterException e) {
-
-            if (e.getErrorCode() == TwitterErrorCode.AUTH_FAIL.getValue()) {
+            if (e.getStatusCode() == Response.Status.UNAUTHORIZED.getStatusCode()) {
                 System.out.println("Twitter authentication failed. Please restart server with " +
                         "valid credentials. See http://twitter4j.org/en/configuration.html for help.");
 
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).
-                        entity("Could not retrieve home timeline because service is temporarily unavailable.").
-                            build();
+                        entity(ResponseMessage.AUTH_FAIL.getValue()).build();
 
             } else if (e.isCausedByNetworkIssue()) {
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).
-                        entity("Could not retrieve home timeline because connection to Twitter failed.").build();
-            } else {
+                        entity(ResponseMessage.NETWORK_ISSUE.getValue()).build();
+            } else { // 'Other' fail-safe
                 e.printStackTrace();
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).
                         entity("Could not retrieve home timeline: " + e.getErrorMessage()).build();

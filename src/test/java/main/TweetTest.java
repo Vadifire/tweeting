@@ -2,7 +2,6 @@ package main;
 
 import main.resources.PostTweetResource;
 import main.twitter.TwitterAPIWrapper;
-import main.twitter.TwitterErrorCode;
 
 import twitter4j.TwitterException;
 
@@ -55,6 +54,7 @@ public class TweetTest {
         Response response = tweetResource.postTweet(null); // Null test case
         assertNotNull(response);
         assertEquals(response.getStatus(), Response.Status.BAD_REQUEST.getStatusCode());
+        assertEquals(response.getEntity().toString(), PostTweetResource.ResponseMessage.NULL_MESSAGE.getValue());
     }
 
     @Test
@@ -65,13 +65,10 @@ public class TweetTest {
 
         when(api.updateStatus(any())).thenReturn(null); // anything but Twitter Exception
 
-        Response response = tweetResource.postTweet(null); // Null test case
+        Response response = tweetResource.postTweet(""); //0 length test case
         assertNotNull(response);
         assertEquals(response.getStatus(), Response.Status.BAD_REQUEST.getStatusCode());
-
-        response = tweetResource.postTweet(""); //0 length test case
-        assertNotNull(response);
-        assertEquals(response.getStatus(), Response.Status.BAD_REQUEST.getStatusCode());
+        assertEquals(response.getEntity().toString(), PostTweetResource.ResponseMessage.TOO_SHORT_MESSAGE.getValue());
 
         StringBuilder sb = new StringBuilder();
         for (int i = 0 ; i < 280; i++) {
@@ -85,6 +82,7 @@ public class TweetTest {
         response = tweetResource.postTweet(sb.toString());
         assertNotNull(response);
         assertEquals(response.getStatus(), Response.Status.BAD_REQUEST.getStatusCode());
+        assertEquals(response.getEntity().toString(), PostTweetResource.ResponseMessage.TOO_LONG_MESSAGE.getValue());
     }
 
     @Test
@@ -92,7 +90,7 @@ public class TweetTest {
 
         Exception dummyCause = new Exception();
         TwitterException authException = new TwitterException("Dummy String", dummyCause,
-                TwitterErrorCode.AUTH_FAIL.getValue());
+                Response.Status.UNAUTHORIZED.getStatusCode());
 
         when(api.updateStatus(any())).thenThrow(authException);
 
@@ -103,6 +101,7 @@ public class TweetTest {
 
         assertNotNull(response);
         assertEquals(response.getStatus(), Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
+        assertEquals(response.getEntity().toString(), PostTweetResource.ResponseMessage.AUTH_FAIL.getValue());
     }
 
     @Test
@@ -120,6 +119,7 @@ public class TweetTest {
 
         assertNotNull(response);
         assertEquals(response.getStatus(), Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
+        assertEquals(response.getEntity().toString(), PostTweetResource.ResponseMessage.NETWORK_ISSUE.getValue());
     }
 
     @Test

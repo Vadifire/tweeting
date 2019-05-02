@@ -2,7 +2,6 @@ package main;
 
 import main.resources.GetTimelineResource;
 import main.twitter.TwitterAPIWrapper;
-import main.twitter.TwitterErrorCode;
 import org.junit.Before;
 import org.junit.Test;
 import twitter4j.*;
@@ -48,7 +47,7 @@ public class TimelineTest {
 
         Exception dummyCause = new Exception();
         TwitterException authException = new TwitterException("Dummy String", dummyCause,
-                TwitterErrorCode.AUTH_FAIL.getValue());
+                Response.Status.UNAUTHORIZED.getStatusCode());
 
         when(api.getHomeTimeline()).thenThrow(authException);
 
@@ -58,6 +57,7 @@ public class TimelineTest {
 
         assertNotNull(response);
         assertEquals(response.getStatus(), Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
+        assertEquals(response.getEntity().toString(), GetTimelineResource.ResponseMessage.AUTH_FAIL.getValue());
     }
 
     @Test
@@ -74,6 +74,7 @@ public class TimelineTest {
 
         assertNotNull(response);
         assertEquals(response.getStatus(), Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
+        assertEquals(response.getEntity().toString(), GetTimelineResource.ResponseMessage.NETWORK_ISSUE.getValue());
     }
 
     @Test

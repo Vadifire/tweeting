@@ -23,6 +23,8 @@ public class TweetTest {
     TwitterAPIWrapper api;
     PostTweetResource tweetResource;
 
+    static final int MAX_TWEET_LENGTH = 280;
+
     @Before
     public void setUp() {
         api = mock(TwitterAPIWrapper.class);
@@ -58,32 +60,38 @@ public class TweetTest {
     }
 
     @Test
-    public void testTweetMessageLength() throws TwitterException {
-
-        // updateStatus() can return anything that isn't a TwitterException and getTimeline() should return a
-        // successful response.
-
+    public void testTweetZeroLength() throws TwitterException {
         when(api.updateStatus(any())).thenReturn(null); // anything but Twitter Exception
 
         Response response = tweetResource.postTweet(""); //0 length test case
         assertNotNull(response);
         assertEquals(response.getStatus(), Response.Status.BAD_REQUEST.getStatusCode());
         assertEquals(response.getEntity().toString(), PostTweetResource.ResponseMessage.TOO_SHORT_MESSAGE.getValue());
+    }
 
+    @Test
+    public void testTweetMaxLength() throws TwitterException {
         StringBuilder sb = new StringBuilder();
-        for (int i = 0 ; i < 280; i++) {
+        for (int i = 0 ; i < MAX_TWEET_LENGTH; i++) {
             sb.append("a"); // single character
         }
-        response = tweetResource.postTweet(sb.toString()); // Exactly 280 test case
+        Response response = tweetResource.postTweet(sb.toString()); // Exactly 280 test case
         assertNotNull(response);
         assertEquals(response.getStatus(), Response.Status.CREATED.getStatusCode());
+    }
 
-        sb.append("a"); // Over 280 characters
-        response = tweetResource.postTweet(sb.toString());
+    @Test
+    public void testTweetTooLong() throws TwitterException {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0 ; i < MAX_TWEET_LENGTH+1; i++) {
+            sb.append("a"); // single character
+        }
+        Response response = tweetResource.postTweet(sb.toString());
         assertNotNull(response);
         assertEquals(response.getStatus(), Response.Status.BAD_REQUEST.getStatusCode());
         assertEquals(response.getEntity().toString(), PostTweetResource.ResponseMessage.TOO_LONG_MESSAGE.getValue());
     }
+
 
     @Test
     public void testTweetAuthFail() throws TwitterException {
@@ -91,10 +99,10 @@ public class TweetTest {
         Exception dummyCause = new Exception();
         TwitterException authException = new TwitterException("Dummy String", dummyCause,
                 Response.Status.UNAUTHORIZED.getStatusCode());
+        String message = "Auth Check";
 
         when(api.updateStatus(any())).thenThrow(authException);
 
-        String message = "Auth Check";
         Response response = tweetResource.postTweet(message);
 
         verify(api).updateStatus(message); // Verify that updateStatus has been called correctly.
@@ -109,10 +117,10 @@ public class TweetTest {
 
         IOException networkCause = new IOException(); // Twitter4J considers IO Exceptions as network-caused
         TwitterException networkException = new TwitterException("Dummy String", networkCause, 0);
+        String message = "Network Check";
 
         when(api.updateStatus(any())).thenThrow(networkException);
 
-        String message = "Network Check";
         Response response = tweetResource.postTweet(message);
 
         verify(api).updateStatus(message); // Verify that updateStatus has been called correctly.
@@ -126,10 +134,10 @@ public class TweetTest {
     public void testTweetOtherServerError() throws TwitterException {
 
         TwitterException dummyException = new TwitterException("Dummy String", new Exception(), 0);
+        String message = "Other Check";
 
         when(api.updateStatus(any())).thenThrow(dummyException);
 
-        String message = "Other Check";
         Response response = tweetResource.postTweet(message);
 
         verify(api).updateStatus(message); // Verify that updateStatus has been called correctly.

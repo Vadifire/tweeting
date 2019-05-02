@@ -15,6 +15,8 @@ public interface TwitterAPIWrapper {
 
     List<Status> getHomeTimeline() throws TwitterException; // Retrieve Statuses from Home Timeline using Twitter4J
 
+    int MAX_TWEET_LENGTH = 280;
+
     Status updateStatus(String message) throws TwitterException;  // Post Status update using Twitter4J API
 
 }

@@ -55,7 +55,7 @@ public class PostTweetResource {
             return Response.status(Response.Status.BAD_REQUEST).
                     entity(ResponseMessage.NULL_MESSAGE.getValue()).build();
         }
-        if (message.length() > 280) {
+        if (message.length() > TwitterAPIWrapper.MAX_TWEET_LENGTH) {
             return Response.status(Response.Status.BAD_REQUEST).
                     entity(ResponseMessage.TOO_LONG_MESSAGE.getValue()).build();
         }

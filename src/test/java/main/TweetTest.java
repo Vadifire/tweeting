@@ -3,6 +3,7 @@ package main;
 import main.resources.PostTweetResource;
 import main.twitter.TwitterAPIWrapper;
 
+import twitter4j.Status;
 import twitter4j.TwitterException;
 
 import javax.ws.rs.core.Response;
@@ -22,13 +23,13 @@ public class TweetTest {
 
     TwitterAPIWrapper api;
     PostTweetResource tweetResource;
-
-    static final int MAX_TWEET_LENGTH = 280;
+    Status mockedStatus;
 
     @Before
     public void setUp() {
         api = mock(TwitterAPIWrapper.class);
         tweetResource = new PostTweetResource(api); //Use the Mocked API instead of the usual TwitterAPIImpl
+        mockedStatus = mock(Status.class);
     }
 
     @Test
@@ -37,9 +38,12 @@ public class TweetTest {
         // updateStatus() can return anything that isn't a TwitterException and getTimeline() should return a
         // successful response.
 
-        when(api.updateStatus(any())).thenReturn(null); // anything but Twitter Exception
+        String message = "No Twitter Exception";
 
-        Response response = tweetResource.postTweet("No Twitter Exception"); // Simple valid message case
+        when(api.updateStatus(any())).thenReturn(mockedStatus); // Return a status without TwitterException
+
+        Response response = tweetResource.postTweet(message); // Simple valid message case
+        verify(api).updateStatus(message);
         assertNotNull(response);
         assertEquals(response.getStatus(), Response.Status.CREATED.getStatusCode());
     }
@@ -51,7 +55,7 @@ public class TweetTest {
         // updateStatus() can return anything that isn't a TwitterException and getTimeline() should return a
         // successful response.
 
-        when(api.updateStatus(any())).thenReturn(null); // anything but Twitter Exception
+        when(api.updateStatus(any())).thenReturn(mockedStatus); // Return a status without TwitterException
 
         Response response = tweetResource.postTweet(null); // Null test case
         assertNotNull(response);
@@ -72,10 +76,11 @@ public class TweetTest {
     @Test
     public void testTweetMaxLength() throws TwitterException {
         StringBuilder sb = new StringBuilder();
-        for (int i = 0 ; i < MAX_TWEET_LENGTH; i++) {
+        for (int i = 0 ; i < TwitterAPIWrapper.MAX_TWEET_LENGTH; i++) {
             sb.append("a"); // single character
         }
-        Response response = tweetResource.postTweet(sb.toString()); // Exactly 280 test case
+        Response response = tweetResource.postTweet(sb.toString()); // Max length test case
+        verify(api).updateStatus(sb.toString());
         assertNotNull(response);
         assertEquals(response.getStatus(), Response.Status.CREATED.getStatusCode());
     }
@@ -83,7 +88,7 @@ public class TweetTest {
     @Test
     public void testTweetTooLong() throws TwitterException {
         StringBuilder sb = new StringBuilder();
-        for (int i = 0 ; i < MAX_TWEET_LENGTH+1; i++) {
+        for (int i = 0 ; i < TwitterAPIWrapper.MAX_TWEET_LENGTH+1; i++) {
             sb.append("a"); // single character
         }
         Response response = tweetResource.postTweet(sb.toString());

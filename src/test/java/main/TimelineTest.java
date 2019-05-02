@@ -24,13 +24,14 @@ public class TimelineTest {
     public void setUp() {
         api = mock(TwitterAPIWrapper.class);
         timelineResource = new GetTimelineResource(api); //Use the Mocked API instead of the usual TwitterAPIImpl.
-
     }
 
     @Test
     public void testTimelineSuccess() throws TwitterException {
 
+        Status mockedStatus = mock(Status.class);
         List<Status> dummyList = new LinkedList<Status>(); // Dummy linked list to return from getHomeTimeline()
+        dummyList.add(mockedStatus);
 
         when(api.getHomeTimeline()).thenReturn(dummyList);
 

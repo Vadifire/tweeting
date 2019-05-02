@@ -1,15 +1,12 @@
 package main;
 
 import main.resources.GetTimelineResource;
-import main.twitter.TwitterAPIWrapper;
 import org.junit.Before;
 import org.junit.Test;
 import twitter4j.*;
 
 import javax.ws.rs.core.Response;
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
@@ -17,12 +14,15 @@ import static org.mockito.Mockito.*;
 
 public class TimelineTest {
 
+    // Mocked classes
+    Twitter api;
+
+    // Resource under test
     GetTimelineResource timelineResource;
-    TwitterAPIWrapper api;
 
     @Before
     public void setUp() {
-        api = mock(TwitterAPIWrapper.class);
+        api = mock(Twitter.class);
         timelineResource = new GetTimelineResource(api); //Use the Mocked API instead of the usual TwitterAPIImpl.
     }
 
@@ -30,7 +30,7 @@ public class TimelineTest {
     public void testTimelineSuccess() throws TwitterException {
 
         Status mockedStatus = mock(Status.class);
-        List<Status> dummyList = new LinkedList<Status>(); // Dummy linked list to return from getHomeTimeline()
+        ResponseList<Status> dummyList = mock(ResponseList.class); // Dummy linked list to return from getHomeTimeline()
         dummyList.add(mockedStatus);
 
         when(api.getHomeTimeline()).thenReturn(dummyList);

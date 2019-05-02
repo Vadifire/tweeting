@@ -1,7 +1,6 @@
 package main.resources;
 
-import main.twitter.TwitterAPIWrapper;
-
+import twitter4j.Twitter;
 import twitter4j.TwitterException;
 
 import javax.ws.rs.Consumes;
@@ -14,9 +13,11 @@ import javax.ws.rs.core.Response;
 @Path("/api/1.0/twitter/tweet/")
 public class PostTweetResource {
 
-    private TwitterAPIWrapper api;
+    public static int MAX_TWEET_LENGTH = 280;
 
-    public PostTweetResource(TwitterAPIWrapper api) {
+    private Twitter api;
+
+    public PostTweetResource(Twitter api) {
         this.api = api;
     }
 
@@ -55,7 +56,7 @@ public class PostTweetResource {
             return Response.status(Response.Status.BAD_REQUEST).
                     entity(ResponseMessage.NULL_MESSAGE.getValue()).build();
         }
-        if (message.length() > TwitterAPIWrapper.MAX_TWEET_LENGTH) {
+        if (message.length() > MAX_TWEET_LENGTH) {
             return Response.status(Response.Status.BAD_REQUEST).
                     entity(ResponseMessage.TOO_LONG_MESSAGE.getValue()).build();
         }

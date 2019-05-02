@@ -1,7 +1,7 @@
 package main.resources;
 
-import main.twitter.TwitterAPIWrapper;
 import twitter4j.Status;
+import twitter4j.Twitter;
 import twitter4j.TwitterException;
 
 import javax.ws.rs.GET;
@@ -17,9 +17,9 @@ import javax.ws.rs.core.Response;
 
 public class GetTimelineResource {
 
-    private TwitterAPIWrapper api;
+    private Twitter api;
 
-    public GetTimelineResource(TwitterAPIWrapper api) {
+    public GetTimelineResource(Twitter api) {
         this.api = api;
     }
 

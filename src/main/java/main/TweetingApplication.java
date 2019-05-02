@@ -7,7 +7,6 @@ import main.resources.PostTweetResource;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import main.twitter.TwitterAPIWrapperImpl;
 import twitter4j.Twitter;
 import twitter4j.TwitterFactory;
 
@@ -38,7 +37,7 @@ public class TweetingApplication extends Application<TweetingConfiguration> {
         env.healthChecks().register("AliveHealthCheck", new AliveHealthCheck());
 
         // Use Default API Impl (Twitter4J)
-        TwitterAPIWrapperImpl api = new TwitterAPIWrapperImpl();
+        Twitter api = TwitterFactory.getSingleton();
 
         // Register GET timeline resource
         final GetTimelineResource timelineResource = new GetTimelineResource(api);

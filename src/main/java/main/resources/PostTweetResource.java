@@ -15,6 +15,13 @@ import javax.ws.rs.core.Response;
 
 @Path("/api/1.0/twitter/tweet/")
 public class PostTweetResource {
+
+    private TwitterAPIWrapper api;
+
+    public PostTweetResource(TwitterAPIWrapper api) {
+        this.api = api;
+    }
+
     /*
      * How to use:
      * curl -i http://localhost:8080/api/1.0/twitter/tweet -d 'message=Hello World'
@@ -38,7 +45,7 @@ public class PostTweetResource {
         }
 
         try {
-            getApi().updateStatus(message);
+            api.updateStatus(message);
         } catch (TwitterException e) {
 
             if (e.getErrorCode() == TwitterErrorCode.AUTH_FAIL.getValue()) {
@@ -59,8 +66,4 @@ public class PostTweetResource {
         }
         return Response.status(Response.Status.CREATED).entity("Successfully posted tweet: " + message).build();
 	}
-
-    protected TwitterAPIWrapper getApi() {
-        return new TwitterAPIWrapperImpl();
-    }
 }

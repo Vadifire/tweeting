@@ -16,7 +16,6 @@ import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
 import static org.mockito.Mockito.*;
 
-//@RunWith(MockitoJUnitRunner.class)
 public class TimelineTest {
 
     GetTimelineResource timelineResource;
@@ -25,12 +24,7 @@ public class TimelineTest {
     @Before
     public void setUp() {
         api = mock(TwitterAPIWrapper.class);
-        timelineResource = new GetTimelineResource() { //Return the Mocked API instead of the usual TwitterAPIImpl.
-            @Override
-            protected TwitterAPIWrapper getApi() {
-                return api;
-            }
-        };
+        timelineResource = new GetTimelineResource(api); //Use the Mocked API instead of the usual TwitterAPIImpl.
 
     }
 

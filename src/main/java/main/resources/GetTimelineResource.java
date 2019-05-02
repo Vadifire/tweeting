@@ -1,12 +1,9 @@
 package main.resources;
 
 import main.twitter.TwitterAPIWrapper;
-import main.twitter.TwitterAPIWrapperImpl;
 import main.twitter.TwitterErrorCode;
 import twitter4j.Status;
-import twitter4j.Twitter;
 import twitter4j.TwitterException;
-import twitter4j.TwitterFactory;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -21,6 +18,12 @@ import javax.ws.rs.core.Response;
 
 public class GetTimelineResource {
 
+    private TwitterAPIWrapper api;
+
+    public GetTimelineResource(TwitterAPIWrapper api) {
+        this.api = api;
+    }
+
     /*
      * How to use:
      * curl -i -X GET http://localhost:8080/api/1.0/twitter/timeline
@@ -28,7 +31,7 @@ public class GetTimelineResource {
     @GET
     public Response getTweets() {
         try {
-            List<Status> statuses = getApi().getHomeTimeline();
+            List<Status> statuses = api.getHomeTimeline();
             if (statuses == null) { //this might never actually return true
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).
                         entity("Failed to retrieve home timeline from Twitter.").build();
@@ -54,10 +57,6 @@ public class GetTimelineResource {
                         entity("Could not retrieve home timeline: " + e.getErrorMessage()).build();
             }
         }
-    }
-
-    protected TwitterAPIWrapper getApi() {
-        return new TwitterAPIWrapperImpl();
     }
 
 }

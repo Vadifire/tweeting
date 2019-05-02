@@ -27,12 +27,7 @@ public class TweetTest {
     @Before
     public void setUp() {
         api = mock(TwitterAPIWrapper.class);
-        tweetResource = new PostTweetResource() { //Return the Mocked API instead of the usual TwitterAPIImpl.
-            @Override
-            protected TwitterAPIWrapper getApi() {
-                return api;
-            }
-        };
+        tweetResource = new PostTweetResource(api); //Use the Mocked API instead of the usual TwitterAPIImpl
     }
 
     @Test

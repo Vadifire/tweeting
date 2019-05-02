@@ -1,4 +1,4 @@
-package main;
+package main.resources;
 
 import main.resources.GetTimelineResource;
 import main.resources.PostTweetResource;

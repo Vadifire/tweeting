@@ -47,6 +47,7 @@ public class TweetTest {
         verify(api).updateStatus(message);
         assertNotNull(response);
         assertEquals(response.getStatus(), Response.Status.CREATED.getStatusCode());
+        assertEquals(response.getEntity().toString(), PostTweetResource.ResponseMessage.SUCCESS.getValue(message));
     }
 
 
@@ -150,5 +151,7 @@ public class TweetTest {
 
         assertNotNull(response);
         assertEquals(response.getStatus(), Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
+        assertEquals(response.getEntity().toString(),
+                PostTweetResource.ResponseMessage.OTHER_ERROR.getValue(dummyException.getErrorMessage()));
     }
 }

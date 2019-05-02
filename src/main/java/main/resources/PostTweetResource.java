@@ -30,7 +30,9 @@ public class PostTweetResource {
         TOO_LONG_MESSAGE("Could not post tweet because message exceeds 280 character limit."),
         TOO_SHORT_MESSAGE("Could not post tweet because message was empty."),
         AUTH_FAIL("Could not post tweet because service is temporarily unavailable."),
-        NETWORK_ISSUE("Could not post tweet because connection to Twitter failed.");
+        NETWORK_ISSUE("Could not post tweet because connection to Twitter failed."),
+        SUCCESS("Successfully posted tweet: "),
+        OTHER_ERROR("Could not post tweet: ");
 
         private final String message;
 
@@ -40,6 +42,13 @@ public class PostTweetResource {
 
         public String getValue() {
             return message;
+        }
+
+        /*
+         * Same as getValue() but append custom message to end of Response message base String
+         */
+        public String getValue(String message) {
+            return getValue() + message;
         }
     }
 
@@ -82,9 +91,9 @@ public class PostTweetResource {
             } else {
                 e.printStackTrace();
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).
-                        entity("Could not post tweet: " + e.getErrorMessage()).build();
+                        entity(ResponseMessage.OTHER_ERROR.getValue(e.getErrorMessage())).build();
             }
         }
-        return Response.status(Response.Status.CREATED).entity("Successfully posted tweet: " + message).build();
+        return Response.status(Response.Status.CREATED).entity(ResponseMessage.SUCCESS.getValue(message)).build();
 	}
 }

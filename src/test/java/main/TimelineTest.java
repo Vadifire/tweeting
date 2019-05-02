@@ -1,6 +1,7 @@
 package main;
 
 import main.resources.GetTimelineResource;
+import main.resources.PostTweetResource;
 import org.junit.Before;
 import org.junit.Test;
 import twitter4j.*;
@@ -41,6 +42,7 @@ public class TimelineTest {
 
         assertNotNull(response);
         assertEquals(response.getStatus(), Response.Status.OK.getStatusCode());
+        assertEquals(response.getEntity(), dummyList);
     }
 
     @Test
@@ -91,6 +93,8 @@ public class TimelineTest {
 
         assertNotNull(response);
         assertEquals(response.getStatus(), Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
+        assertEquals(response.getEntity().toString(),
+                GetTimelineResource.ResponseMessage.OTHER_ERROR.getValue(dummyException.getErrorMessage()));
     }
 
 }

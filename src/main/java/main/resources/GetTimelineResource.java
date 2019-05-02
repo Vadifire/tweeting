@@ -30,7 +30,8 @@ public class GetTimelineResource {
 
         NULL_TIMELINE("Failed to retrieve home timeline from Twitter."),
         AUTH_FAIL("Could not retrieve home timeline because service is temporarily unavailable."),
-        NETWORK_ISSUE("Could not retrieve home timeline because connection to Twitter failed.");
+        NETWORK_ISSUE("Could not retrieve home timeline because connection to Twitter failed."),
+        OTHER_ERROR("Could not retrieve home timeline: ");
 
         private final String message;
 
@@ -40,6 +41,13 @@ public class GetTimelineResource {
 
         public String getValue() {
             return message;
+        }
+
+        /*
+         * Same as getValue() but append custom message to end of Response message base String
+         */
+        public String getValue(String message) {
+            return getValue() + message;
         }
     }
 
@@ -71,7 +79,7 @@ public class GetTimelineResource {
             } else { // 'Other' fail-safe
                 e.printStackTrace();
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).
-                        entity("Could not retrieve home timeline: " + e.getErrorMessage()).build();
+                        entity(ResponseMessage.OTHER_ERROR.getValue(e.getErrorMessage())).build();
             }
         }
     }

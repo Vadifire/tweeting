@@ -2,7 +2,6 @@ package tweeting.util;
 
 import org.junit.Before;
 import org.junit.Test;
-import tweeting.resources.GetTimelineResource;
 import twitter4j.*;
 
 import javax.ws.rs.core.Response;
@@ -57,8 +56,10 @@ public class ResponseUtilTest {
 
     @Test
     public void testNetworkError() {
-        IOException networkCause = new IOException(); // Twitter4J considers IO Exceptions as network-caused
-        TwitterException networkException = new TwitterException("Dummy String", networkCause, 0);
+        IOException networkCause = new IOException();
+        TwitterException networkException = spy(new TwitterException("Dummy String", networkCause, 0));
+
+        when(networkException.isCausedByNetworkIssue()).thenReturn(true); // Don't rely on Twitter4J impl.
 
         Response response = responseUtil.catchTwitterException(networkException);
 

@@ -2,16 +2,18 @@ package tweeting.resources;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Spy;
 import tweeting.util.ResponseUtil;
-import twitter4j.*;
+import twitter4j.ResponseList;
+import twitter4j.Status;
+import twitter4j.Twitter;
+import twitter4j.TwitterException;
 
 import javax.ws.rs.core.Response;
-import java.io.IOException;
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
 import static org.mockito.Mockito.*;
+
 
 public class GetTimelineResourceTest {
 
@@ -62,7 +64,7 @@ public class GetTimelineResourceTest {
 
         assertNotNull(response);
         assertEquals(response.getStatus(), Response.Status.INTERNAL_SERVER_ERROR.getStatusCode()); // Verify code
-        assertEquals(response.getEntity().toString(), timelineResource.getResUtil().getNullResponse()); // Verify cont.
+        assertEquals(response.getEntity().toString(), timelineResource.getResUtil().getNullResponseError()); // Verify cont.
     }
 
 }

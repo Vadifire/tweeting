@@ -30,7 +30,7 @@ public class ResponseUtil {
         return "Could not " + attemptedAction + ": " + errorMessage;
     }
 
-    public String getNullResponse() {
+    public String getNullResponseError() {
         return "Failed to " + attemptedAction + " from Twitter.";
     }
 

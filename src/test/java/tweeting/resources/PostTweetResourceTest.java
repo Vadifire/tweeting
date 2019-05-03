@@ -6,8 +6,6 @@ import twitter4j.TwitterException;
 
 import javax.ws.rs.core.Response;
 
-import java.io.IOException;
-
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
 import static org.mockito.Mockito.*;
@@ -63,7 +61,7 @@ public class PostTweetResourceTest {
         Response response = tweetResource.postTweet(message); // Problem with Twitter
 
         verify(api).updateStatus(message);
-        verify(api).destroyStatus(anyLong()); // Make sure we delete any incorrect status
+        verify(api).destroyStatus(anyLong()); // Make sure we attempt to delete the incorrect status
         assertNotNull(response);
         assertEquals(response.getStatus(), Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
         assertEquals(response.getEntity().toString(),

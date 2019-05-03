@@ -36,7 +36,7 @@ public class GetTimelineResource {
             List<Status> statuses = api.getHomeTimeline();
             if (statuses == null) { //this might never actually return true
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).
-                        entity(resUtil.getNullResponse()).build();
+                        entity(resUtil.getNullResponseError()).build();
             }
             return Response.ok(statuses).build(); // Successfully got timeline
 

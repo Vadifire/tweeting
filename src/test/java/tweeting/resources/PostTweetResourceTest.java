@@ -47,27 +47,9 @@ public class PostTweetResourceTest {
 
         verify(api).updateStatus(message);
         assertNotNull(response);
-        assertEquals(response.getStatus(), Response.Status.CREATED.getStatusCode());
-        assertEquals(response.getEntity(), mockedStatus);
+        assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
+        assertEquals(mockedStatus, response.getEntity());
     }
-
-    @Test
-    public void testTweetIncorrectUpdate() throws TwitterException {
-        String message = "No Twitter Exception";
-
-        when(api.updateStatus(anyString())).thenReturn(mockedStatus);
-        when(mockedStatus.getText()).thenReturn(message + " add wrong message");
-
-        Response response = tweetResource.postTweet(message); // Problem with Twitter
-
-        verify(api).updateStatus(message);
-        verify(api).destroyStatus(anyLong()); // Make sure we attempt to delete the incorrect status
-        assertNotNull(response);
-        assertEquals(response.getStatus(), Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
-        assertEquals(response.getEntity().toString(),
-                tweetResource.getResUtil().getIncorrectUpdateError("tweet"));
-    }
-
 
     @Test
     public void testTweetNullCase() throws TwitterException {
@@ -77,8 +59,8 @@ public class PostTweetResourceTest {
 
         verify(api, never()).updateStatus(anyString()); // Make sure not to call updateStatus()
         assertNotNull(response);
-        assertEquals(response.getStatus(), Response.Status.BAD_REQUEST.getStatusCode());
-        assertEquals(response.getEntity().toString(), tweetResource.getResUtil().getNullParamError(paramName));
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+        assertEquals(tweetResource.getResUtil().getNullParamError(paramName), response.getEntity().toString());
     }
 
     @Test
@@ -91,8 +73,9 @@ public class PostTweetResourceTest {
 
         verify(api, never()).updateStatus(anyString()); // Make sure not to call updateStatus()
         assertNotNull(response);
-        assertEquals(response.getStatus(), Response.Status.BAD_REQUEST.getStatusCode());
-        assertEquals(response.getEntity().toString(), tweetResource.getResUtil().getParamEmptyError(paramName));
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+        assertEquals(tweetResource.getResUtil().getParamBadLengthError(paramName,
+                unitName, 1, CharacterUtil.MAX_TWEET_LENGTH), response.getEntity().toString());
     }
 
     @Test
@@ -109,8 +92,8 @@ public class PostTweetResourceTest {
 
         verify(api).updateStatus(sb.toString());
         assertNotNull(response);
-        assertEquals(response.getStatus(), Response.Status.CREATED.getStatusCode());
-        assertEquals(response.getEntity(), mockedStatus);
+        assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
+        assertEquals(mockedStatus, response.getEntity());
     }
 
     @Test
@@ -126,8 +109,8 @@ public class PostTweetResourceTest {
 
         verify(api, never()).updateStatus(anyString()); // Make sure not to call updateStatus()
         assertNotNull(response);
-        assertEquals(response.getStatus(), Response.Status.BAD_REQUEST.getStatusCode());
-        assertEquals(response.getEntity().toString(), tweetResource.getResUtil().getParamTooLongError(paramName,
-                unitName, CharacterUtil.MAX_TWEET_LENGTH));
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+        assertEquals(tweetResource.getResUtil().getParamBadLengthError(paramName, unitName,
+                1, CharacterUtil.MAX_TWEET_LENGTH), response.getEntity().toString());
     }
 }

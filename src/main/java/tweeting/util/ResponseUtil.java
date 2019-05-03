@@ -38,16 +38,9 @@ public class ResponseUtil {
         return "Could not " + attemptedAction + " because no " + missingParam + " was specified.";
     }
 
-    public String getParamTooLongError(String param, String unit, int max) {
-        return "Could not " + attemptedAction + " because " + param + " exceeded " + max + " " + unit + ".";
-    }
-
-    public String getParamEmptyError(String param) {
-        return "Could not " + attemptedAction + " because " + param + " was empty.";
-    }
-
-    public String getIncorrectUpdateError(String objectToCreate) {
-        return "Could not " + attemptedAction + " because Twitter failed to create " + objectToCreate + " correctly.";
+    public String getParamBadLengthError(String param, String unit, int min, int max) {
+        return "Could not " + attemptedAction + " because " + param + " must be between " + min + " and " + max +
+                " " + unit + ".";
     }
 
     /*

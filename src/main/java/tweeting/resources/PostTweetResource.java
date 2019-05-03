@@ -41,32 +41,19 @@ public class PostTweetResource {
                     entity(resUtil.getNullParamError(messageParam)).build();
         }
 
-        if (message.length() > CharacterUtil.MAX_TWEET_LENGTH) {
+        if (message.length() > CharacterUtil.MAX_TWEET_LENGTH || message.length() == 0) {
             return Response.status(Response.Status.BAD_REQUEST).
-                    entity(resUtil.getParamTooLongError(messageParam, "characters",
-                            CharacterUtil.MAX_TWEET_LENGTH)).build();
-        }
-        if (message.length() == 0) {
-            return Response.status(Response.Status.BAD_REQUEST).
-                    entity(resUtil.getParamEmptyError(messageParam)).build();
+                    entity(resUtil.getParamBadLengthError(messageParam, "characters",
+                            1, CharacterUtil.MAX_TWEET_LENGTH)).build();
         }
 
         try {
             Status returnedStatus = api.updateStatus(message); // Latest status should be updated to message
 
-            if (returnedStatus.getText().equals(message)) { // Status with correct text was posted
-
-                // Return successful response with latest status
-                Response.ResponseBuilder responseBuilder = Response.status(Response.Status.CREATED);
-                responseBuilder.type(MediaType.APPLICATION_JSON);
-                return responseBuilder.entity(returnedStatus).build();
-                
-            } else { // Status with wrong text was posted
-
-                api.destroyStatus(returnedStatus.getId()); // Send delete request to Twitter
-                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).
-                        entity(resUtil.getIncorrectUpdateError("tweet")).build();
-            }
+            // Return successful response with returned status
+            Response.ResponseBuilder responseBuilder = Response.status(Response.Status.CREATED);
+            responseBuilder.type(MediaType.APPLICATION_JSON);
+            return responseBuilder.entity(returnedStatus).build();
 
         } catch (TwitterException e) {
             return resUtil.catchTwitterException(e);

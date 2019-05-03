@@ -49,8 +49,8 @@ public class GetTimelineResourceTest {
         verify(resUtil, never()).catchTwitterException(any()); // Verify no exception testing
 
         assertNotNull(response);
-        assertEquals(response.getStatus(), Response.Status.OK.getStatusCode()); // Verify correct response code
-        assertEquals(response.getEntity(), dummyList); // Verify correct content
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus()); // Verify correct response code
+        assertEquals(dummyList, response.getEntity()); // Verify correct content
     }
 
     @Test
@@ -63,8 +63,8 @@ public class GetTimelineResourceTest {
         verify(resUtil, never()).catchTwitterException(any()); // Verify no exception testing
 
         assertNotNull(response);
-        assertEquals(response.getStatus(), Response.Status.INTERNAL_SERVER_ERROR.getStatusCode()); // Verify code
-        assertEquals(response.getEntity().toString(), timelineResource.getResUtil().getNullResponseError()); // Verify cont.
+        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus()); // Verify code
+        assertEquals(timelineResource.getResUtil().getNullResponseError(), response.getEntity().toString()); // Verify cont.
     }
 
 }

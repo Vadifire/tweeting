@@ -34,8 +34,8 @@ public class ResponseUtilTest {
         Response response = responseUtil.catchTwitterException(authException);
 
         assertNotNull(response);
-        assertEquals(response.getStatus(), Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
-        assertEquals(response.getEntity().toString(), responseUtil.getAuthFailError());
+        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
+        assertEquals(responseUtil.getAuthFailError(), response.getEntity().toString());
     }
 
     @Test
@@ -50,8 +50,8 @@ public class ResponseUtilTest {
         Response response = responseUtil.catchTwitterException(authException);
 
         assertNotNull(response);
-        assertEquals(response.getStatus(), Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
-        assertEquals(response.getEntity().toString(), responseUtil.getAuthFailError());
+        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
+        assertEquals(responseUtil.getAuthFailError(), response.getEntity().toString());
     }
 
     @Test
@@ -64,8 +64,8 @@ public class ResponseUtilTest {
         Response response = responseUtil.catchTwitterException(networkException);
 
         assertNotNull(response);
-        assertEquals(response.getStatus(), Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
-        assertEquals(response.getEntity().toString(), responseUtil.getNetworkError());
+        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
+        assertEquals(responseUtil.getNetworkError(), response.getEntity().toString());
     }
 
     @Test
@@ -75,8 +75,8 @@ public class ResponseUtilTest {
         Response response = responseUtil.catchTwitterException(dummyException);
 
         assertNotNull(response);
-        assertEquals(response.getStatus(), Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
-        assertEquals(response.getEntity().toString(), responseUtil.getOtherError(dummyException.getErrorMessage()));
+        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
+        assertEquals(responseUtil.getOtherError(dummyException.getErrorMessage()), response.getEntity().toString());
     }
 
 

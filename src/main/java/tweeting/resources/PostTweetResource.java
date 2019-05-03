@@ -22,6 +22,7 @@ public class PostTweetResource {
 
     ResponseUtil resUtil; // Provides messages for HTTP Responses, handles TwitterException
 
+
     public PostTweetResource(Twitter api) {
         this.api = api;
         resUtil = new ResponseUtil("post tweet");
@@ -38,12 +39,12 @@ public class PostTweetResource {
 	public Response postTweet(@FormParam(messageParam) String message) { // Receives message from JSON data
         if (message == null) {
             return Response.status(Response.Status.BAD_REQUEST).
-                    entity(resUtil.getNullParamError(messageParam)).build();
+                    entity(resUtil.getNullParamErrorMessage(messageParam)).build();
         }
 
         if (message.length() > CharacterUtil.MAX_TWEET_LENGTH || message.length() == 0) {
             return Response.status(Response.Status.BAD_REQUEST).
-                    entity(resUtil.getParamBadLengthError(messageParam, "characters",
+                    entity(resUtil.getParamBadLengthErrorMessage(messageParam, "characters",
                             1, CharacterUtil.MAX_TWEET_LENGTH)).build();
         }
 

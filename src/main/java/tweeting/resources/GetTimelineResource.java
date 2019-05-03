@@ -26,17 +26,19 @@ public class GetTimelineResource {
         this.api = api;
         this.resUtil = new ResponseUtil("retrieve home timeline");
     }
+
     /*
      * How to use:
      * curl -i -X GET http://localhost:8080/api/1.0/twitter/timeline
      */
     @GET
     public Response getTweets() {
+
         try {
             List<Status> statuses = api.getHomeTimeline();
             if (statuses == null) { //this might never actually return true
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).
-                        entity(resUtil.getNullResponseError()).build();
+                        entity(resUtil.getNullResponseErrorMessage()).build();
             }
             return Response.ok(statuses).build(); // Successfully got timeline
 

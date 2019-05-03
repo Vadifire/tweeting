@@ -20,18 +20,17 @@ public class GetTimelineResourceTest {
     // Mocked class
     Twitter api;
 
-    // Spied class. We want to ensure TwitterException is separately unit tested.
-    ResponseUtil resUtil;
-
     // Resource under test
     GetTimelineResource timelineResource;
+
+    // Spy ResponseUtil to verify this unit is not dependent on catchTwitterException
+    ResponseUtil resUtil;
 
     @Before
     public void setUp() {
         api = mock(Twitter.class);
 
         timelineResource = new GetTimelineResource(api); // Use the Mocked API instead of the usual TwitterAPIImpl.
-
         resUtil = spy(timelineResource.getResUtil());
     }
 
@@ -46,7 +45,7 @@ public class GetTimelineResourceTest {
         Response response = timelineResource.getTweets();
 
         verify(api).getHomeTimeline(); // Verify we have actually made the call to getHomeTimeline()
-        verify(resUtil, never()).catchTwitterException(any()); // Verify no exception testing
+        verify(resUtil, never()).catchTwitterException(any());
 
         assertNotNull(response);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus()); // Verify correct response code
@@ -60,11 +59,11 @@ public class GetTimelineResourceTest {
         Response response = timelineResource.getTweets();
 
         verify(api).getHomeTimeline(); // Verify we have actually made the call to getHomeTimeline()
-        verify(resUtil, never()).catchTwitterException(any()); // Verify no exception testing
+        verify(resUtil, never()).catchTwitterException(any());
 
         assertNotNull(response);
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus()); // Verify code
-        assertEquals(timelineResource.getResUtil().getNullResponseError(), response.getEntity().toString()); // Verify cont.
+        assertEquals(timelineResource.getResUtil().getNullResponseErrorMessage(), response.getEntity().toString());
     }
 
 }

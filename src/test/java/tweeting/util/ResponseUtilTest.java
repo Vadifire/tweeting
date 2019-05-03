@@ -5,7 +5,6 @@ import org.junit.Test;
 import twitter4j.*;
 
 import javax.ws.rs.core.Response;
-import java.io.IOException;
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
@@ -13,70 +12,69 @@ import static org.mockito.Mockito.*;
 
 public class ResponseUtilTest {
 
+    // Mocked TwitterException
+    TwitterException mockedException;
+
+    // Class under test
     ResponseUtil responseUtil;
+
     String attemptedAction;
 
     @Before
     public void setUp() {
-        responseUtil = new ResponseUtil(attemptedAction);
+        mockedException = mock(TwitterException.class);
+
+        responseUtil = new ResponseUtil(attemptedAction); // Provide dummy resUtil for TwitterEx
         attemptedAction = "some action";
     }
 
     @Test
     public void testBadAuthError() {
+        when(mockedException.getErrorCode()).thenReturn(ResponseUtil.TwitterErrorCode.BAD_AUTH_DATA.getCode());
 
-        Exception dummyCause = new Exception();
-        TwitterException authException = spy(new TwitterException("Dummy String", dummyCause,
-                Response.Status.UNAUTHORIZED.getStatusCode())); // Spy needed to stub
-
-        when(authException.getErrorCode()).thenReturn(ResponseUtil.TwitterErrorCode.BAD_AUTH_DATA.getCode());
-
-        Response response = responseUtil.catchTwitterException(authException);
+        Response response = responseUtil.catchTwitterException(mockedException);
 
         assertNotNull(response);
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
-        assertEquals(responseUtil.getAuthFailError(), response.getEntity().toString());
+        assertEquals(responseUtil.getAuthFailErrorMessage(), response.getEntity().toString());
     }
 
     @Test
     public void testCouldNotAuthError() {
+        when(mockedException.getErrorCode()).thenReturn(ResponseUtil.TwitterErrorCode.COULD_NOT_AUTH.getCode());
 
-        Exception dummyCause = new Exception();
-        TwitterException authException = spy(new TwitterException("Dummy String", dummyCause,
-                Response.Status.UNAUTHORIZED.getStatusCode())); // Spy needed to stub
-
-        when(authException.getErrorCode()).thenReturn(ResponseUtil.TwitterErrorCode.COULD_NOT_AUTH.getCode());
-
-        Response response = responseUtil.catchTwitterException(authException);
+        Response response = responseUtil.catchTwitterException(mockedException);
 
         assertNotNull(response);
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
-        assertEquals(responseUtil.getAuthFailError(), response.getEntity().toString());
+        assertEquals(responseUtil.getAuthFailErrorMessage(), response.getEntity().toString());
     }
 
     @Test
     public void testNetworkError() {
-        IOException networkCause = new IOException();
-        TwitterException networkException = spy(new TwitterException("Dummy String", networkCause, 0));
+        when(mockedException.getErrorCode()).thenReturn(-1); // Test some other error code
+        when(mockedException.isCausedByNetworkIssue()).thenReturn(true); // Don't rely on Twitter4J impl.
 
-        when(networkException.isCausedByNetworkIssue()).thenReturn(true); // Don't rely on Twitter4J impl.
-
-        Response response = responseUtil.catchTwitterException(networkException);
+        Response response = responseUtil.catchTwitterException(mockedException);
 
         assertNotNull(response);
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
-        assertEquals(responseUtil.getNetworkError(), response.getEntity().toString());
+        assertEquals(responseUtil.getNetworkErrorMessage(), response.getEntity().toString());
     }
 
     @Test
     public void testOtherError() {
-        TwitterException dummyException = new TwitterException("Dummy String", new Exception(), 0);
+        String dummyCauseMessage = "Some error cause";
 
-        Response response = responseUtil.catchTwitterException(dummyException);
+        when(mockedException.getErrorCode()).thenReturn(-1); // Test some other error code
+        when(mockedException.isCausedByNetworkIssue()).thenReturn(false); // Don't rely on Twitter4J impl.
+        when(mockedException.getErrorMessage()).thenReturn(dummyCauseMessage);
+
+        Response response = responseUtil.catchTwitterException(mockedException);
 
         assertNotNull(response);
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
-        assertEquals(responseUtil.getOtherError(dummyException.getErrorMessage()), response.getEntity().toString());
+        assertEquals(responseUtil.getOtherErrorMessage(dummyCauseMessage), response.getEntity().toString());
     }
 
 

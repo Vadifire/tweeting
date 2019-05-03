@@ -18,27 +18,27 @@ public class ResponseUtil {
         this.attemptedAction = attemptedAction;
     }
 
-    public String getNetworkError() {
+    public String getNetworkErrorMessage() {
         return "Could not " + attemptedAction + " because connection to Twitter failed.";
     }
 
-    public String getAuthFailError() {
+    public String getAuthFailErrorMessage() {
         return "Could not " + attemptedAction + " because service is temporarily unavailable.";
     }
 
-    public String getOtherError(String errorMessage) {
+    public String getOtherErrorMessage(String errorMessage) {
         return "Could not " + attemptedAction + ": " + errorMessage;
     }
 
-    public String getNullResponseError() {
+    public String getNullResponseErrorMessage() {
         return "Failed to " + attemptedAction + " from Twitter.";
     }
 
-    public String getNullParamError(String missingParam) {
+    public String getNullParamErrorMessage(String missingParam) {
         return "Could not " + attemptedAction + " because no " + missingParam + " was specified.";
     }
 
-    public String getParamBadLengthError(String param, String unit, int min, int max) {
+    public String getParamBadLengthErrorMessage(String param, String unit, int min, int max) {
         return "Could not " + attemptedAction + " because " + param + " must be between " + min + " and " + max +
                 " " + unit + ".";
     }
@@ -65,22 +65,22 @@ public class ResponseUtil {
      * Catches the TwitterException in resource classes and returns appropriate Response
      */
     public Response catchTwitterException(TwitterException e) {
+
         if (e.getErrorCode() == TwitterErrorCode.BAD_AUTH_DATA.getCode() ||
                 e.getErrorCode() == TwitterErrorCode.COULD_NOT_AUTH.getCode()) {
             System.out.println("Twitter authentication failed. Please restart server with " +
                     "valid credentials. See http://twitter4j.org/en/configuration.html for help.");
 
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).
-                    entity(getAuthFailError()).build();
+                    entity(getAuthFailErrorMessage()).build();
 
         } else if (e.isCausedByNetworkIssue()) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).
-                    entity(getNetworkError()).build();
+                    entity(getNetworkErrorMessage()).build();
         } else { // 'Other' fail-safe
             e.printStackTrace();
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).
-                    entity(getOtherError(e.getErrorMessage())).build();
+                    entity(getOtherErrorMessage(e.getErrorMessage())).build();
         }
     }
-
 }

@@ -1,8 +1,8 @@
-package main;
+package tweeting;
 
-import main.health.AliveHealthCheck;
-import main.resources.GetTimelineResource;
-import main.resources.PostTweetResource;
+import tweeting.health.AliveHealthCheck;
+import tweeting.resources.GetTimelineResource;
+import tweeting.resources.PostTweetResource;
 
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;

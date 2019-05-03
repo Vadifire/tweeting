@@ -1,4 +1,4 @@
-package main.resources;
+package tweeting.resources;
 
 import twitter4j.Status;
 import twitter4j.Twitter;

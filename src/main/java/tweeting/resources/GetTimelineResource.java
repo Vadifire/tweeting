@@ -1,5 +1,6 @@
 package tweeting.resources;
 
+import tweeting.util.ResponseUtil;
 import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
@@ -19,38 +20,12 @@ public class GetTimelineResource {
 
     private Twitter api;
 
+    ResponseUtil resUtil; // Provides messages for HTTP Responses, handles Twitter Exception
+
     public GetTimelineResource(Twitter api) {
         this.api = api;
+        this.resUtil = new ResponseUtil("retrieve home timeline");
     }
-
-    /*
-     * Separate response messages to enum to facilitate correct response message unit testing
-     */
-    public enum ResponseMessage {
-
-        NULL_TIMELINE("Failed to retrieve home timeline from Twitter."),
-        AUTH_FAIL("Could not retrieve home timeline because service is temporarily unavailable."),
-        NETWORK_ISSUE("Could not retrieve home timeline because connection to Twitter failed."),
-        OTHER_ERROR("Could not retrieve home timeline: ");
-
-        private final String message;
-
-        ResponseMessage(String message) {
-            this.message = message;
-        }
-
-        public String getValue() {
-            return message;
-        }
-
-        /*
-         * Same as getValue() but append custom message to end of Response message base String
-         */
-        public String getValue(String message) {
-            return getValue() + message;
-        }
-    }
-
     /*
      * How to use:
      * curl -i -X GET http://localhost:8080/api/1.0/twitter/timeline
@@ -61,27 +36,17 @@ public class GetTimelineResource {
             List<Status> statuses = api.getHomeTimeline();
             if (statuses == null) { //this might never actually return true
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).
-                        entity(ResponseMessage.NULL_TIMELINE.getValue()).build();
+                        entity(resUtil.getNullResponse()).build();
             }
-            return Response.ok(statuses).build();
+            return Response.ok(statuses).build(); // Successfully got timeline
 
         } catch (TwitterException e) {
-            if (e.getStatusCode() == Response.Status.UNAUTHORIZED.getStatusCode()) {
-                System.out.println("Twitter authentication failed. Please restart server with " +
-                        "valid credentials. See http://twitter4j.org/en/configuration.html for help.");
-
-                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).
-                        entity(ResponseMessage.AUTH_FAIL.getValue()).build();
-
-            } else if (e.isCausedByNetworkIssue()) {
-                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).
-                        entity(ResponseMessage.NETWORK_ISSUE.getValue()).build();
-            } else { // 'Other' fail-safe
-                e.printStackTrace();
-                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).
-                        entity(ResponseMessage.OTHER_ERROR.getValue(e.getErrorMessage())).build();
-            }
+            return resUtil.catchTwitterException(e);
         }
+    }
+
+    public ResponseUtil getResUtil () {
+        return this.resUtil;
     }
 
 }

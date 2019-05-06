@@ -17,6 +17,15 @@ public class TweetingConfiguration extends Configuration {
 	@JsonProperty
 	private int port;
 
+	/* Setters used for unit test of getHost() and getPort() */
+	public void setHost(String host) {
+		this.host = host;
+	}
+
+	public void setPort(int port) {
+		this.port = port;
+	}
+
 	public String getHost() {
 		return host;
 	}

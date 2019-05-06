@@ -1,6 +1,5 @@
 package tweeting.resources;
 
-import org.junit.After;
 import tweeting.util.ResponseUtil;
 import tweeting.util.TwitterExceptionHandler;
 import twitter4j.Status;

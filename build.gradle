@@ -47,9 +47,6 @@ dependencies {
 
 // Display test results for individual unit tests
 test {
-
-    //useJUnitPlatform() // Have to tell Gradle to use JUnit platform with Jacoco
-
     testLogging {
         events "PASSED", "STARTED", "FAILED", "SKIPPED"
     }

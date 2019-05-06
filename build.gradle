@@ -56,19 +56,32 @@ test {
     // testLogging.showStandardStreams = true //allow print line
 }
 
-// Enforce code coverage requirements (build fails at first violation)
+// Check code coverage requirements
 jacocoTestCoverageVerification {
     violationRules {
-        rule {
-            enabled = true
+        rule { // 100% Line Coverage
             element = 'CLASS'
             includes = ['tweeting.resources.*',
                         'tweeting.util.TwitterExceptionHandler',
                         'tweeting.health.AliveHealthCheck',
                         'tweeting.TweetingConfiguration']
-
             limit {
-                minimum = 1.0 // Want 100% code coverage for these classes
+                counter = 'LINE'
+                value = 'COVEREDRATIO'
+                minimum = 1.0
+            }
+        }
+
+        rule { // 100% Branch Coverage
+            element = 'CLASS'
+            includes = ['tweeting.resources.*',
+                        'tweeting.util.TwitterExceptionHandler',
+                        'tweeting.health.AliveHealthCheck',
+                        'tweeting.TweetingConfiguration']
+            limit {
+                counter = 'BRANCH'
+                value = 'COVEREDRATIO'
+                minimum = 1.0
             }
         }
     }

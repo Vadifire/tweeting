@@ -1,86 +1,37 @@
 package tweeting.util;
 
-import twitter4j.TwitterException;
-
-import javax.ws.rs.core.Response;
-
 /*
- * Utility Class that defines common HTTP Responses and TwitterException handling
+ * Utility Class that defines common HTTP Response messages
  *
- * This reduces duplicate for resources
+ * This reduces duplicate code for resources
  */
 
 public class ResponseUtil {
 
-    private String attemptedAction;
-
-    public ResponseUtil(String attemptedAction) {
-        this.attemptedAction = attemptedAction;
-    }
-
-    public String getNetworkErrorMessage() {
+    public static String getNetworkErrorMessage(String attemptedAction) {
         return "Could not " + attemptedAction + " because connection to Twitter failed.";
     }
 
-    public String getAuthFailErrorMessage() {
+    public static String getAuthFailErrorMessage(String attemptedAction) {
         return "Could not " + attemptedAction + " because service is temporarily unavailable.";
     }
 
-    public String getOtherErrorMessage(String errorMessage) {
+    public static String getOtherErrorMessage(String attemptedAction, String errorMessage) {
         return "Could not " + attemptedAction + ": " + errorMessage;
     }
 
-    public String getNullResponseErrorMessage() {
+    public static String getNullResponseErrorMessage(String attemptedAction) {
         return "Failed to " + attemptedAction + " from Twitter.";
     }
 
-    public String getNullParamErrorMessage(String missingParam) {
+    public static String getNullParamErrorMessage(String attemptedAction, String missingParam) {
         return "Could not " + attemptedAction + " because no " + missingParam + " was specified.";
     }
 
-    public String getParamBadLengthErrorMessage(String param, String unit, int min, int max) {
+    public static String getParamBadLengthErrorMessage(String attemptedAction, String param, String unit,
+                                                       int min, int max) {
         return "Could not " + attemptedAction + " because " + param + " must be between " + min + " and " + max +
                 " " + unit + ".";
     }
 
-    /*
-     * Twitter Error Codes (https://developer.twitter.com/en/docs/basics/response-codes.html)
-     */
-    public enum TwitterErrorCode {
-
-        BAD_AUTH_DATA(215), COULD_NOT_AUTH(32);
-
-        TwitterErrorCode(int code) {
-            this.code = code;
-        }
-
-        private int code;
-
-        public int getCode() {
-            return code;
-        }
-    }
-
-    /*
-     * Catches the TwitterException in resource classes and returns appropriate Response
-     */
-    public Response catchTwitterException(TwitterException e) {
-
-        if (e.getErrorCode() == TwitterErrorCode.BAD_AUTH_DATA.getCode() ||
-                e.getErrorCode() == TwitterErrorCode.COULD_NOT_AUTH.getCode()) {
-            System.out.println("Twitter authentication failed. Please restart server with " +
-                    "valid credentials. See http://twitter4j.org/en/configuration.html for help.");
-
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).
-                    entity(getAuthFailErrorMessage()).build();
-
-        } else if (e.isCausedByNetworkIssue()) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).
-                    entity(getNetworkErrorMessage()).build();
-        } else { // 'Other' fail-safe
-            e.printStackTrace();
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).
-                    entity(getOtherErrorMessage(e.getErrorMessage())).build();
-        }
-    }
 }

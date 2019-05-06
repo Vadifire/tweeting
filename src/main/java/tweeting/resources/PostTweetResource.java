@@ -1,6 +1,7 @@
 package tweeting.resources;
 
 import tweeting.util.ResponseUtil;
+import tweeting.util.TwitterExceptionHandler;
 import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
@@ -16,16 +17,20 @@ import javax.ws.rs.core.Response;
 @Path("/api/1.0/twitter/tweet/")
 public class PostTweetResource {
 
-    private final String messageParam = "message"; // Used in ResponseUtil
+    /* Constants */
+    public static final String MESSAGE_PARAM = "message"; // Used in ResponseUtil
+    public static final String ATTEMPTED_ACTION = "retrieve home timeline";
+    public static final String UNIT = "characters";
+    public static final int MAX_TWEET_LENGTH = CharacterUtil.MAX_TWEET_LENGTH; // 280
+    public static final int MIN_TWEET_LENGTH = 1;
 
     private Twitter api;
 
-    ResponseUtil resUtil; // Provides messages for HTTP Responses, handles TwitterException
-
+    private TwitterExceptionHandler exceptionHandler;
 
     public PostTweetResource(Twitter api) {
         this.api = api;
-        resUtil = new ResponseUtil("post tweet");
+        setExceptionHandler(new TwitterExceptionHandler(ATTEMPTED_ACTION));
     }
 
     /*
@@ -36,20 +41,20 @@ public class PostTweetResource {
      */
 	@POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	public Response postTweet(@FormParam(messageParam) String message) { // Receives message from JSON data
+	public Response postTweet(@FormParam(MESSAGE_PARAM) String message) { // Receives message from JSON data
         if (message == null) {
             return Response.status(Response.Status.BAD_REQUEST).
-                    entity(resUtil.getNullParamErrorMessage(messageParam)).build();
+                    entity(ResponseUtil.getNullParamErrorMessage(ATTEMPTED_ACTION, MESSAGE_PARAM)).build();
         }
 
         if (message.length() > CharacterUtil.MAX_TWEET_LENGTH || message.length() == 0) {
             return Response.status(Response.Status.BAD_REQUEST).
-                    entity(resUtil.getParamBadLengthErrorMessage(messageParam, "characters",
-                            1, CharacterUtil.MAX_TWEET_LENGTH)).build();
+                    entity(ResponseUtil.getParamBadLengthErrorMessage(ATTEMPTED_ACTION, MESSAGE_PARAM,
+                            UNIT, 1, MAX_TWEET_LENGTH)).build();
         }
 
         try {
-            Status returnedStatus = api.updateStatus(message); // Latest status should be updated to message
+            Status returnedStatus = api.updateStatus(message); // Status should be updated to message
 
             // Return successful response with returned status
             Response.ResponseBuilder responseBuilder = Response.status(Response.Status.CREATED);
@@ -57,11 +62,15 @@ public class PostTweetResource {
             return responseBuilder.entity(returnedStatus).build();
 
         } catch (TwitterException e) {
-            return resUtil.catchTwitterException(e);
+            return exceptionHandler.catchTwitterException(e);
         }
 	}
 
-	public ResponseUtil getResUtil() {
-	    return resUtil;
+    /*
+     * Used for mocking purposes
+     */
+    public void setExceptionHandler(TwitterExceptionHandler exceptionHandler) {
+        this.exceptionHandler = exceptionHandler;
     }
+
 }

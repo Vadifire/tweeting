@@ -3,6 +3,7 @@ package tweeting.resources;
 import org.junit.Before;
 import org.junit.Test;
 import tweeting.util.ResponseUtil;
+import tweeting.util.TwitterExceptionHandler;
 import twitter4j.ResponseList;
 import twitter4j.Status;
 import twitter4j.Twitter;
@@ -17,21 +18,21 @@ import static org.mockito.Mockito.*;
 
 public class GetTimelineResourceTest {
 
-    // Mocked class
+    // Mocked classes
     Twitter api;
+    TwitterExceptionHandler exceptionHandler;
 
     // Resource under test
     GetTimelineResource timelineResource;
 
-    // Spy ResponseUtil to verify this unit is not dependent on catchTwitterException
-    ResponseUtil resUtil;
-
     @Before
     public void setUp() {
         api = mock(Twitter.class);
+        exceptionHandler = mock(TwitterExceptionHandler.class);
 
         timelineResource = new GetTimelineResource(api); // Use the Mocked API instead of the usual TwitterAPIImpl.
-        resUtil = spy(timelineResource.getResUtil());
+        timelineResource.setExceptionHandler(exceptionHandler); // Ensure no dependency
+
     }
 
     @Test
@@ -45,7 +46,6 @@ public class GetTimelineResourceTest {
         Response response = timelineResource.getTweets();
 
         verify(api).getHomeTimeline(); // Verify we have actually made the call to getHomeTimeline()
-        verify(resUtil, never()).catchTwitterException(any());
 
         assertNotNull(response);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus()); // Verify correct response code
@@ -59,11 +59,11 @@ public class GetTimelineResourceTest {
         Response response = timelineResource.getTweets();
 
         verify(api).getHomeTimeline(); // Verify we have actually made the call to getHomeTimeline()
-        verify(resUtil, never()).catchTwitterException(any());
 
         assertNotNull(response);
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus()); // Verify code
-        assertEquals(timelineResource.getResUtil().getNullResponseErrorMessage(), response.getEntity().toString());
+        assertEquals(ResponseUtil.getNullResponseErrorMessage(GetTimelineResource.ATTEMPTED_ACTION),
+                response.getEntity().toString());
     }
 
 }

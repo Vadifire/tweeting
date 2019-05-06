@@ -1,6 +1,7 @@
 package tweeting.resources;
 
 import tweeting.util.ResponseUtil;
+import tweeting.util.TwitterExceptionHandler;
 import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
@@ -18,13 +19,17 @@ import javax.ws.rs.core.Response;
 
 public class GetTimelineResource {
 
+    /* Constants */
+    public static final String ATTEMPTED_ACTION = "retrieve home timeline";
+
     private Twitter api;
 
-    ResponseUtil resUtil; // Provides messages for HTTP Responses, handles Twitter Exception
+    private TwitterExceptionHandler exceptionHandler;
+
 
     public GetTimelineResource(Twitter api) {
         this.api = api;
-        this.resUtil = new ResponseUtil("retrieve home timeline");
+        setExceptionHandler(new TwitterExceptionHandler(ATTEMPTED_ACTION));
     }
 
     /*
@@ -38,17 +43,20 @@ public class GetTimelineResource {
             List<Status> statuses = api.getHomeTimeline();
             if (statuses == null) { //this might never actually return true
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).
-                        entity(resUtil.getNullResponseErrorMessage()).build();
+                        entity(ResponseUtil.getNullResponseErrorMessage(ATTEMPTED_ACTION)).build();
             }
             return Response.ok(statuses).build(); // Successfully got timeline
 
         } catch (TwitterException e) {
-            return resUtil.catchTwitterException(e);
+            return exceptionHandler.catchTwitterException(e);
         }
     }
 
-    public ResponseUtil getResUtil () {
-        return this.resUtil;
+    /*
+     * Used for mocking purposes
+     */
+    public void setExceptionHandler(TwitterExceptionHandler exceptionHandler) {
+        this.exceptionHandler = exceptionHandler;
     }
 
 }

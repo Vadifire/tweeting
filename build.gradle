@@ -9,16 +9,19 @@ plugins {
     // Apply the java plugin to add support for Java
     /* 
      * Adding the java plugin provides these features:
-     * A compileJava task that compiles all the Java source files under src/main/java
+     * A compileJava task that compiles all the Java source files under src/tweeting/java
      * A compileTestJava task for source files under src/test/java
      * A test task that runs the tests from src/test/java
-     * A jar task that packages the main compiled classes and resources from src/main/resources into a single JAR named <project>-<version>.jar
+     * A jar task that packages the compiled classes and into a single JAR named <project>-<version>.jar
      * A javadoc task that generates Javadoc for the main classes
      */
     id 'java'
 
     // Apply the application plugin to add support for building an application
     id 'application'
+
+    // Apply Jacoco for code coverage
+    id 'jacoco'
 }
 
 repositories {
@@ -27,9 +30,9 @@ repositories {
 
 dependencies {
     // Include dependencies for compile and run time
-    implementation 'com.google.guava:guava:27.0.1-jre', 
-        'org.twitter4j:twitter4j-core:4.0.7',
-        'io.dropwizard:dropwizard-core:0.8.0'
+    implementation 'com.google.guava:guava:27.0.1-jre',
+            'org.twitter4j:twitter4j-core:4.0.7',
+            'io.dropwizard:dropwizard-core:0.8.0'
 
     // JUnit for unit testing
     testImplementation 'junit:junit:4.12'
@@ -47,15 +50,45 @@ test {
     testLogging {
         events "PASSED", "STARTED", "FAILED", "SKIPPED"
     }
-    //testLogging.showStandardStreams = true //allow print line
+    // testLogging.showStandardStreams = true //allow print line
 }
 
-// Define the main class for the application
-mainClassName = 'main.TweetingApplication'
+// Check code coverage requirements
+jacocoTestCoverageVerification {
+    violationRules {
+        rule { // 100% Path Coverage
+            element = 'CLASS'
+            includes = ['tweeting.resources.*',
+                        'tweeting.util.TwitterExceptionHandler',
+                        'tweeting.health.AliveHealthCheck',
+                        'tweeting.TweetingConfiguration']
+            limit {
+                counter = 'COMPLEXITY'
+                value = 'COVEREDRATIO'
+                minimum = 1.0
+            }
+        }
+
+        rule { // 100% Line Coverage (added as well because 'JaCoCo does not consider exception handling as branches')
+            element = 'CLASS'
+            includes = ['tweeting.resources.*',
+                        'tweeting.util.TwitterExceptionHandler',
+                        'tweeting.health.AliveHealthCheck',
+                        'tweeting.TweetingConfiguration']
+            limit {
+                counter = 'LINE'
+                value = 'COVEREDRATIO'
+                minimum = 1.0
+            }
+        }
+    }
+}
+
+// Define the tweeting class for the application
+mainClassName = 'tweeting.TweetingApplication'
 run {
     args = ['server', 'config.yml']
 }
-// manifest.mainAttributes("Main-Class" : "main.ProgramOne")
 
 // Java Version
 sourceCompatibility = '1.8'

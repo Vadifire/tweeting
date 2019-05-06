@@ -1,4 +1,4 @@
-package main;
+package tweeting;
 
 import io.dropwizard.Configuration;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -33,6 +33,18 @@ public class TweetingConfiguration extends Configuration {
 	@JsonProperty
 	@NotEmpty
 	private String accessTokenSecret;
+
+	/* Setters used for unit test of getHost() and getPort() */
+
+	public void setHost(String host) {
+		this.host = host;
+	}
+
+	public void setPort(int port) {
+		this.port = port;
+	}
+
+	/* GETTERS BELOW */
 
 	public String getHost() {
 		return host;

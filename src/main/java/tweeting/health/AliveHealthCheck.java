@@ -12,7 +12,7 @@ import com.codahale.metrics.health.HealthCheck;
 public class AliveHealthCheck extends HealthCheck {
 
     @Override
-    protected Result check() {
+    public Result check() {
         return Result.healthy();
     }
 

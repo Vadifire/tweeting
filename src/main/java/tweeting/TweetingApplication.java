@@ -21,13 +21,6 @@ public class TweetingApplication extends Application<TweetingConfiguration> {
     @Override
     public void initialize(Bootstrap<TweetingConfiguration> bootstrap) {
         System.out.println("Initializing Tweeting Service...");
-
-        Twitter twitter = TwitterFactory.getSingleton();
-        if (!twitter.getAuthorization().isEnabled()) {
-            System.out.println("Twitter authentication credentials are not set. Please restart server with " +
-                    "valid credentials. See http://twitter4j.org/en/configuration.html for help.");
-            System.exit(1);
-        }
     }
 
     @Override
@@ -43,12 +36,19 @@ public class TweetingApplication extends Application<TweetingConfiguration> {
         cb.setOAuthConsumerKey(config.getConsumerKey());
         cb.setOAuthConsumerSecret(config.getConsumerSecret());
         cb.setOAuthAccessToken(config.getAccessToken());
-        cb.setOAuthAccessToken(config.getAccessTokenSecret());
+        cb.setOAuthAccessTokenSecret(config.getAccessTokenSecret());
 
         TwitterFactory tf = new TwitterFactory(cb.build());
 
         // Use Default API Impl (Twitter4J)
-        Twitter api = tf.getSingleton();
+        Twitter api = tf.getInstance();
+
+        // Verify authorization
+        if (!api.getAuthorization().isEnabled()) {
+            System.out.println("Twitter authentication credentials are not set. Please restart server with " +
+                    "valid credentials. See http://twitter4j.org/en/configuration.html for help.");
+            System.exit(1);
+        }
 
         // Register GET timeline resource
         final GetTimelineResource timelineResource = new GetTimelineResource(api);

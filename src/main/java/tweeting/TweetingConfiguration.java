@@ -15,7 +15,6 @@ public class TweetingConfiguration extends Configuration {
 	@Min(1)
 	@Max(65535)
 	@JsonProperty
-	@NotEmpty
 	private int port;
 
 	@JsonProperty
@@ -42,6 +41,22 @@ public class TweetingConfiguration extends Configuration {
 
 	public void setPort(int port) {
 		this.port = port;
+	}
+
+	public void setConsumerKey(String consumerKey) {
+		this.consumerKey = consumerKey;
+	}
+
+	public void setConsumerSecret(String consumerSecret) {
+		this.consumerSecret = consumerSecret;
+	}
+
+	public void setAccessToken(String accessToken) {
+		this.accessToken = accessToken;
+	}
+
+	public void setAccessTokenSecret(String accessTokenSecret) {
+		this.accessTokenSecret = accessTokenSecret;
 	}
 
 	/* GETTERS BELOW */

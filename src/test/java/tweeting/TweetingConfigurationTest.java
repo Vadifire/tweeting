@@ -28,4 +28,32 @@ public class TweetingConfigurationTest {
         config.setPort(dummyPort);
         assertEquals(dummyPort, config.getPort());
     }
+
+    @Test
+    public void testGetConsumerKey() {
+        String dummykey = "some key";
+        config.setConsumerKey(dummykey);
+        assertEquals(dummykey, config.getConsumerKey());
+    }
+
+    @Test
+    public void testGetConsumerSecret() {
+        String dummySecret = "some secret";
+        config.setConsumerSecret(dummySecret);
+        assertEquals(dummySecret, config.getConsumerSecret());
+    }
+
+    @Test
+    public void testGetAccessToken() {
+        String dummySecret = "some token";
+        config.setAccessToken(dummySecret);
+        assertEquals(dummySecret, config.getAccessToken());
+    }
+
+    @Test
+    public void testGetAccessTokenSecret() {
+        String dummySecret = "some token secret";
+        config.setAccessTokenSecret(dummySecret);
+        assertEquals(dummySecret, config.getAccessTokenSecret());
+    }
 }

@@ -1,8 +1,8 @@
-package main;
+package tweeting;
 
-import main.health.AliveHealthCheck;
-import main.resources.GetTimelineResource;
-import main.resources.PostTweetResource;
+import tweeting.health.AliveHealthCheck;
+import tweeting.resources.GetTimelineResource;
+import tweeting.resources.PostTweetResource;
 
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
@@ -33,15 +33,18 @@ public class TweetingApplication extends Application<TweetingConfiguration> {
     public void run(TweetingConfiguration config, Environment env) {
         System.out.println("Running Tweeting Service...");
 
-        //Register alive health check
+        // Register alive health check
         env.healthChecks().register("AliveHealthCheck", new AliveHealthCheck());
 
+        // Use Default API Impl (Twitter4J)
+        Twitter api = TwitterFactory.getSingleton();
+
         // Register GET timeline resource
-        final GetTimelineResource timelineResource = new GetTimelineResource();
+        final GetTimelineResource timelineResource = new GetTimelineResource(api);
         env.jersey().register(timelineResource);
 
-        //Register POST tweet resource
-        final PostTweetResource tweetResource = new PostTweetResource();
+        // Register POST tweet resource
+        final PostTweetResource tweetResource = new PostTweetResource(api);
         env.jersey().register(tweetResource);
     }
 }

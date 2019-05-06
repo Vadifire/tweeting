@@ -7,7 +7,8 @@ This codebase depends on the [Twitter4J API](http://twitter4j.org/).
 
 Begin by cloning the repository using ```git clone https://github.com/Vadifire/tweeting.git``` 
 
-To build the project, cd into the downloaded repository and run: ```./gradlew build```
+To build the project, cd into the downloaded repository and run: ```./gradlew build```. 
+Building will automatically perform unit testing. Use ```./gradlew test --rerun-tasks``` to manually run unit testing.
 
 To use the Twitter API, authentication is required. 
 API keys and tokens for authentication can be generated here: https://apps.twitter.com. 

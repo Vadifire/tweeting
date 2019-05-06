@@ -1,4 +1,4 @@
-package main.health;
+package tweeting.health;
 
 import com.codahale.metrics.health.HealthCheck;
 

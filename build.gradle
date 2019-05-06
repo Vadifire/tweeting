@@ -9,10 +9,10 @@ plugins {
     // Apply the java plugin to add support for Java
     /* 
      * Adding the java plugin provides these features:
-     * A compileJava task that compiles all the Java source files under src/main/java
+     * A compileJava task that compiles all the Java source files under src/tweeting/java
      * A compileTestJava task for source files under src/test/java
      * A test task that runs the tests from src/test/java
-     * A jar task that packages the main compiled classes and resources from src/main/resources into a single JAR named <project>-<version>.jar
+     * A jar task that packages the compiled classes and into a single JAR named <project>-<version>.jar
      * A javadoc task that generates Javadoc for the main classes
      */
     id 'java'
@@ -31,19 +31,31 @@ dependencies {
         'org.twitter4j:twitter4j-core:4.0.7',
         'io.dropwizard:dropwizard-core:0.8.0'
 
-    // Use JUnit test framework
-    //testImplementation 'junit:junit:4.12'
+    // JUnit for unit testing
+    testImplementation 'junit:junit:4.12'
+
+    // Mocking Framework used with unit testing
+    testCompile 'org.mockito:mockito-core:2.27.0'
 
     // implementation: used for compile and run time
     // testImplementation: (^ equivalent, but for tests)
 }
 
-// Define the main class for the application
-mainClassName = 'main.TweetingApplication'
+
+// Display test results for individual unit tests
+test {
+    testLogging {
+        events "PASSED", "STARTED", "FAILED", "SKIPPED"
+    }
+    // testLogging.showStandardStreams = true //allow print line
+}
+
+// Define the tweeting class for the application
+mainClassName = 'tweeting.TweetingApplication'
 run {
     args = ['server', 'config.yml']
 }
-//manifest.mainAttributes("Main-Class" : "main.ProgramOne")
+// manifest.mainAttributes("Main-Class" : "tweeting.ProgramOne")
 
 // Java Version
 sourceCompatibility = '1.8'

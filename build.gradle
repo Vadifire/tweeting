@@ -19,6 +19,9 @@ plugins {
 
     // Apply the application plugin to add support for building an application
     id 'application'
+
+    // Apply Jacoco for code coverage
+    id 'jacoco'
 }
 
 repositories {
@@ -27,16 +30,16 @@ repositories {
 
 dependencies {
     // Include dependencies for compile and run time
-    implementation 'com.google.guava:guava:27.0.1-jre', 
-        'org.twitter4j:twitter4j-core:4.0.7',
-        'io.dropwizard:dropwizard-core:0.8.0'
+    implementation 'com.google.guava:guava:27.0.1-jre',
+            'org.twitter4j:twitter4j-core:4.0.7',
+            'io.dropwizard:dropwizard-core:0.8.0'
 
     // JUnit for unit testing
     testImplementation 'junit:junit:4.12'
 
     // Mocking Framework used with unit testing
     testCompile 'org.mockito:mockito-core:2.27.0'
-
+    
     // implementation: used for compile and run time
     // testImplementation: (^ equivalent, but for tests)
 }
@@ -44,6 +47,9 @@ dependencies {
 
 // Display test results for individual unit tests
 test {
+
+    //useJUnitPlatform() // Have to tell Gradle to use JUnit platform with Jacoco
+
     testLogging {
         events "PASSED", "STARTED", "FAILED", "SKIPPED"
     }
@@ -55,7 +61,6 @@ mainClassName = 'tweeting.TweetingApplication'
 run {
     args = ['server', 'config.yml']
 }
-// manifest.mainAttributes("Main-Class" : "tweeting.ProgramOne")
 
 // Java Version
 sourceCompatibility = '1.8'

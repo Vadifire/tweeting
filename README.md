@@ -34,4 +34,5 @@ To post a tweet, run the following command, replacing ```Hello World``` with you
 
 To generate a code coverage report, build the project using ```./gradlew build``` 
 and run ```./gradlew jacocoTestReport```. The test report is called index.html and is located in the
-build/reports/jacoco/test/html/ directory.
+build/reports/jacoco/test/html/ directory. To ensure appropriate code coverage is reached, run 
+```./gradlew jacocoTestCoverageVerification```

@@ -39,7 +39,7 @@ dependencies {
 
     // Mocking Framework used with unit testing
     testCompile 'org.mockito:mockito-core:2.27.0'
-    
+
     // implementation: used for compile and run time
     // testImplementation: (^ equivalent, but for tests)
 }
@@ -54,6 +54,21 @@ test {
         events "PASSED", "STARTED", "FAILED", "SKIPPED"
     }
     // testLogging.showStandardStreams = true //allow print line
+}
+
+// Enforce code coverage requirements (build fails at first violation)
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            enabled = true
+            element = 'CLASS'
+            includes = ['tweeting.resources.*']
+
+            limit {
+                minimum = 1.0
+            }
+        }
+    }
 }
 
 // Define the tweeting class for the application

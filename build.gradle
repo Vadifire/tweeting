@@ -59,7 +59,20 @@ test {
 // Check code coverage requirements
 jacocoTestCoverageVerification {
     violationRules {
-        rule { // 100% Line Coverage
+        rule { // 100% Path Coverage
+            element = 'CLASS'
+            includes = ['tweeting.resources.*',
+                        'tweeting.util.TwitterExceptionHandler',
+                        'tweeting.health.AliveHealthCheck',
+                        'tweeting.TweetingConfiguration']
+            limit {
+                counter = 'COMPLEXITY'
+                value = 'COVEREDRATIO'
+                minimum = 1.0
+            }
+        }
+
+        rule { // 100% Line Coverage (added as well because 'JaCoCo does not consider exception handling as branches')
             element = 'CLASS'
             includes = ['tweeting.resources.*',
                         'tweeting.util.TwitterExceptionHandler',
@@ -67,19 +80,6 @@ jacocoTestCoverageVerification {
                         'tweeting.TweetingConfiguration']
             limit {
                 counter = 'LINE'
-                value = 'COVEREDRATIO'
-                minimum = 1.0
-            }
-        }
-
-        rule { // 100% Branch Coverage
-            element = 'CLASS'
-            includes = ['tweeting.resources.*',
-                        'tweeting.util.TwitterExceptionHandler',
-                        'tweeting.health.AliveHealthCheck',
-                        'tweeting.TweetingConfiguration']
-            limit {
-                counter = 'BRANCH'
                 value = 'COVEREDRATIO'
                 minimum = 1.0
             }

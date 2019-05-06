@@ -66,4 +66,23 @@ public class GetTimelineResourceTest {
                 response.getEntity().toString());
     }
 
+    @Test
+    public void testTimelineException() throws TwitterException {
+
+        // Test that getHomeTimeline() properly calls catchTwitterException() in exception case
+
+        Response expectedResponse = mock(Response.class);
+        TwitterException dummyException = mock(TwitterException.class);
+
+        when(api.getHomeTimeline()).thenThrow(dummyException);
+        when(exceptionHandler.catchTwitterException(dummyException)).thenReturn(expectedResponse);
+
+        Response actualResponse = timelineResource.getTweets();
+
+        verify(api).getHomeTimeline();
+        verify(exceptionHandler).catchTwitterException(dummyException);
+        assertNotNull(actualResponse);
+        assertEquals(expectedResponse, actualResponse);
+    }
+
 }

@@ -105,4 +105,24 @@ public class PostTweetResourceTest {
                 PostTweetResource.MESSAGE_PARAM, PostTweetResource.UNIT,
                 1, PostTweetResource.MAX_TWEET_LENGTH), response.getEntity().toString());
     }
+
+    @Test
+    public void testTweetException() throws TwitterException {
+
+        // Test that postTweet() properly calls catchTwitterException() in exception case
+
+        String message = "Some Twitter Exception";
+        Response expectedResponse = mock(Response.class);
+        TwitterException dummyException = mock(TwitterException.class);
+
+        when(api.updateStatus(anyString())).thenThrow(dummyException);
+        when(exceptionHandler.catchTwitterException(dummyException)).thenReturn(expectedResponse);
+
+        Response actualResponse = tweetResource.postTweet(message);
+
+        verify(api).updateStatus(message);
+        verify(exceptionHandler).catchTwitterException(dummyException);
+        assertNotNull(actualResponse);
+        assertEquals(expectedResponse, actualResponse);
+    }
 }

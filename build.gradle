@@ -62,10 +62,13 @@ jacocoTestCoverageVerification {
         rule {
             enabled = true
             element = 'CLASS'
-            includes = ['tweeting.resources.*']
+            includes = ['tweeting.resources.*',
+                        'tweeting.util.TwitterExceptionHandler',
+                        'tweeting.health.AliveHealthCheck',
+                        'tweeting.TweetingConfiguration']
 
             limit {
-                minimum = 1.0
+                minimum = 1.0 // Want 100% code coverage for these classes
             }
         }
     }

@@ -1,0 +1,7 @@
+host: localhost
+port: 8080
+
+consumerKey: PLACEHOLDER_CONSUMER_KEY
+consumerSecret: PLACEHOLDER_CONSUMER_SECRET
+accessToken: PLACEHOLDER_ACCESS_TOKEN
+accessTokenSecret: PLACEHOLDER_ACCESS_SECRET

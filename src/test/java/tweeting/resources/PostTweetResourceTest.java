@@ -68,7 +68,7 @@ public class PostTweetResourceTest {
         assertNotNull(response);
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
         assertEquals(ResponseUtil.getParamBadLengthErrorMessage(PostTweetResource.ATTEMPTED_ACTION,
-                PostTweetResource.MESSAGE_PARAM, PostTweetResource.UNIT, PostTweetResource.MIN_TWEET_LENGTH,
+                PostTweetResource.MESSAGE_PARAM, PostTweetResource.PARAM_UNIT, PostTweetResource.MIN_TWEET_LENGTH,
                 PostTweetResource.MAX_TWEET_LENGTH), response.getEntity().toString());
     }
 
@@ -101,7 +101,7 @@ public class PostTweetResourceTest {
         assertNotNull(response);
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
         assertEquals(ResponseUtil.getParamBadLengthErrorMessage(PostTweetResource.ATTEMPTED_ACTION,
-                PostTweetResource.MESSAGE_PARAM, PostTweetResource.UNIT,
+                PostTweetResource.MESSAGE_PARAM, PostTweetResource.PARAM_UNIT,
                 1, PostTweetResource.MAX_TWEET_LENGTH), response.getEntity().toString());
     }
 

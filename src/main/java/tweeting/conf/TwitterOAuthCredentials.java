@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.validation.constraints.NotNull;
 
-public class AuthorizationDetails {
+public class TwitterOAuthCredentials {
 
     @NotNull
     @JsonProperty
@@ -20,13 +20,13 @@ public class AuthorizationDetails {
 
     @NotNull
     @JsonProperty
-    private ConsumerAPIDetails consumerAPIKeys;
+    private ConsumerAPIKeys consumerAPIKeys;
 
-    public void setConsumerAPIDetails(ConsumerAPIDetails consumerAPIDetails) {
-        this.consumerAPIKeys = consumerAPIDetails;
+    public void setConsumerAPIDetails(ConsumerAPIKeys consumerAPIKeys) {
+        this.consumerAPIKeys = consumerAPIKeys;
     }
 
-    public ConsumerAPIDetails getConsumerAPIDetails() {
+    public ConsumerAPIKeys getConsumerAPIDetails() {
         return consumerAPIKeys;
     }
 

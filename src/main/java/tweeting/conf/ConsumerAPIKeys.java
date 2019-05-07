@@ -3,7 +3,7 @@ package tweeting.conf;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.validator.constraints.NotEmpty;
 
-public class ConsumerAPIDetails {
+public class ConsumerAPIKeys {
 
     @JsonProperty
     @NotEmpty

@@ -16,23 +16,23 @@ public class TwitterExceptionHandler {
     /*
      * Catches the TwitterException in resource classes and returns appropriate Response
      */
-    public Response catchTwitterException(TwitterException e) {
+    public Response catchTwitterException(TwitterException exception) {
 
-        if (e.getErrorCode() == TwitterErrorCode.BAD_AUTH_DATA.getCode() ||
-                e.getErrorCode() == TwitterErrorCode.COULD_NOT_AUTH.getCode()) {
+        if (exception.getErrorCode() == TwitterErrorCode.BAD_AUTH_DATA.getCode() ||
+                exception.getErrorCode() == TwitterErrorCode.COULD_NOT_AUTH.getCode()) {
             System.out.println("Twitter authentication failed. Please restart server with " +
                     "valid credentials. See http://twitter4j.org/en/configuration.html for help.");
 
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).
                     entity(ResponseUtil.getAuthFailErrorMessage(attemptedAction)).build();
 
-        } else if (e.isCausedByNetworkIssue()) {
+        } else if (exception.isCausedByNetworkIssue()) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).
                     entity(ResponseUtil.getNetworkErrorMessage(attemptedAction)).build();
         } else { // 'Other' fail-safe
-            e.printStackTrace();
+            exception.printStackTrace();
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).
-                    entity(ResponseUtil.getOtherErrorMessage(attemptedAction, e.getErrorMessage())).build();
+                    entity(ResponseUtil.getOtherErrorMessage(attemptedAction, exception.getErrorMessage())).build();
         }
     }
 

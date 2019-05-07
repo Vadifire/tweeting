@@ -18,7 +18,7 @@ public class TweetingConfigurationTest {
 
     @Test
     public void testGetAuthorization() {
-        AuthorizationDetails mockedAuth = mock(AuthorizationDetails.class);
+        TwitterOAuthCredentials mockedAuth = mock(TwitterOAuthCredentials.class);
         config.setAuthorization(mockedAuth);
         assertEquals(mockedAuth, config.getAuthorization());
     }

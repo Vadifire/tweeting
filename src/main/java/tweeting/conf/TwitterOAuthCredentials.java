@@ -22,11 +22,11 @@ public class TwitterOAuthCredentials {
     @JsonProperty
     private ConsumerAPIKeys consumerAPIKeys;
 
-    public void setConsumerAPIDetails(ConsumerAPIKeys consumerAPIKeys) {
+    public void setConsumerAPIKeys(ConsumerAPIKeys consumerAPIKeys) {
         this.consumerAPIKeys = consumerAPIKeys;
     }
 
-    public ConsumerAPIKeys getConsumerAPIDetails() {
+    public ConsumerAPIKeys getConsumerAPIKeys() {
         return consumerAPIKeys;
     }
 

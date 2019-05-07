@@ -17,16 +17,16 @@ public class TwitterOAuthCredentialsTest {
     }
 
     @Test
-    public void testGetConsumerAPIDetails() {
-        ConsumerAPIKeys mockedConsumerDetails = mock(ConsumerAPIKeys.class);
-        twitterOAuthCredentials.setConsumerAPIDetails(mockedConsumerDetails);
-        assertEquals(mockedConsumerDetails, twitterOAuthCredentials.getConsumerAPIDetails());
+    public void testGetConsumerAPIKeys() {
+        ConsumerAPIKeys mockedKeys = mock(ConsumerAPIKeys.class);
+        twitterOAuthCredentials.setConsumerAPIKeys(mockedKeys);
+        assertEquals(mockedKeys, twitterOAuthCredentials.getConsumerAPIKeys());
     }
 
     @Test
     public void testGetAccessTokenDetails() {
-        AccessTokenDetails mockedConsumerDetails = mock(AccessTokenDetails.class);
-        twitterOAuthCredentials.setAccessTokenDetails(mockedConsumerDetails);
-        assertEquals(mockedConsumerDetails, twitterOAuthCredentials.getAccessTokenDetails());
+        AccessTokenDetails mockedTokenDetails = mock(AccessTokenDetails.class);
+        twitterOAuthCredentials.setAccessTokenDetails(mockedTokenDetails);
+        assertEquals(mockedTokenDetails, twitterOAuthCredentials.getAccessTokenDetails());
     }
 }

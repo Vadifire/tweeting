@@ -36,7 +36,7 @@ public class TweetingApplication extends Application<TweetingConfiguration> {
 
         /* Setup authorization with config values */
         TwitterOAuthCredentials auth = config.getAuthorization();
-        ConsumerAPIKeys consumerAPIKeys = auth.getConsumerAPIDetails();
+        ConsumerAPIKeys consumerAPIKeys = auth.getConsumerAPIKeys();
         AccessTokenDetails accessTokenDetails = auth.getAccessTokenDetails();
 
         ConfigurationBuilder configurationBuilder = new ConfigurationBuilder();

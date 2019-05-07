@@ -10,10 +10,14 @@ Begin by cloning the repository using ```git clone https://github.com/Vadifire/t
 To build the project, cd into the downloaded repository and run: ```./gradlew build```. 
 Building will automatically perform unit testing. Use ```./gradlew test --rerun-tasks``` to manually run unit testing.
 
+#### Authentication
+
 To use the Twitter API, authentication is required. 
-API keys and tokens for authentication can be generated here: https://apps.twitter.com. 
-Once your credentials have been generated, copy the config-example.yml file into a new file called config.yml. 
-Replace the placeholder values with your consumer token, consumer key, access token, and access token secret. 
+API keys and tokens for authentication can be generated here: https://apps.twitter.com. Create a new app if
+necessary, then access its "Keys and tokens" tab. Copy the config-example.yml file (in the project's root directory) 
+into a new file called config.yml. Replace API_KEY, API_SECRET_KEY, ACCESS_TOKEN, and ACCESS_TOKEN_SECRET in the config 
+file with the respective values from Twitter.
+
 
 To start the application, run ```./gradlew run```. The application will start running locally on port 8080.
 

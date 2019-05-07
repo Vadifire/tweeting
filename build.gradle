@@ -32,9 +32,9 @@ dependencies {
     // Include dependencies for compile and run time
     implementation 'com.google.guava:guava:27.0.1-jre',
             'org.twitter4j:twitter4j-core:4.0.7',
-            'io.dropwizard:dropwizard-core:0.8.0',
-            'org.slf4j:slf4j-api:1.8.0-beta4',
-            'org.slf4j:slf4j-simple:1.8.0-beta4'
+            'io.dropwizard:dropwizard-core:0.8.0'
+    
+    testCompile group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.2'
 
     // JUnit for unit testing
     testImplementation 'junit:junit:4.12'
@@ -52,7 +52,7 @@ test {
     testLogging {
         events "PASSED", "STARTED", "FAILED", "SKIPPED"
     }
-    // testLogging.showStandardStreams = true //allow print line
+     testLogging.showStandardStreams = true //allow print line
 }
 
 // Check code coverage requirements

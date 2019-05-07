@@ -12,7 +12,7 @@ Building will automatically perform unit testing. Use ```./gradlew test --rerun-
 
 To use the Twitter API, authentication is required. 
 API keys and tokens for authentication can be generated here: https://apps.twitter.com. 
-Once your credentials have been generated, copy the config-example.yml file into a new file called config-yml. 
+Once your credentials have been generated, copy the config-example.yml file into a new file called config.yml. 
 Replace the placeholder values with your consumer token, consumer key, access token, and access token secret. 
 
 To start the application, run ```./gradlew run```. The application will start running locally on port 8080.

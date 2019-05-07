@@ -34,7 +34,9 @@ public class GetTimelineResource {
 
     /*
      * How to use:
-     * curl -i -X GET http://localhost:8080/api/1.0/twitter/timeline
+     * curl -i -X GET http://HOST:PORT/api/1.0/twitter/timeline
+     *
+     * Replace HOST and PORT with configured values
      */
     @GET
     public Response getTweets() {

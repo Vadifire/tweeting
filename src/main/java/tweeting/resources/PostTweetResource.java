@@ -20,7 +20,7 @@ public class PostTweetResource {
     /* Constants */
     public static final String MESSAGE_PARAM = "message"; // Used in ResponseUtil
     public static final String ATTEMPTED_ACTION = "retrieve home timeline";
-    public static final String UNIT = "characters";
+    public static final String PARAM_UNIT = "characters";
     public static final int MAX_TWEET_LENGTH = CharacterUtil.MAX_TWEET_LENGTH; // 280
     public static final int MIN_TWEET_LENGTH = 1;
 
@@ -35,9 +35,9 @@ public class PostTweetResource {
 
     /*
      * How to use:
-     * curl -i http://localhost:8080/api/1.0/twitter/tweet -d 'message=Hello World'
+     * curl -i http://HOST:PORT/api/1.0/twitter/tweet -d 'message=Hello World'
      *
-     * Replace 'Hello World' with desired message.
+     * Replace 'Hello World' with desired message, replace HOST and PORT with configured values
      */
 	@POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -50,7 +50,7 @@ public class PostTweetResource {
         if (message.length() > CharacterUtil.MAX_TWEET_LENGTH || message.length() == 0) {
             return Response.status(Response.Status.BAD_REQUEST).
                     entity(ResponseUtil.getParamBadLengthErrorMessage(ATTEMPTED_ACTION, MESSAGE_PARAM,
-                            UNIT, 1, MAX_TWEET_LENGTH)).build();
+                            PARAM_UNIT, 1, MAX_TWEET_LENGTH)).build();
         }
 
         try {

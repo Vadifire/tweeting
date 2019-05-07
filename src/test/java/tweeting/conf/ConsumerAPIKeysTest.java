@@ -5,27 +5,27 @@ import org.junit.Test;
 
 import static junit.framework.TestCase.assertEquals;
 
-public class ConsumerAPIDetailsTest {
+public class ConsumerAPIKeysTest {
 
     // Class under test
-    ConsumerAPIDetails consumerAPIDetails;
+    ConsumerAPIKeys consumerAPIKeys;
 
     @Before
     public void setup() {
-        consumerAPIDetails = new ConsumerAPIDetails();
+        consumerAPIKeys = new ConsumerAPIKeys();
     }
 
     @Test
     public void testGetApiKey() {
         String dummyKey = "some key";
-        consumerAPIDetails.setApiKey(dummyKey);
-        assertEquals(dummyKey, consumerAPIDetails.getApiKey());
+        consumerAPIKeys.setConsumerAPIKey(dummyKey);
+        assertEquals(dummyKey, consumerAPIKeys.getConsumerAPIKey());
     }
 
     @Test
     public void testGetApiSecretKey() {
         String dummySecret = "some secret";
-        consumerAPIDetails.setApiSecretKey(dummySecret);
-        assertEquals(dummySecret, consumerAPIDetails.getApiSecretKey());
+        consumerAPIKeys.setConsumerAPISecretKey(dummySecret);
+        assertEquals(dummySecret, consumerAPIKeys.getConsumerAPISecretKey());
     }
 }

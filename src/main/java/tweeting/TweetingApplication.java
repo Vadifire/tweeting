@@ -1,8 +1,8 @@
 package tweeting;
 
 import tweeting.conf.AccessTokenDetails;
-import tweeting.conf.AuthorizationDetails;
-import tweeting.conf.ConsumerAPIDetails;
+import tweeting.conf.TwitterOAuthCredentials;
+import tweeting.conf.ConsumerAPIKeys;
 import tweeting.conf.TweetingConfiguration;
 import tweeting.health.AliveHealthCheck;
 import tweeting.resources.GetTimelineResource;
@@ -37,24 +37,23 @@ public class TweetingApplication extends Application<TweetingConfiguration> {
     public void run(TweetingConfiguration config, Environment env) {
         logger.info("Running Tweeting Service on " + config.getHost() + ":" + config.getPort());
 
-
         /* Setup authorization with config values */
-        AuthorizationDetails auth = config.getAuthorization();
-        ConsumerAPIDetails consumerAPIDetails = auth.getConsumerAPIDetails();
+        TwitterOAuthCredentials auth = config.getAuthorization();
+        ConsumerAPIKeys consumerAPIKeys = auth.getConsumerAPIKeys();
         AccessTokenDetails accessTokenDetails = auth.getAccessTokenDetails();
 
-        ConfigurationBuilder cb = new ConfigurationBuilder();
-        cb.setDebugEnabled(true);
-        cb.setOAuthConsumerKey(consumerAPIDetails.getApiKey());
-        cb.setOAuthConsumerSecret(consumerAPIDetails.getApiSecretKey());
-        cb.setOAuthAccessToken(accessTokenDetails.getAccessToken());
-        cb.setOAuthAccessTokenSecret(accessTokenDetails.getAccessTokenSecret());
-        TwitterFactory tf = new TwitterFactory(cb.build());
+        ConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
+        configurationBuilder.setDebugEnabled(true);
+        configurationBuilder.setOAuthConsumerKey(consumerAPIKeys.getConsumerAPIKey());
+        configurationBuilder.setOAuthConsumerSecret(consumerAPIKeys.getConsumerAPISecretKey());
+        configurationBuilder.setOAuthAccessToken(accessTokenDetails.getAccessToken());
+        configurationBuilder.setOAuthAccessTokenSecret(accessTokenDetails.getAccessTokenSecret());
+        TwitterFactory twitterFactory = new TwitterFactory(configurationBuilder.build());
 
         logger.info("Authorization credentials set.");
 
         // Use Default API Impl (Twitter4J)
-        Twitter api = tf.getInstance();
+        Twitter api = twitterFactory.getInstance();
 
         // Verify authorization
         if (!api.getAuthorization().isEnabled()) {

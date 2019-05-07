@@ -1,0 +1,16 @@
+# Config for server documented here: https://www.dropwizard.io/1.0.2/docs/manual/configuration.html
+server:
+  applicationConnectors:
+    - type: http
+      port: 8080
+      bindHost: localhost
+
+twitterOAuthCredentials: # Keys and tokens can be generated here: https://developer.twitter.com/apps
+
+  consumerAPIKeys:
+    consumerAPIKey: API_KEY
+    consumerAPISecretKey: API_SECRET_KEY
+
+  accessTokenDetails:
+    accessToken: ACCESS_TOKEN
+    accessTokenSecret: ACCESS_TOKEN_SECRET

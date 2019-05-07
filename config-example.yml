@@ -5,7 +5,7 @@ server:
       port: 8080
       bindHost: localhost
 
-authorization: # Required for Twitter API authorization (generate here: https://developer.twitter.com/apps)
+twitterOAuthCredentials: # Keys and tokens can be generated here: https://developer.twitter.com/apps
 
   consumerAPIKeys:
     apiKey: API_KEY

@@ -63,7 +63,7 @@ jacocoTestCoverageVerification {
             includes = ['tweeting.resources.*',
                         'tweeting.util.TwitterExceptionHandler',
                         'tweeting.health.AliveHealthCheck',
-                        'tweeting.TweetingConfiguration']
+                        'tweeting.conf.*']
             limit {
                 counter = 'COMPLEXITY'
                 value = 'COVEREDRATIO'
@@ -76,7 +76,7 @@ jacocoTestCoverageVerification {
             includes = ['tweeting.resources.*',
                         'tweeting.util.TwitterExceptionHandler',
                         'tweeting.health.AliveHealthCheck',
-                        'tweeting.TweetingConfiguration']
+                        'tweeting.conf.*']
             limit {
                 counter = 'LINE'
                 value = 'COVEREDRATIO'

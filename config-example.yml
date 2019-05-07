@@ -1,7 +1,16 @@
-host: localhost
-port: 8080
+# Config for server documented here: https://www.dropwizard.io/1.0.2/docs/manual/configuration.html
+server:
+  applicationConnectors:
+    - type: http
+      port: 8080 # Server port
+      bindHost: localhost # Server host
 
-consumerKey: PLACEHOLDER_CONSUMER_KEY
-consumerSecret: PLACEHOLDER_CONSUMER_SECRET
-accessToken: PLACEHOLDER_ACCESS_TOKEN
-accessTokenSecret: PLACEHOLDER_ACCESS_SECRET
+authorization: # Required for Twitter API authorization (generate here: https://developer.twitter.com/apps)
+
+  consumerAPIKeys: # Consumer API Keys (Identifies and authenticates client)
+    apiKey: API_KEY
+    apiSecretKey: API_SECRET_KEY
+
+  accessTokenDetails: # Access token & access token secret (Defines client privileges)
+    accessToken: ACCESS_TOKEN
+    accessTokenSecret: ACCESS_TOKEN_SECRET

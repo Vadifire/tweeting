@@ -1,5 +1,9 @@
 package tweeting;
 
+import tweeting.conf.AccessTokenDetails;
+import tweeting.conf.AuthorizationDetails;
+import tweeting.conf.ConsumerAPIDetails;
+import tweeting.conf.TweetingConfiguration;
 import tweeting.health.AliveHealthCheck;
 import tweeting.resources.GetTimelineResource;
 import tweeting.resources.PostTweetResource;
@@ -33,14 +37,18 @@ public class TweetingApplication extends Application<TweetingConfiguration> {
     public void run(TweetingConfiguration config, Environment env) {
         logger.info("Running Tweeting Service on " + config.getHost() + ":" + config.getPort());
 
+
+        /* Setup authorization with config values */
+        AuthorizationDetails auth = config.getAuthorization();
+        ConsumerAPIDetails consumerAPIDetails = auth.getConsumerAPIDetails();
+        AccessTokenDetails accessTokenDetails = auth.getAccessTokenDetails();
+
         ConfigurationBuilder cb = new ConfigurationBuilder();
-
-        cb.setDebugEnabled(true); // Could be it's own config
-        cb.setOAuthConsumerKey(config.getConsumerKey());
-        cb.setOAuthConsumerSecret(config.getConsumerSecret());
-        cb.setOAuthAccessToken(config.getAccessToken());
-        cb.setOAuthAccessTokenSecret(config.getAccessTokenSecret());
-
+        cb.setDebugEnabled(true);
+        cb.setOAuthConsumerKey(consumerAPIDetails.getApiKey());
+        cb.setOAuthConsumerSecret(consumerAPIDetails.getApiSecretKey());
+        cb.setOAuthAccessToken(accessTokenDetails.getAccessToken());
+        cb.setOAuthAccessTokenSecret(accessTokenDetails.getAccessTokenSecret());
         TwitterFactory tf = new TwitterFactory(cb.build());
 
         logger.info("Authorization credentials set.");

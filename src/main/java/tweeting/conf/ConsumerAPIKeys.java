@@ -7,25 +7,25 @@ public class ConsumerAPIKeys {
 
     @JsonProperty
     @NotEmpty
-    private String apiKey;
+    private String consumerAPIKey;
 
-    public void setApiKey(String apiKey) {
-        this.apiKey = apiKey;
+    public void setConsumerAPIKey(String consumerAPIKey) {
+        this.consumerAPIKey = consumerAPIKey;
     }
 
-    public String getApiKey() {
-        return apiKey;
+    public String getConsumerAPIKey() {
+        return consumerAPIKey;
     }
 
     @JsonProperty
     @NotEmpty
-    private String apiSecretKey;
+    private String consumerAPISecretKey;
 
-    public void setApiSecretKey(String apiSecretKey) {
-        this.apiSecretKey = apiSecretKey;
+    public void setConsumerAPISecretKey(String consumerAPISecretKey) {
+        this.consumerAPISecretKey = consumerAPISecretKey;
     }
 
-    public String getApiSecretKey() {
-        return apiSecretKey;
+    public String getConsumerAPISecretKey() {
+        return consumerAPISecretKey;
     }
 }

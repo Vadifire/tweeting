@@ -18,14 +18,14 @@ public class ConsumerAPIKeysTest {
     @Test
     public void testGetApiKey() {
         String dummyKey = "some key";
-        consumerAPIKeys.setApiKey(dummyKey);
-        assertEquals(dummyKey, consumerAPIKeys.getApiKey());
+        consumerAPIKeys.setConsumerAPIKey(dummyKey);
+        assertEquals(dummyKey, consumerAPIKeys.getConsumerAPIKey());
     }
 
     @Test
     public void testGetApiSecretKey() {
         String dummySecret = "some secret";
-        consumerAPIKeys.setApiSecretKey(dummySecret);
-        assertEquals(dummySecret, consumerAPIKeys.getApiSecretKey());
+        consumerAPIKeys.setConsumerAPISecretKey(dummySecret);
+        assertEquals(dummySecret, consumerAPIKeys.getConsumerAPISecretKey());
     }
 }

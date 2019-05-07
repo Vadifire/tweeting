@@ -41,8 +41,8 @@ public class TweetingApplication extends Application<TweetingConfiguration> {
 
         ConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
         configurationBuilder.setDebugEnabled(true);
-        configurationBuilder.setOAuthConsumerKey(consumerAPIKeys.getApiKey());
-        configurationBuilder.setOAuthConsumerSecret(consumerAPIKeys.getApiSecretKey());
+        configurationBuilder.setOAuthConsumerKey(consumerAPIKeys.getConsumerAPIKey());
+        configurationBuilder.setOAuthConsumerSecret(consumerAPIKeys.getConsumerAPISecretKey());
         configurationBuilder.setOAuthAccessToken(accessTokenDetails.getAccessToken());
         configurationBuilder.setOAuthAccessTokenSecret(accessTokenDetails.getAccessTokenSecret());
         TwitterFactory twitterFactory = new TwitterFactory(configurationBuilder.build());

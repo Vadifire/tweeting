@@ -8,8 +8,8 @@ server:
 twitterOAuthCredentials: # Keys and tokens can be generated here: https://developer.twitter.com/apps
 
   consumerAPIKeys:
-    apiKey: API_KEY
-    apiSecretKey: API_SECRET_KEY
+    consumerAPIKey: API_KEY
+    consumerAPISecretKey: API_SECRET_KEY
 
   accessTokenDetails:
     accessToken: ACCESS_TOKEN

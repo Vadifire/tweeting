@@ -9,20 +9,20 @@ public class AccessTokenDetails {
     @NotEmpty
     private String accessToken;
 
-    @JsonProperty
-    @NotEmpty
-    private String accessTokenSecret;
-
     public void setAccessToken(String accessToken) {
         this.accessToken = accessToken;
     }
 
-    public void setAccessTokenSecret(String accessTokenSecret) {
-        this.accessTokenSecret = accessTokenSecret;
-    }
-
     public String getAccessToken() {
         return accessToken;
+    }
+
+    @JsonProperty
+    @NotEmpty
+    private String accessTokenSecret;
+
+    public void setAccessTokenSecret(String accessTokenSecret) {
+        this.accessTokenSecret = accessTokenSecret;
     }
 
     public String getAccessTokenSecret() {

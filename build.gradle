@@ -34,7 +34,7 @@ dependencies {
             'org.twitter4j:twitter4j-core:4.0.7',
             'io.dropwizard:dropwizard-core:0.8.0'
     
-    testCompile group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.2'
+    testCompile group: 'org.slf4j', name: 'log4j-over-slf4j', version: '1.2'
 
     // JUnit for unit testing
     testImplementation 'junit:junit:4.12'

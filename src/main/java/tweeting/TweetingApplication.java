@@ -35,7 +35,8 @@ public class TweetingApplication extends Application<TweetingConfiguration> {
 
     @Override
     public void run(TweetingConfiguration config, Environment env) {
-        logger.info("Running Tweeting Service on " + config.getHost() + ":" + config.getPort());
+
+        logger.info("Running Tweeting Service...");
 
         /* Setup authorization with config values */
         TwitterOAuthCredentials auth = config.getAuthorization();

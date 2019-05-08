@@ -54,4 +54,4 @@ logging:
           archivedFileCount: 5
           timeZone: UTC
           logFormat: "%le  [%d] [TRANSACTION_ID: %X{transID}] %X{remoteIP}:%X{serverPort} - %X{protocol} %X{methodType}
-                    %X{requestURI}%X{params} - %m\n"
+                      %X{requestURI}%X{params} - %m\n"

@@ -14,3 +14,19 @@ twitterOAuthCredentials: # Keys and tokens can be generated here: https://develo
   accessTokenDetails:
     accessToken: ACCESS_TOKEN
     accessTokenSecret: ACCESS_TOKEN_SECRET
+
+# Logging config documentation here: https://www.dropwizard.io/0.9.0/docs/manual/configuration.html#logging
+logging:
+  level: INFO
+  loggers:
+    "mylogger":
+      level: INFO
+      additive: false
+      appenders:
+        - type: console
+          timeZone: UTC
+          threshold: ALL
+          # logFormat docs: https://logback.qos.ch/manual/layouts.html#conversionWord
+          logFormat: "%le  [%d] Custom Message - %m\n"
+  appenders:
+    - type: console

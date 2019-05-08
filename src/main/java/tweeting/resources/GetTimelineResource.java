@@ -1,5 +1,7 @@
 package tweeting.resources;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import tweeting.util.ResponseUtil;
 import tweeting.util.TwitterExceptionHandler;
 import twitter4j.Status;
@@ -18,6 +20,8 @@ import javax.ws.rs.core.Response;
 @Produces(MediaType.APPLICATION_JSON)
 
 public class GetTimelineResource {
+
+    private static final Logger logger = LoggerFactory.getLogger("requestLogger");
 
     /* Constants */
     public static final String ATTEMPTED_ACTION = "retrieve home timeline";
@@ -40,13 +44,16 @@ public class GetTimelineResource {
      */
     @GET
     public Response getTweets() {
-
         try {
+            logger.trace("Retrieving home timeline from Twitter...");
             List<Status> statuses = api.getHomeTimeline();
-            if (statuses == null) { //this might never actually return true
+            if (statuses == null) {
+                logger.warn("Twitter failed to respond with a valid home timeline. " +
+                        "Sending 500 Internal Server Error.");
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).
                         entity(ResponseUtil.getNullResponseErrorMessage(ATTEMPTED_ACTION)).build();
             }
+            logger.info("Successfully retrieved home timeline from Twitter. Sending 200 OK response.");
             return Response.ok(statuses).build(); // Successfully got timeline
 
         } catch (TwitterException e) {

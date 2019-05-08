@@ -1,5 +1,8 @@
 package tweeting;
 
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.util.ContextInitializer;
+import ch.qos.logback.core.joran.spi.JoranException;
 import tweeting.conf.AccessTokenDetails;
 import tweeting.conf.TwitterOAuthCredentials;
 import tweeting.conf.ConsumerAPIKeys;
@@ -11,7 +14,7 @@ import tweeting.resources.PostTweetResource;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import tweeting.util.LogContextFilter;
+import tweeting.util.LogFilter;
 import twitter4j.Twitter;
 import twitter4j.TwitterFactory;
 import twitter4j.conf.ConfigurationBuilder;
@@ -24,22 +27,19 @@ import java.util.EnumSet;
 
 public class TweetingApplication extends Application<TweetingConfiguration> {
 
-    private static final Logger logger = LoggerFactory.getLogger(TweetingApplication.class);
+    private static final Logger logger = LoggerFactory.getLogger("startupLogger");
 
     public static void main(String[] args) throws Exception {
-        logger.info("Starting Tweeting Service...");
         new TweetingApplication().run(args);
     }
 
     @Override
     public void initialize(Bootstrap<TweetingConfiguration> bootstrap) {
-        logger.info("Initializing Tweeting Service...");
     }
 
     @Override
     public void run(TweetingConfiguration config, Environment env) {
-
-        logger.info("Running Tweeting Service...");
+        logger.info("Starting Tweeting Service...");
 
         /* Setup authorization with config values */
         TwitterOAuthCredentials auth = config.getAuthorization();
@@ -60,26 +60,35 @@ public class TweetingApplication extends Application<TweetingConfiguration> {
         // Verify authorization
         if (!api.getAuthorization().isEnabled()) {
             logger.error("Twitter authentication credentials are not set. Please restart server with " +
-                    "valid credentials. See http://twitter4j.org/en/configuration.html for help.");
+                    "valid credentials. See http://twitter4j.org/en/configuration.html for help."); // Should be fatal
             System.exit(1);
         }
 
-        logger.info("Authorization credentials set.");
+        logger.info("Twitter authorization credentials set.");
 
-        env.servlets().addFilter("Registered Logging Filter.", new LogContextFilter())
+        logger.debug("Twitter credentials are:\n" + // TODO: should credentials be logged?
+                "\tConsumer API Key: " + consumerAPIKeys.getConsumerAPIKey() + "\n" +
+                "\tConsumer API Secret Key: " + consumerAPIKeys.getConsumerAPIKey() + "\n" +
+                "\tAccess Token: " + accessTokenDetails.getAccessToken() + "\n" +
+                "\tAccess Token Secret: " + accessTokenDetails.getAccessTokenSecret());
+
+        env.servlets().addFilter("Registered Logging Filter.", new LogFilter())
                 .addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/*");
+        env.admin().addFilter("AdminFilter", new LogFilter()).addMappingForUrlPatterns(null,
+                false, "/*");
         logger.info("Registered logging filter.");
 
-        env.healthChecks().register("AliveHealthCheck", new AliveHealthCheck());
-        logger.info("Registered Alive Health Check.");
+        AliveHealthCheck healthCheck = new AliveHealthCheck();
+        String healthCheckName = "Alive Health Check";
+        env.healthChecks().register(healthCheckName, healthCheck);
+        logger.info("Registered Health Check: " + healthCheckName);
 
         final GetTimelineResource timelineResource = new GetTimelineResource(api);
         env.jersey().register(timelineResource);
-        logger.info("Registered Get Home Timeline Resource.");
+        logger.info("Registered Resource: " + timelineResource.getClass().getName() + ".");
 
         final PostTweetResource tweetResource = new PostTweetResource(api);
         env.jersey().register(tweetResource);
-        logger.info("Registered Post Tweet Resource.");
-
+        logger.info("Registered Resource: " + tweetResource.getClass().getName() + ".");
     }
 }

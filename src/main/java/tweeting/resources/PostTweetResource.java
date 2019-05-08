@@ -1,5 +1,7 @@
 package tweeting.resources;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import tweeting.util.ResponseUtil;
 import tweeting.util.TwitterExceptionHandler;
 import twitter4j.Status;
@@ -23,6 +25,7 @@ public class PostTweetResource {
     public static final String PARAM_UNIT = "characters";
     public static final int MAX_TWEET_LENGTH = CharacterUtil.MAX_TWEET_LENGTH; // 280
     public static final int MIN_TWEET_LENGTH = 1;
+    private static final Logger logger = LoggerFactory.getLogger("requestLogger");
 
     private Twitter api;
 
@@ -42,12 +45,17 @@ public class PostTweetResource {
 	@POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	public Response postTweet(@FormParam(MESSAGE_PARAM) String message) { // Receives message from JSON data
+
+        logger.trace("Attempting to post \'" + message + "\' to Twitter...");
+
         if (message == null) {
+            logger.debug("Request is missing message parameter. Sending 400 Bad Request error.");
             return Response.status(Response.Status.BAD_REQUEST).
                     entity(ResponseUtil.getNullParamErrorMessage(ATTEMPTED_ACTION, MESSAGE_PARAM)).build();
         }
 
         if (message.length() > CharacterUtil.MAX_TWEET_LENGTH || message.length() == 0) {
+            logger.debug("Message parameter has invalid length. Sending 400 Bad Request error.");
             return Response.status(Response.Status.BAD_REQUEST).
                     entity(ResponseUtil.getParamBadLengthErrorMessage(ATTEMPTED_ACTION, MESSAGE_PARAM,
                             PARAM_UNIT, 1, MAX_TWEET_LENGTH)).build();
@@ -55,10 +63,10 @@ public class PostTweetResource {
 
         try {
             Status returnedStatus = api.updateStatus(message); // Status should be updated to message
-
             // Return successful response with returned status
             Response.ResponseBuilder responseBuilder = Response.status(Response.Status.CREATED);
             responseBuilder.type(MediaType.APPLICATION_JSON);
+            logger.info("Successfully posted " + returnedStatus.getText() + " to Twitter. Sending 201 Created response.");
             return responseBuilder.entity(returnedStatus).build();
 
         } catch (TwitterException e) {

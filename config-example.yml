@@ -28,10 +28,10 @@ logging:
       threshold: ALL
       logFormat: "%le  [%d] %m\n"
     - type: file
-      currentLogFilename: ./log/startup.log
+      currentLogFilename: ./log/init.log
       threshold: ALL
       archive: true
-      archivedLogFilenamePattern: ./log/startup-%d.log.gz
+      archivedLogFilenamePattern: ./log/init-%d.log.gz
       archivedFileCount: 5
       timeZone: UTC
       logFormat: "%le  [%d] %m\n"
@@ -44,8 +44,8 @@ logging:
         - type: console
           timeZone: UTC
           threshold: ALL
-          logFormat: "%le  [%d] [TRANSACTION_ID: %X{transID}] %X{remoteIP}:%X{serverPort} - %X{protocol} %X{methodType}
-                      %X{requestURI}%X{params} - %m\n"
+          logFormat: "%le  [%d] [TRANSACTION_ID: %X{transID}] %X{remoteIP}:%X{serverPort} - \"%X{methodType}
+                      %X{requestURI} %X{protocol}\" %X{params} - %m\n"
         - type: file
           currentLogFilename: ./log/requests.log
           threshold: ALL
@@ -53,5 +53,5 @@ logging:
           archivedLogFilenamePattern: ./log/requests-%d.log.gz
           archivedFileCount: 5
           timeZone: UTC
-          logFormat: "%le  [%d] [TRANSACTION_ID: %X{transID}] %X{remoteIP}:%X{serverPort} - %X{protocol} %X{methodType}
-                      %X{requestURI}%X{params} - %m\n"
+          logFormat: "%le  [%d] [TRANSACTION_ID: %X{transID}] %X{remoteIP}:%X{serverPort} - \"%X{methodType}
+                      %X{requestURI} %X{protocol}\" %X{params}- %m\n"

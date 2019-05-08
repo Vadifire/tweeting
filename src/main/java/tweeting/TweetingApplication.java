@@ -1,12 +1,5 @@
 package tweeting;
 
-import ch.qos.logback.classic.LoggerContext;
-import ch.qos.logback.classic.util.ContextInitializer;
-import ch.qos.logback.core.joran.spi.JoranException;
-import io.dropwizard.lifecycle.ServerLifecycleListener;
-import org.eclipse.jetty.server.Connector;
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.ServerConnector;
 import tweeting.conf.AccessTokenDetails;
 import tweeting.conf.TwitterOAuthCredentials;
 import tweeting.conf.ConsumerAPIKeys;
@@ -31,8 +24,7 @@ import java.util.EnumSet;
 
 public class TweetingApplication extends Application<TweetingConfiguration> {
 
-    // I want to consolidate io.dropwizard's logging with my logging to one file.
-    private static final Logger logger = LoggerFactory.getLogger("io.dropwizard");
+    private static final Logger logger = LoggerFactory.getLogger(TweetingApplication.class);
 
     public static void main(String[] args) throws Exception {
         new TweetingApplication().run(args);
@@ -44,7 +36,7 @@ public class TweetingApplication extends Application<TweetingConfiguration> {
 
     @Override
     public void run(TweetingConfiguration config, Environment env) {
-        logger.info("Started Tweeting Application.");
+        logger.trace("Running Tweeting Application...");
 
         logger.trace("Setting Twitter OAuth credentials...");
         TwitterOAuthCredentials auth = config.getAuthorization();
@@ -68,19 +60,17 @@ public class TweetingApplication extends Application<TweetingConfiguration> {
             System.exit(1);
         }
 
-        logger.info("Twitter authorization credentials set.");
-
-        logger.debug("Twitter credentials are:\n" + // TODO: should credentials be logged?
+        logger.info("Twitter authorization credentials set:\n" +
                 "\tConsumer API Key: " + consumerAPIKeys.getConsumerAPIKey() + "\n" +
                 "\tConsumer API Secret Key: " + consumerAPIKeys.getConsumerAPIKey() + "\n" +
                 "\tAccess Token: " + accessTokenDetails.getAccessToken() + "\n" +
                 "\tAccess Token Secret: " + accessTokenDetails.getAccessTokenSecret());
 
-        env.servlets().addFilter("Registered Logging Filter.", new LogFilter())
+        env.servlets().addFilter("Logging Filter", new LogFilter())
                 .addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/*");
         env.admin().addFilter("AdminFilter", new LogFilter()).addMappingForUrlPatterns(null,
                 false, "/*");
-        logger.info("Registered Logging Filter.");
+        logger.trace("Registered Logging Filters for Requests.");
 
         AliveHealthCheck healthCheck = new AliveHealthCheck();
         String healthCheckName = "Alive Health Check";
@@ -89,10 +79,12 @@ public class TweetingApplication extends Application<TweetingConfiguration> {
 
         final GetTimelineResource timelineResource = new GetTimelineResource(api);
         env.jersey().register(timelineResource);
-        logger.info("Registered Resource: " + timelineResource.getClass().getName() + ".");
+        logger.info("Registered Resource: " + timelineResource.getClass().getName());
 
         final PostTweetResource tweetResource = new PostTweetResource(api);
         env.jersey().register(tweetResource);
-        logger.info("Registered Resource: " + tweetResource.getClass().getName() + ".");
+        logger.info("Registered Resource: " + tweetResource.getClass().getName());
+
+        logger.info("Finished Tweeting Application initialization.");
     }
 }

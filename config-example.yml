@@ -45,7 +45,7 @@ logging:
           timeZone: UTC
           threshold: ALL
           logFormat: "%le  [%d] [TRANSACTION_ID: %X{transID}] %X{remoteIP}:%X{serverPort} - \"%X{methodType}
-                      %X{requestURI} %X{protocol}\" %X{params} - %m\n"
+                      %X{requestURI} %X{protocol}\" %X{params}- %m\n"
         - type: file
           currentLogFilename: ./log/requests.log
           threshold: ALL

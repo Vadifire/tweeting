@@ -70,7 +70,7 @@ public class TweetingApplication extends Application<TweetingConfiguration> {
                 .addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/*");
         env.admin().addFilter("AdminFilter", new LogFilter()).addMappingForUrlPatterns(null,
                 false, "/*");
-        logger.trace("Registered Logging Filters for Requests.");
+        logger.info("Initialized Logging for Requests.");
 
         AliveHealthCheck healthCheck = new AliveHealthCheck();
         String healthCheckName = "Alive Health Check";

@@ -18,8 +18,6 @@ public class LogFilter implements Filter {
 
     private static final Logger logger = LoggerFactory.getLogger(LogFilter.class);
 
-    // TODO: FilterConfig useful/needed?
-
     public void init(FilterConfig config) {
 
     }
@@ -39,13 +37,12 @@ public class LogFilter implements Filter {
 
         String transactionId = UUID.randomUUID().toString();
 
-        // TODO: think more about what all we want in MDC
-
         MDC.put("transID", transactionId);
         MDC.put("remoteIP", httpRequest.getRemoteAddr());
         MDC.put("methodType", httpRequest.getMethod());
         MDC.put("requestURI", httpRequest.getRequestURI());
         MDC.put("protocol", httpRequest.getProtocol());
+        System.out.println(httpRequest.getProtocol());
         MDC.put("serverPort", Integer.toString(httpRequest.getServerPort()));
         if (!httpRequest.getParameterMap().isEmpty()){
             MDC.put("params", " " + httpRequest.getParameterMap().toString());

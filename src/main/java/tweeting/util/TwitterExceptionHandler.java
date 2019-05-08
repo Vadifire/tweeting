@@ -34,7 +34,7 @@ public class TwitterExceptionHandler {
                     entity(ResponseUtil.getNetworkErrorMessage(attemptedAction)).build();
         } else { // 'Other' fail-safe
             logger.warn("Request to Twitter failed. Error code: " + exception.getErrorCode() +
-                    "\nError message "+ exception.getMessage() + "\n" + exception.getStackTrace());
+                    "\nError message: "+ exception.getMessage());
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).
                     entity(ResponseUtil.getOtherErrorMessage(attemptedAction, exception.getErrorMessage())).build();
         }

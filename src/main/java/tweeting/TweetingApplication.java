@@ -3,6 +3,10 @@ package tweeting;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.util.ContextInitializer;
 import ch.qos.logback.core.joran.spi.JoranException;
+import io.dropwizard.lifecycle.ServerLifecycleListener;
+import org.eclipse.jetty.server.Connector;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
 import tweeting.conf.AccessTokenDetails;
 import tweeting.conf.TwitterOAuthCredentials;
 import tweeting.conf.ConsumerAPIKeys;
@@ -27,7 +31,8 @@ import java.util.EnumSet;
 
 public class TweetingApplication extends Application<TweetingConfiguration> {
 
-    private static final Logger logger = LoggerFactory.getLogger("startupLogger");
+    // I want to consolidate io.dropwizard's logging with my logging to one file.
+    private static final Logger logger = LoggerFactory.getLogger("io.dropwizard");
 
     public static void main(String[] args) throws Exception {
         new TweetingApplication().run(args);
@@ -39,13 +44,12 @@ public class TweetingApplication extends Application<TweetingConfiguration> {
 
     @Override
     public void run(TweetingConfiguration config, Environment env) {
-        logger.info("Starting Tweeting Service...");
+        logger.info("Started Tweeting Application.");
 
-        /* Setup authorization with config values */
+        logger.trace("Setting Twitter OAuth credentials...");
         TwitterOAuthCredentials auth = config.getAuthorization();
         ConsumerAPIKeys consumerAPIKeys = auth.getConsumerAPIKeys();
         AccessTokenDetails accessTokenDetails = auth.getAccessTokenDetails();
-
         ConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
         configurationBuilder.setDebugEnabled(true);
         configurationBuilder.setOAuthConsumerKey(consumerAPIKeys.getConsumerAPIKey());
@@ -76,7 +80,7 @@ public class TweetingApplication extends Application<TweetingConfiguration> {
                 .addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/*");
         env.admin().addFilter("AdminFilter", new LogFilter()).addMappingForUrlPatterns(null,
                 false, "/*");
-        logger.info("Registered logging filter.");
+        logger.info("Registered Logging Filter.");
 
         AliveHealthCheck healthCheck = new AliveHealthCheck();
         String healthCheckName = "Alive Health Check";

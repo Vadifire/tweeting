@@ -18,7 +18,6 @@ necessary, then access its "Keys and tokens" tab. Copy the config-example.yml fi
 into a new file called config.yml. Replace API_KEY, API_SECRET_KEY, ACCESS_TOKEN, and ACCESS_TOKEN_SECRET in the config 
 file with the respective values from Twitter.
 
-
 To start the application, run ```./gradlew run```. The application will start running locally on port 8080.
 
 #### Retrieving Home Timeline
@@ -33,10 +32,14 @@ Alternatively, you can simply access ```http://localhost:8080/api/1.0/twitter/ti
 To post a tweet, run the following command, replacing ```Hello World``` with your desired tweet:
 ```curl -i http://localhost:8080/api/1.0/twitter/tweet -d 'message=Hello World'```
 
-
 ## How To Check Code Coverage
 
 To generate a code coverage report, build the project using ```./gradlew build``` 
 and run ```./gradlew jacocoTestReport```. The test report is called index.html and is located in the
 build/reports/jacoco/test/html/ directory. To ensure 100% line and path coverage of required classes, run 
 ```./gradlew jacocoTestCoverageVerification```
+
+## Log Files
+
+By default, log files are in the /log/ directory. All information regarding requests is contained within the 
+requests.log file. All other logging is stored in the general.log file. 

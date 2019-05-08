@@ -47,10 +47,10 @@ logging:
           logFormat: "%le  [%d] [TRANSACTION_ID: %X{transID}] %X{remoteIP}:%X{serverPort} - \"%X{methodType}
                       %X{requestURI} %X{protocol}\" %X{params}- %m\n"
         - type: file
-          currentLogFilename: ./log/requests.log
+          currentLogFilename: ./log/general.log
           threshold: ALL
           archive: true
-          archivedLogFilenamePattern: ./log/requests-%d.log.gz
+          archivedLogFilenamePattern: ./log/general-%d.log.gz
           archivedFileCount: 5
           timeZone: UTC
           logFormat: "%le  [%d] [TRANSACTION_ID: %X{transID}] %X{remoteIP}:%X{serverPort} - \"%X{methodType}

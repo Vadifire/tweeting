@@ -14,9 +14,9 @@ import java.util.UUID;
  * Intercepts requests to add Logging context
  */
 
-public class LogFilter implements Filter {
+public class RequestsLogFilter implements Filter {
 
-    private static final Logger logger = LoggerFactory.getLogger(LogFilter.class);
+    private static final Logger logger = LoggerFactory.getLogger(RequestsLogFilter.class);
 
     public void init(FilterConfig config) {
 

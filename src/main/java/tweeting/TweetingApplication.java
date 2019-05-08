@@ -11,7 +11,7 @@ import tweeting.resources.PostTweetResource;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import tweeting.util.LogFilter;
+import tweeting.util.RequestsLogFilter;
 import twitter4j.Twitter;
 import twitter4j.TwitterFactory;
 import twitter4j.conf.ConfigurationBuilder;
@@ -66,9 +66,9 @@ public class TweetingApplication extends Application<TweetingConfiguration> {
                 "\tAccess Token: " + accessTokenDetails.getAccessToken() + "\n" +
                 "\tAccess Token Secret: " + accessTokenDetails.getAccessTokenSecret());
 
-        env.servlets().addFilter("Logging Filter", new LogFilter())
+        env.servlets().addFilter("Requests Log Filter", new RequestsLogFilter())
                 .addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/*");
-        env.admin().addFilter("AdminFilter", new LogFilter()).addMappingForUrlPatterns(null,
+        env.admin().addFilter("AdminFilter", new RequestsLogFilter()).addMappingForUrlPatterns(null,
                 false, "/*");
         logger.info("Initialized Logging for Requests.");
 

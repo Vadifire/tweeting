@@ -66,7 +66,8 @@ public class PostTweetResource {
             // Return successful response with returned status
             Response.ResponseBuilder responseBuilder = Response.status(Response.Status.CREATED);
             responseBuilder.type(MediaType.APPLICATION_JSON);
-            logger.info("Successfully posted " + returnedStatus.getText() + " to Twitter. Sending 201 Created response.");
+            logger.info("Successfully posted " + returnedStatus.getText() + " to Twitter. Sending 201 Created " +
+                    "response.");
             return responseBuilder.entity(returnedStatus).build();
 
         } catch (TwitterException e) {

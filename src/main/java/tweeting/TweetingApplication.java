@@ -42,40 +42,45 @@ public class TweetingApplication extends Application<TweetingConfiguration> {
 
     @Override
     public void run(TweetingConfiguration config, Environment env) {
-        logger.trace("Configuring Tweeting Application...");
+        try {
+            logger.debug("Configuring Tweeting application");
+            TwitterOAuthCredentials auth = config.getAuthorization();
+            ConsumerAPIKeys consumerAPIKeys = auth.getConsumerAPIKeys();
+            AccessTokenDetails accessTokenDetails = auth.getAccessTokenDetails();
+            ConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
+            configurationBuilder.setDebugEnabled(true);
+            configurationBuilder.setOAuthConsumerKey(consumerAPIKeys.getConsumerAPIKey());
+            configurationBuilder.setOAuthConsumerSecret(consumerAPIKeys.getConsumerAPISecretKey());
+            configurationBuilder.setOAuthAccessToken(accessTokenDetails.getAccessToken());
+            configurationBuilder.setOAuthAccessTokenSecret(accessTokenDetails.getAccessTokenSecret());
+            TwitterFactory twitterFactory = new TwitterFactory(configurationBuilder.build());
+            logger.info("Twitter credentials have been configured using {} configuration file.", getConfigFileName());
 
-        TwitterOAuthCredentials auth = config.getAuthorization();
-        ConsumerAPIKeys consumerAPIKeys = auth.getConsumerAPIKeys();
-        AccessTokenDetails accessTokenDetails = auth.getAccessTokenDetails();
-        ConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
-        configurationBuilder.setDebugEnabled(true);
-        configurationBuilder.setOAuthConsumerKey(consumerAPIKeys.getConsumerAPIKey());
-        configurationBuilder.setOAuthConsumerSecret(consumerAPIKeys.getConsumerAPISecretKey());
-        configurationBuilder.setOAuthAccessToken(accessTokenDetails.getAccessToken());
-        configurationBuilder.setOAuthAccessTokenSecret(accessTokenDetails.getAccessTokenSecret());
-        TwitterFactory twitterFactory = new TwitterFactory(configurationBuilder.build());
-        logger.info("Twitter credentials have been configured using {} configuration file.", getConfigFileName());
+            // Use Default API Impl (Twitter4J)
+            Twitter api = twitterFactory.getInstance();
 
-        // Use Default API Impl (Twitter4J)
-        Twitter api = twitterFactory.getInstance();
+            RequestsLogFilter logFilter = new RequestsLogFilter();
+            env.servlets().addFilter("Requests Log Filter", logFilter)
+                    .addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/*");
+            env.admin().addFilter("AdminFilter", new RequestsLogFilter()).addMappingForUrlPatterns(
+                    null, false, "/*");
+            logger.debug("Logging Filter for HTTP requests has been set to: {}", logFilter.getClass().getName());
 
-        RequestsLogFilter logFilter = new RequestsLogFilter();
-        env.servlets().addFilter("Requests Log Filter", logFilter)
-                .addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/*");
-        env.admin().addFilter("AdminFilter", new RequestsLogFilter()).addMappingForUrlPatterns(null,
-                false, "/*");
+            AliveHealthCheck healthCheck = new AliveHealthCheck();
+            String healthCheckName = "Alive Health Check";
+            env.healthChecks().register(healthCheckName, healthCheck);
+            logger.debug("Health check has been registered: {}", healthCheck.getClass().getName());
 
-        logger.debug("Logging Filter for HTTP requests has been set to: {}", logFilter.getClass().getName());
+            // Dropwizard already logging registered resources
+            final GetTimelineResource timelineResource = new GetTimelineResource(api);
+            env.jersey().register(timelineResource);
+            final PostTweetResource tweetResource = new PostTweetResource(api);
+            env.jersey().register(tweetResource);
 
-        AliveHealthCheck healthCheck = new AliveHealthCheck();
-        String healthCheckName = "Alive Health Check";
-        env.healthChecks().register(healthCheckName, healthCheck);
-
-        // Resource URIs and server IP/port already logged by dropwizard.
-        final GetTimelineResource timelineResource = new GetTimelineResource(api);
-        env.jersey().register(timelineResource);
-        final PostTweetResource tweetResource = new PostTweetResource(api);
-        env.jersey().register(tweetResource);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            System.exit(1);
+        }
     }
 
     public static String getConfigFileName() {

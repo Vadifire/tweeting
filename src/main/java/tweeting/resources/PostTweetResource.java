@@ -44,20 +44,19 @@ public class PostTweetResource {
 	@POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	public Response postTweet(@FormParam(MESSAGE_PARAM) String message) { // Receives message from JSON data
-        if (message == null) {
-            logger.debug("Request is missing message parameter. Sending 400 Bad Request error.");
-            return Response.status(Response.Status.BAD_REQUEST).
-                    entity(ResponseUtil.getNullParamErrorMessage(ATTEMPTED_ACTION, MESSAGE_PARAM)).build();
-        }
-        if (message.length() > CharacterUtil.MAX_TWEET_LENGTH || StringUtils.isBlank(message)) {
-            logger.debug("Message parameter is blank or over the {} character limit. Sending 400 Bad Request error.",
-                    CharacterUtil.MAX_TWEET_LENGTH);
-            return Response.status(Response.Status.BAD_REQUEST).
-                    entity(ResponseUtil.getParamBadLengthErrorMessage(ATTEMPTED_ACTION, MESSAGE_PARAM,
-                    PARAM_UNIT, CharacterUtil.MAX_TWEET_LENGTH)).build();
-        }
-
-        try {
+	    try{
+            if (message == null) {
+                logger.debug("Request is missing message parameter. Sending 400 Bad Request error.");
+                return Response.status(Response.Status.BAD_REQUEST).
+                        entity(ResponseUtil.getNullParamErrorMessage(ATTEMPTED_ACTION, MESSAGE_PARAM)).build();
+            }
+            if (message.length() > CharacterUtil.MAX_TWEET_LENGTH || StringUtils.isBlank(message)) {
+                logger.debug("Message parameter is blank or over the {} character limit. Sending 400 Bad Request " +
+                                "error.", CharacterUtil.MAX_TWEET_LENGTH);
+                return Response.status(Response.Status.BAD_REQUEST).
+                        entity(ResponseUtil.getParamBadLengthErrorMessage(ATTEMPTED_ACTION, MESSAGE_PARAM,
+                        PARAM_UNIT, CharacterUtil.MAX_TWEET_LENGTH)).build();
+            }
             Status returnedStatus = api.updateStatus(message); // Status should be updated to message
             logger.debug("Twitter status was updated to:\n{}", returnedStatus);
             // Return successful response with returned status
@@ -68,6 +67,10 @@ public class PostTweetResource {
 
         } catch (TwitterException e) {
             return exceptionHandler.catchTwitterException(e);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            return (Response.status(Response.Status.INTERNAL_SERVER_ERROR).
+                    entity(ResponseUtil.getServiceUnavailableErrorMessage(ATTEMPTED_ACTION))).build();
         }
 	}
 

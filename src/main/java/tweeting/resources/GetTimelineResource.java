@@ -58,6 +58,10 @@ public class GetTimelineResource {
 
         } catch (TwitterException e) {
             return exceptionHandler.catchTwitterException(e);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            return (Response.status(Response.Status.INTERNAL_SERVER_ERROR).
+                    entity(ResponseUtil.getServiceUnavailableErrorMessage(ATTEMPTED_ACTION))).build();
         }
     }
 

@@ -17,8 +17,13 @@ public class AliveHealthCheck extends HealthCheck {
 
     @Override
     public Result check() {
-        logger.info("Application is healthy. Sending 200 OK response.");
-        return Result.healthy();
+        try {
+            logger.info("Application is healthy. Sending 200 OK response.");
+            return Result.healthy();
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            return Result.unhealthy("Server encountered error while performing health check.");
+        }
     }
 
 }

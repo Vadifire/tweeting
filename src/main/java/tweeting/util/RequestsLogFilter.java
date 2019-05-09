@@ -31,30 +31,29 @@ public class RequestsLogFilter implements Filter {
     }
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-            throws IOException, ServletException {
-
-        if (!(request instanceof HttpServletRequest) || !(response instanceof HttpServletResponse)) {
-             logger.warn("Log Filter only supports HTTP requests/responses");
-             return;
-        }
-        HttpServletRequest httpRequest = (HttpServletRequest) request;
-
-        String transactionId = UUID.randomUUID().toString();
-
-        MDC.put("transID", transactionId);
-        MDC.put("remoteIP", httpRequest.getRemoteAddr());
-        MDC.put("methodType", httpRequest.getMethod());
-        MDC.put("requestURI", httpRequest.getRequestURI());
-        MDC.put("protocol", httpRequest.getProtocol());
-        if (!httpRequest.getParameterMap().isEmpty()){
-            MDC.put("params", httpRequest.getParameterMap().toString() + " ");
-        }
-
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) {
         try {
+            if (!(request instanceof HttpServletRequest) || !(response instanceof HttpServletResponse)) {
+                logger.warn("Log Filter only supports HTTP requests/responses");
+                return;
+            }
+            HttpServletRequest httpRequest = (HttpServletRequest) request;
+
+            String transactionId = UUID.randomUUID().toString();
+
+            MDC.put("transID", transactionId);
+            MDC.put("remoteIP", httpRequest.getRemoteAddr());
+            MDC.put("methodType", httpRequest.getMethod());
+            MDC.put("requestURI", httpRequest.getRequestURI());
+            MDC.put("protocol", httpRequest.getProtocol());
+            if (!httpRequest.getParameterMap().isEmpty()) {
+                MDC.put("params", httpRequest.getParameterMap().toString() + " ");
+            }
             chain.doFilter(request, response);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
         } finally {
-            MDC.clear(); // Reset context after every Request
+            MDC.clear();
         }
 
     }

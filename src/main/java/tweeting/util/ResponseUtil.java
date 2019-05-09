@@ -12,7 +12,7 @@ public class ResponseUtil {
         return "Could not " + attemptedAction + " because connection to Twitter failed.";
     }
 
-    public static String getAuthFailErrorMessage(String attemptedAction) {
+    public static String getServiceUnavailableErrorMessage(String attemptedAction) {
         return "Could not " + attemptedAction + " because service is temporarily unavailable.";
     }
 

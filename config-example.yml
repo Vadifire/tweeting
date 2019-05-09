@@ -20,7 +20,7 @@ twitterOAuthCredentials: # Keys and tokens can be generated here: https://develo
 # Logging config documentation here: https://www.dropwizard.io/0.9.0/docs/manual/configuration.html#logging
 # logFormat documentation here: https://logback.qos.ch/manual/layouts.html#conversionWord
 logging:
-  level: INFO
+  level: ALL
 
   appenders:
     - type: console
@@ -37,13 +37,13 @@ logging:
   loggers:
     "requestLogger":
       level: ALL
-      additive: false
       appenders:
         - type: console
           timeZone: UTC
           threshold: ALL
+          includeCallerData: true
           logFormat: "%le  [%d] [TRANSACTION_ID: %X{transID}] %X{remoteIP}:%X{serverPort} - \"%X{methodType}
-                      %X{requestURI} %X{protocol}\" %X{params}- %m\n"
+                      %X{requestURI} %X{protocol}\" %X{params}- %class: %m\n"
         - type: file
           currentLogFilename: ./log/general.log
           threshold: ALL
@@ -51,5 +51,6 @@ logging:
           archivedLogFilenamePattern: ./log/general-%d.log.gz
           archivedFileCount: 5
           timeZone: UTC
+          includeCallerData: true
           logFormat: "%le  [%d] [TRANSACTION_ID: %X{transID}] %X{remoteIP}:%X{serverPort} - \"%X{methodType}
-                      %X{requestURI} %X{protocol}\" %X{params}- %m\n"
+                      %X{requestURI} %X{protocol}\" %X{params}- %class: %m\n"

@@ -37,7 +37,7 @@ public class TwitterExceptionHandlerTest {
 
         assertNotNull(response);
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
-        assertEquals(ResponseUtil.getAuthFailErrorMessage(attemptedAction), response.getEntity().toString());
+        assertEquals(ResponseUtil.getServiceUnavailableErrorMessage(attemptedAction), response.getEntity().toString());
     }
 
     @Test
@@ -48,7 +48,7 @@ public class TwitterExceptionHandlerTest {
 
         assertNotNull(response);
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
-        assertEquals(ResponseUtil.getAuthFailErrorMessage(attemptedAction), response.getEntity().toString());
+        assertEquals(ResponseUtil.getServiceUnavailableErrorMessage(attemptedAction), response.getEntity().toString());
     }
 
     @Test

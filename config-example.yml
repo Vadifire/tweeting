@@ -25,16 +25,14 @@ logging:
   appenders:
     - type: console
       timeZone: UTC
-      threshold: ALL
-      logFormat: "%le  [%d] %m\n"
+      threshold: INFO
     - type: file
-      currentLogFilename: ./log/init.log
-      threshold: ALL
+      currentLogFilename: ./log/general.log
+      threshold: INFO
       archive: true
-      archivedLogFilenamePattern: ./log/init-%d.log.gz
+      archivedLogFilenamePattern: ./log/general-%d.log.gz
       archivedFileCount: 5
       timeZone: UTC
-      logFormat: "%le  [%d] %m\n"
 
   loggers:
     "requestLogger":

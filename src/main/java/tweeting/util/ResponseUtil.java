@@ -28,10 +28,9 @@ public class ResponseUtil {
         return "Could not " + attemptedAction + " because no " + missingParam + " was specified.";
     }
 
-    public static String getParamBadLengthErrorMessage(String attemptedAction, String param, String unit,
-                                                       int min, int max) {
-        return "Could not " + attemptedAction + " because " + param + " must be between " + min + " and " + max +
-                " " + unit + ".";
+    public static String getParamBadLengthErrorMessage(String attemptedAction, String param, String unit, int max) {
+        return "Could not " + attemptedAction + " because " + param + " must be not blank and within " + max + " " +
+                unit;
     }
 
 }

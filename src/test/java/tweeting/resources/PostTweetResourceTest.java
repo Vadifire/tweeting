@@ -14,6 +14,7 @@ import static org.mockito.Mockito.*;
 
 import org.junit.Before;
 import org.junit.Test;
+import twitter4j.util.CharacterUtil;
 
 public class PostTweetResourceTest {
 
@@ -63,19 +64,19 @@ public class PostTweetResourceTest {
     public void testTweetZeroLength() {
         String message = "";
 
-        Response response = tweetResource.postTweet(message); //0 length test case
+        Response response = tweetResource.postTweet(message); // 0 length test case
 
         assertNotNull(response);
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
         assertEquals(ResponseUtil.getParamBadLengthErrorMessage(PostTweetResource.ATTEMPTED_ACTION,
-                PostTweetResource.MESSAGE_PARAM, PostTweetResource.PARAM_UNIT, PostTweetResource.MIN_TWEET_LENGTH,
-                PostTweetResource.MAX_TWEET_LENGTH), response.getEntity().toString());
+                PostTweetResource.MESSAGE_PARAM, PostTweetResource.PARAM_UNIT,
+                CharacterUtil.MAX_TWEET_LENGTH), response.getEntity().toString());
     }
 
     @Test
     public void testTweetMaxLength() throws TwitterException {
         StringBuilder sb = new StringBuilder();
-        for (int i = 0 ; i < PostTweetResource.MAX_TWEET_LENGTH; i++) {
+        for (int i = 0 ; i < CharacterUtil.MAX_TWEET_LENGTH; i++) {
             sb.append("a"); // single character
         }
 
@@ -92,7 +93,7 @@ public class PostTweetResourceTest {
     @Test
     public void testTweetTooLong() {
         StringBuilder sb = new StringBuilder();
-        for (int i = 0 ; i < PostTweetResource.MAX_TWEET_LENGTH+1; i++) {
+        for (int i = 0 ; i < CharacterUtil.MAX_TWEET_LENGTH+1; i++) {
             sb.append("a"); // single character
         }
 
@@ -101,8 +102,8 @@ public class PostTweetResourceTest {
         assertNotNull(response);
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
         assertEquals(ResponseUtil.getParamBadLengthErrorMessage(PostTweetResource.ATTEMPTED_ACTION,
-                PostTweetResource.MESSAGE_PARAM, PostTweetResource.PARAM_UNIT,
-                1, PostTweetResource.MAX_TWEET_LENGTH), response.getEntity().toString());
+                PostTweetResource.MESSAGE_PARAM, PostTweetResource.PARAM_UNIT, CharacterUtil.MAX_TWEET_LENGTH),
+                response.getEntity().toString());
     }
 
     @Test

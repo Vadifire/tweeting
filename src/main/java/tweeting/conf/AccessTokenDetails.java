@@ -3,9 +3,12 @@ package tweeting.conf;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.validator.constraints.NotEmpty;
 
+import javax.validation.constraints.NotNull;
+
 public class AccessTokenDetails {
 
     @JsonProperty
+    @NotNull
     @NotEmpty
     private String accessToken;
 
@@ -18,6 +21,7 @@ public class AccessTokenDetails {
     }
 
     @JsonProperty
+    @NotNull
     @NotEmpty
     private String accessTokenSecret;
 

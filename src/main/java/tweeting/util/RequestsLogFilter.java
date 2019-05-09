@@ -4,7 +4,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
-import javax.servlet.*;
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -42,10 +47,8 @@ public class RequestsLogFilter implements Filter {
         MDC.put("methodType", httpRequest.getMethod());
         MDC.put("requestURI", httpRequest.getRequestURI());
         MDC.put("protocol", httpRequest.getProtocol());
-        System.out.println(httpRequest.getProtocol());
-        MDC.put("serverPort", Integer.toString(httpRequest.getServerPort()));
         if (!httpRequest.getParameterMap().isEmpty()){
-            MDC.put("params", " " + httpRequest.getParameterMap().toString());
+            MDC.put("params", httpRequest.getParameterMap().toString() + " ");
         }
 
         try {

@@ -45,8 +45,8 @@ public class GetTimelineResource {
     @GET
     public Response getTweets() {
         try {
-            logger.trace("Retrieving home timeline from Twitter...");
             List<Status> statuses = api.getHomeTimeline();
+            logger.debug("Twitter returned the following statuses from home timeline:\n{}", statuses);
             if (statuses == null) {
                 logger.warn("Twitter failed to respond with a valid home timeline. " +
                         "Sending 500 Internal Server Error.");

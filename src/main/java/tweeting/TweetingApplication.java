@@ -25,8 +25,14 @@ import java.util.EnumSet;
 public class TweetingApplication extends Application<TweetingConfiguration> {
 
     private static final Logger logger = LoggerFactory.getLogger(TweetingApplication.class);
+    private static String configFileName;
 
     public static void main(String[] args) throws Exception {
+        if (args == null || args.length < 2) {
+            logger.error("Invalid arguments. First argument should be 'server' and second argument should point to " +
+                    "config file.");
+        }
+        configFileName = args[1]; // Store to log which configuration file was used
         new TweetingApplication().run(args);
     }
 
@@ -36,9 +42,8 @@ public class TweetingApplication extends Application<TweetingConfiguration> {
 
     @Override
     public void run(TweetingConfiguration config, Environment env) {
-        logger.trace("Running Tweeting Application...");
+        logger.trace("Configuring Tweeting Application...");
 
-        logger.trace("Setting Twitter OAuth credentials...");
         TwitterOAuthCredentials auth = config.getAuthorization();
         ConsumerAPIKeys consumerAPIKeys = auth.getConsumerAPIKeys();
         AccessTokenDetails accessTokenDetails = auth.getAccessTokenDetails();
@@ -49,42 +54,31 @@ public class TweetingApplication extends Application<TweetingConfiguration> {
         configurationBuilder.setOAuthAccessToken(accessTokenDetails.getAccessToken());
         configurationBuilder.setOAuthAccessTokenSecret(accessTokenDetails.getAccessTokenSecret());
         TwitterFactory twitterFactory = new TwitterFactory(configurationBuilder.build());
+        logger.info("Twitter credentials have been configured using {} configuration file.", getConfigFileName());
 
         // Use Default API Impl (Twitter4J)
         Twitter api = twitterFactory.getInstance();
 
-        // Verify authorization
-        if (!api.getAuthorization().isEnabled()) {
-            logger.error("Twitter authentication credentials are not set. Please restart server with " +
-                    "valid credentials. See http://twitter4j.org/en/configuration.html for help."); // Should be fatal
-            System.exit(1);
-        }
-
-        logger.info("Twitter authorization credentials set:\n" +
-                "\tConsumer API Key: " + consumerAPIKeys.getConsumerAPIKey() + "\n" +
-                "\tConsumer API Secret Key: " + consumerAPIKeys.getConsumerAPIKey() + "\n" +
-                "\tAccess Token: " + accessTokenDetails.getAccessToken() + "\n" +
-                "\tAccess Token Secret: " + accessTokenDetails.getAccessTokenSecret());
-
-        env.servlets().addFilter("Requests Log Filter", new RequestsLogFilter())
+        RequestsLogFilter logFilter = new RequestsLogFilter();
+        env.servlets().addFilter("Requests Log Filter", logFilter)
                 .addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/*");
         env.admin().addFilter("AdminFilter", new RequestsLogFilter()).addMappingForUrlPatterns(null,
                 false, "/*");
-        logger.info("Initialized Logging for Requests.");
+
+        logger.debug("Logging Filter for HTTP requests has been set to: {}", logFilter.getClass().getName());
 
         AliveHealthCheck healthCheck = new AliveHealthCheck();
         String healthCheckName = "Alive Health Check";
         env.healthChecks().register(healthCheckName, healthCheck);
-        logger.info("Registered Health Check: " + healthCheckName);
 
+        // Resource URIs and server IP/port already logged by dropwizard.
         final GetTimelineResource timelineResource = new GetTimelineResource(api);
         env.jersey().register(timelineResource);
-        logger.info("Registered Resource: " + timelineResource.getClass().getName());
-
         final PostTweetResource tweetResource = new PostTweetResource(api);
         env.jersey().register(tweetResource);
-        logger.info("Registered Resource: " + tweetResource.getClass().getName());
+    }
 
-        logger.info("Finished Tweeting Application initialization.");
+    public static String getConfigFileName() {
+        return configFileName;
     }
 }

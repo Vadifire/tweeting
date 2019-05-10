@@ -59,6 +59,7 @@ public class TweetingApplication extends Application<TweetingConfiguration> {
             // Use Default API Impl (Twitter4J)
             Twitter api = twitterFactory.getInstance();
 
+            logger.debug("Adding logging filter for HTTP requests");
             RequestsLogFilter logFilter = new RequestsLogFilter();
             env.servlets().addFilter("Requests Log Filter", logFilter)
                     .addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/*");
@@ -66,16 +67,19 @@ public class TweetingApplication extends Application<TweetingConfiguration> {
                     null, false, "/*");
             logger.debug("Logging Filter for HTTP requests has been set to: {}", logFilter.getClass().getName());
 
+            logger.debug("Registering health check");
             AliveHealthCheck healthCheck = new AliveHealthCheck();
             String healthCheckName = "Alive Health Check";
             env.healthChecks().register(healthCheckName, healthCheck);
             logger.debug("Health check has been registered: {}", healthCheck.getClass().getName());
 
-            // Dropwizard already logging registered resources
+            logger.debug("Registering resources");
             final GetTimelineResource timelineResource = new GetTimelineResource(api);
             env.jersey().register(timelineResource);
+            logger.debug("Registered resource: {}", timelineResource.getClass().getName());
             final PostTweetResource tweetResource = new PostTweetResource(api);
             env.jersey().register(tweetResource);
+            logger.debug("Registered resource: {}", tweetResource.getClass().getName());
 
         } catch (Exception e) {
             logger.error(e.getMessage(), e);

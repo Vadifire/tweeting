@@ -11,7 +11,7 @@ import tweeting.resources.PostTweetResource;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import tweeting.util.RequestsLogFilter;
+import tweeting.util.LogFilter;
 import twitter4j.Twitter;
 import twitter4j.TwitterFactory;
 import twitter4j.conf.ConfigurationBuilder;
@@ -59,13 +59,13 @@ public class TweetingApplication extends Application<TweetingConfiguration> {
             // Use Default API Impl (Twitter4J)
             Twitter api = twitterFactory.getInstance();
 
-            logger.debug("Adding logging filter for HTTP requests");
-            RequestsLogFilter logFilter = new RequestsLogFilter();
-            env.servlets().addFilter("Requests Log Filter", logFilter)
+            logger.debug("Adding log filter");
+            LogFilter logFilter = new LogFilter();
+            env.servlets().addFilter("Log Filter", logFilter)
                     .addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/*");
-            env.admin().addFilter("AdminFilter", new RequestsLogFilter()).addMappingForUrlPatterns(
+            env.admin().addFilter("AdminFilter", new LogFilter()).addMappingForUrlPatterns(
                     null, false, "/*");
-            logger.debug("Logging Filter for HTTP requests has been set to: {}", logFilter.getClass().getName());
+            logger.debug("Log Filter has been set to: {}", logFilter.getClass().getName());
 
             logger.debug("Registering health check");
             AliveHealthCheck healthCheck = new AliveHealthCheck();

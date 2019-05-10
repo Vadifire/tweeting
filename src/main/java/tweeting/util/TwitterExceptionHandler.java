@@ -11,7 +11,7 @@ import javax.ws.rs.core.Response;
 public class TwitterExceptionHandler {
 
     private String attemptedAction;
-    private final Logger logger = LoggerFactory.getLogger("requestLogger");
+    private final Logger logger = LoggerFactory.getLogger(TwitterExceptionHandler.class);
 
     public TwitterExceptionHandler(String attemptedAction) {
         this.attemptedAction = attemptedAction;

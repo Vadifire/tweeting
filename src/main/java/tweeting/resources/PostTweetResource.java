@@ -24,7 +24,7 @@ public class PostTweetResource {
     public static final String MESSAGE_PARAM = "message"; // Used in ResponseUtil
     public static final String ATTEMPTED_ACTION = "post tweet";
     public static final String PARAM_UNIT = "characters";
-    private static final Logger logger = LoggerFactory.getLogger("requestLogger");
+    private static final Logger logger = LoggerFactory.getLogger(PostTweetResource.class);
 
     private Twitter api;
 

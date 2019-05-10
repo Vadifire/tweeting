@@ -6,22 +6,20 @@ import org.slf4j.MDC;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.UUID;
 
 /*
  * Intercepts requests to add Logging context
  */
 
-public class RequestsLogFilter implements Filter {
+public class LogFilter implements Filter {
 
-    private static final Logger logger = LoggerFactory.getLogger(RequestsLogFilter.class);
+    private static final Logger logger = LoggerFactory.getLogger(LogFilter.class);
 
     public void init(FilterConfig config) {
 

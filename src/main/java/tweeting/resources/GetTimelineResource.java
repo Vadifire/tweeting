@@ -21,7 +21,7 @@ import javax.ws.rs.core.Response;
 
 public class GetTimelineResource {
 
-    private static final Logger logger = LoggerFactory.getLogger("requestLogger");
+    private static final Logger logger = LoggerFactory.getLogger(GetTimelineResource.class);
 
     /* Constants */
     public static final String ATTEMPTED_ACTION = "retrieve home timeline";

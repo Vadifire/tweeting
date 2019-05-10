@@ -36,10 +36,8 @@ To post a tweet, run the following command, replacing ```Hello World``` with you
 
 To generate a code coverage report, build the project using ```./gradlew build``` 
 and run ```./gradlew jacocoTestReport```. The test report is called index.html and is located in the
-build/reports/jacoco/test/html/ directory. To ensure 100% line and path coverage of required classes, run 
-```./gradlew jacocoTestCoverageVerification```
+build/reports/jacoco/test/html/ directory.
 
-## Log Files
+## Logging
 
-By default, log files are in the /log/ directory. All information regarding requests is contained within the 
-requests.log file. All other logging is stored in the general.log file. 
+By default, the latest log file is stored as /log/tweeting.log.

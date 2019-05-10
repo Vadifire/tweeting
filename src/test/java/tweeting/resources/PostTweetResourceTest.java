@@ -131,7 +131,7 @@ public class PostTweetResourceTest {
     }
 
     @Test
-    public void testTimelineGeneralException() throws TwitterException {
+    public void testTweetGeneralException() throws TwitterException {
         String message = "Some Twitter Exception";
         RuntimeException dummyException = mock(RuntimeException.class);
 

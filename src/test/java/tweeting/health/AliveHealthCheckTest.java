@@ -13,8 +13,4 @@ public class AliveHealthCheckTest {
         assertEquals(HealthCheck.Result.healthy(), healthCheck.check()); // Ensure always returns healthy()
     }
 
-    @Test
-    public void testAliveHealthCheckGeneralException() {
-
-    }
 }

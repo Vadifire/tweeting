@@ -22,7 +22,6 @@ public class TwitterExceptionHandler {
      */
     public Response catchTwitterException(TwitterException exception) {
         try {
-            logger.debug("Encountered Twitter Exception while attempting to {}.", attemptedAction);
             if (exception.getErrorCode() == TwitterErrorCode.BAD_AUTH_DATA.getCode() ||
                     exception.getErrorCode() == TwitterErrorCode.COULD_NOT_AUTH.getCode()) {
                 logger.error("Twitter authentication failed. Please restart server with valid Twitter credentials." +

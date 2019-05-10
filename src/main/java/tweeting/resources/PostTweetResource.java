@@ -3,11 +3,13 @@ package tweeting.resources;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import tweeting.util.ResponseUtil;
 import tweeting.util.TwitterExceptionHandler;
 import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
+import twitter4j.TwitterObjectFactory;
 import twitter4j.util.CharacterUtil;
 
 import javax.ws.rs.Consumes;
@@ -58,14 +60,16 @@ public class PostTweetResource {
                                 PARAM_UNIT, CharacterUtil.MAX_TWEET_LENGTH)).build();
             }
             Status returnedStatus = api.updateStatus(message); // Status should be updated to message
-            logger.debug("Twitter status was updated to:\n{}", returnedStatus);
+            logger.info("Successfully posted '{}' to Twitter. Sending 201 Created response.", message);
             // Return successful response with returned status
             Response.ResponseBuilder responseBuilder = Response.status(Response.Status.CREATED);
             responseBuilder.type(MediaType.APPLICATION_JSON);
-            logger.info("Successfully posted {} to Twitter. Sending 201 Created response.", returnedStatus.getText());
-            return responseBuilder.entity(returnedStatus).build();
+            Response response = responseBuilder.entity(returnedStatus).build();
+            return response;
 
         } catch (TwitterException e) {
+            logger.warn("Encountered Twitter Exception while attempting to {}. Error is being handled by {} class.",
+                    ATTEMPTED_ACTION, exceptionHandler.getClass().getName());
             return exceptionHandler.catchTwitterException(e);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);

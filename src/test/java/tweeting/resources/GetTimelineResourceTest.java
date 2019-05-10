@@ -4,17 +4,13 @@ import org.junit.Before;
 import org.junit.Test;
 import tweeting.util.ResponseUtil;
 import tweeting.util.TwitterExceptionHandler;
-import twitter4j.ResponseList;
-import twitter4j.Status;
-import twitter4j.Twitter;
-import twitter4j.TwitterException;
+import twitter4j.*;
 
 import javax.ws.rs.core.Response;
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
 import static org.mockito.Mockito.*;
-
 
 public class GetTimelineResourceTest {
 
@@ -32,7 +28,6 @@ public class GetTimelineResourceTest {
 
         timelineResource = new GetTimelineResource(api); // Use the Mocked API instead of the usual TwitterAPIImpl.
         timelineResource.setExceptionHandler(exceptionHandler); // Ensure no dependency
-
     }
 
     @Test

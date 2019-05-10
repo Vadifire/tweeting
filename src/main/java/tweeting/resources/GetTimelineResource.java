@@ -2,11 +2,13 @@ package tweeting.resources;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import tweeting.util.ResponseUtil;
 import tweeting.util.TwitterExceptionHandler;
 import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
+import twitter4j.TwitterObjectFactory;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -46,7 +48,6 @@ public class GetTimelineResource {
     public Response getTweets() {
         try {
             List<Status> statuses = api.getHomeTimeline();
-            logger.debug("Twitter returned the following statuses from home timeline:\n{}", statuses);
             if (statuses == null) {
                 logger.warn("Twitter failed to respond with a valid home timeline. " +
                         "Sending 500 Internal Server Error.");
@@ -57,6 +58,8 @@ public class GetTimelineResource {
             return Response.ok(statuses).build(); // Successfully got timeline
 
         } catch (TwitterException e) {
+            logger.warn("Encountered Twitter Exception while attempting to {}. Error is being handled by {} class.",
+                    ATTEMPTED_ACTION, exceptionHandler.getClass().getName());
             return exceptionHandler.catchTwitterException(e);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);

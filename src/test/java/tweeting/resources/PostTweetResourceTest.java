@@ -10,7 +10,10 @@ import javax.ws.rs.core.Response;
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -46,6 +49,7 @@ public class PostTweetResourceTest {
 
         verify(api).updateStatus(message);
         assertNotNull(response);
+        System.out.println(response.getStatus());
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
         assertEquals(mockedStatus, response.getEntity());
     }

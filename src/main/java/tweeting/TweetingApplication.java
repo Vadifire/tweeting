@@ -49,12 +49,14 @@ public class TweetingApplication extends Application<TweetingConfiguration> {
             AccessTokenDetails accessTokenDetails = auth.getAccessTokenDetails();
             ConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
             configurationBuilder.setDebugEnabled(true);
+            configurationBuilder.setJSONStoreEnabled(true); // Needed in order to use getRawJSON
             configurationBuilder.setOAuthConsumerKey(consumerAPIKeys.getConsumerAPIKey());
             configurationBuilder.setOAuthConsumerSecret(consumerAPIKeys.getConsumerAPISecretKey());
             configurationBuilder.setOAuthAccessToken(accessTokenDetails.getAccessToken());
             configurationBuilder.setOAuthAccessTokenSecret(accessTokenDetails.getAccessTokenSecret());
             TwitterFactory twitterFactory = new TwitterFactory(configurationBuilder.build());
-            logger.info("Twitter credentials have been configured using {} configuration file.", getConfigFileName());
+            logger.info("Twitter credentials have been configured using the {} configuration file.",
+                    getConfigFileName());
 
             // Use Default API Impl (Twitter4J)
             Twitter api = twitterFactory.getInstance();

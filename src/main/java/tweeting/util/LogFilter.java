@@ -39,6 +39,7 @@ public class LogFilter implements Filter {
 
             String transactionId = UUID.randomUUID().toString();
 
+            logger.debug("Populating request context");
             MDC.put("transID", transactionId);
             MDC.put("remoteIP", httpRequest.getRemoteAddr());
             MDC.put("methodType", httpRequest.getMethod());

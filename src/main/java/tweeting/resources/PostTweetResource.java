@@ -66,8 +66,6 @@ public class PostTweetResource {
             return response;
 
         } catch (TwitterException e) {
-            logger.warn("Encountered Twitter Exception while attempting to {}. Error is being handled by {} class.",
-                    ATTEMPTED_ACTION, exceptionHandler.getClass().getName());
             return exceptionHandler.catchTwitterException(e);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);

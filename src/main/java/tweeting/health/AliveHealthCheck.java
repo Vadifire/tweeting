@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 
 public class AliveHealthCheck extends HealthCheck {
 
-    private static final Logger logger = LoggerFactory.getLogger("requestLogger");
+    private static final Logger logger = LoggerFactory.getLogger(HealthCheck.class);
 
     @Override
     public Result check() {

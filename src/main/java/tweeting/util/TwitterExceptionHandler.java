@@ -6,6 +6,8 @@ import tweeting.TweetingApplication;
 import twitter4j.TwitterException;
 
 import javax.ws.rs.core.Response;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 
 public class TwitterExceptionHandler {

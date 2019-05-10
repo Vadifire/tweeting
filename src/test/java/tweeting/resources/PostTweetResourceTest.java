@@ -111,7 +111,7 @@ public class PostTweetResourceTest {
     }
 
     @Test
-    public void testTweetException() throws TwitterException {
+    public void testTweetTwitterException() throws TwitterException {
 
         // Test that postTweet() properly calls catchTwitterException() in exception case
 
@@ -128,5 +128,21 @@ public class PostTweetResourceTest {
         verify(exceptionHandler).catchTwitterException(dummyException);
         assertNotNull(actualResponse);
         assertEquals(expectedResponse, actualResponse);
+    }
+
+    @Test
+    public void testTimelineGeneralException() throws TwitterException {
+        String message = "Some Twitter Exception";
+        RuntimeException dummyException = mock(RuntimeException.class);
+
+        when(api.updateStatus(anyString())).thenThrow(dummyException);
+
+        Response actualResponse = tweetResource.postTweet(message);
+
+        verify(api).updateStatus(message);
+        assertNotNull(actualResponse);
+        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), actualResponse.getStatus()); // Verify code
+        assertEquals(ResponseUtil.getServiceUnavailableErrorMessage(PostTweetResource.ATTEMPTED_ACTION),
+                actualResponse.getEntity().toString());
     }
 }

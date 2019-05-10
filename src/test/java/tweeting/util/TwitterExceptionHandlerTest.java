@@ -79,5 +79,21 @@ public class TwitterExceptionHandlerTest {
                 response.getEntity().toString());
     }
 
+    @Test
+    public void testGeneralException() {
+        RuntimeException dummyRuntimeException = mock(RuntimeException.class);
+        TwitterException dummyTwitterException = mock(TwitterException.class);
+
+        when(dummyTwitterException.getErrorCode()).thenThrow(dummyRuntimeException);
+
+        Response actualResponse = exceptionHandler.catchTwitterException(dummyTwitterException);
+
+        assertNotNull(actualResponse);
+        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), actualResponse.getStatus()); // Verify code
+        assertEquals(ResponseUtil.getServiceUnavailableErrorMessage(attemptedAction),
+                actualResponse.getEntity().toString());
+
+    }
+
 
 }

@@ -62,7 +62,7 @@ public class GetTimelineResourceTest {
     }
 
     @Test
-    public void testTimelineException() throws TwitterException {
+    public void testTimelineTwitterException() throws TwitterException {
 
         // Test that getHomeTimeline() properly calls catchTwitterException() in exception case
 
@@ -78,6 +78,21 @@ public class GetTimelineResourceTest {
         verify(exceptionHandler).catchTwitterException(dummyException);
         assertNotNull(actualResponse);
         assertEquals(expectedResponse, actualResponse);
+    }
+
+    @Test
+    public void testTimelineGeneralException() throws TwitterException {
+        RuntimeException dummyException = mock(RuntimeException.class);
+
+        when(api.getHomeTimeline()).thenThrow(dummyException);
+
+        Response actualResponse = timelineResource.getTweets();
+
+        verify(api).getHomeTimeline();
+        assertNotNull(actualResponse);
+        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), actualResponse.getStatus()); // Verify code
+        assertEquals(ResponseUtil.getServiceUnavailableErrorMessage(GetTimelineResource.ATTEMPTED_ACTION),
+                actualResponse.getEntity().toString());
     }
 
 }

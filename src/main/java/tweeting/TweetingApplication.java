@@ -46,21 +46,12 @@ public class TweetingApplication extends Application<TweetingConfiguration> {
         try {
             logger.debug("Configuring Tweeting application");
             TwitterOAuthCredentials auth = config.getAuthorization();
-            ConsumerAPIKeys consumerAPIKeys = auth.getConsumerAPIKeys();
-            AccessTokenDetails accessTokenDetails = auth.getAccessTokenDetails();
-            ConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
-            configurationBuilder.setDebugEnabled(true);
-            configurationBuilder.setJSONStoreEnabled(true); // Needed in order to use getRawJSON
-            configurationBuilder.setOAuthConsumerKey(consumerAPIKeys.getConsumerAPIKey());
-            configurationBuilder.setOAuthConsumerSecret(consumerAPIKeys.getConsumerAPISecretKey());
-            configurationBuilder.setOAuthAccessToken(accessTokenDetails.getAccessToken());
-            configurationBuilder.setOAuthAccessTokenSecret(accessTokenDetails.getAccessTokenSecret());
-            TwitterFactory twitterFactory = new TwitterFactory(configurationBuilder.build());
+            TwitterService service = TwitterService.getInstance(auth);
+
             logger.info("Twitter credentials have been configured using the {} configuration file.",
                     getConfigFileName());
 
             // Use Default API Impl (Twitter4J)
-            Twitter api = twitterFactory.getInstance();
 
             logger.debug("Adding log filter");
             LogFilter logFilter = new LogFilter();
@@ -75,9 +66,6 @@ public class TweetingApplication extends Application<TweetingConfiguration> {
             String healthCheckName = "Alive Health Check";
             env.healthChecks().register(healthCheckName, healthCheck);
             logger.debug("Health check has been registered: {}", healthCheck.getClass().getName());
-
-            TwitterService service = TwitterService.getInstance();
-            service.setAPI(api);
 
             logger.debug("Registering resources");
             final GetTimelineResource timelineResource = new GetTimelineResource(service);

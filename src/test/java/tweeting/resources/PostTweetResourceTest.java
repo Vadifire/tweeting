@@ -3,8 +3,8 @@ package tweeting.resources;
 import tweeting.services.TwitterService;
 import tweeting.util.ResponseUtil;
 import tweeting.util.TwitterExceptionHandler;
+import tweeting.util.TwitterServiceException;
 import twitter4j.Status;
-import twitter4j.TwitterException;
 
 import javax.ws.rs.core.Response;
 
@@ -35,12 +35,14 @@ public class PostTweetResourceTest {
         mockedStatus = mock(Status.class);
         exceptionHandler = mock(TwitterExceptionHandler.class);
 
-        tweetResource = new PostTweetResource(service); //Use the Mocked service instead of the usual TwitterserviceImpl
+        tweetResource = new PostTweetResource(service); //Use the Mocked service instead of the usual Twitter4J impl
         tweetResource.setExceptionHandler(exceptionHandler); // Ensure no dependency
+
+        when(service.getMaxCharacterLength()).thenReturn(CharacterUtil.MAX_TWEET_LENGTH);
     }
 
     @Test
-    public void testTweetValid() throws TwitterException {
+    public void testTweetValid() throws TwitterServiceException {
         String message = "No Twitter Exception";
 
         when(service.postTweet(anyString())).thenReturn(mockedStatus);
@@ -78,7 +80,7 @@ public class PostTweetResourceTest {
     }
 
     @Test
-    public void testTweetMaxLength() throws TwitterException {
+    public void testTweetMaxLength() throws TwitterServiceException {
         StringBuilder sb = new StringBuilder();
         for (int i = 0 ; i < CharacterUtil.MAX_TWEET_LENGTH; i++) {
             sb.append("a"); // single character
@@ -111,13 +113,13 @@ public class PostTweetResourceTest {
     }
 
     @Test
-    public void testTweetTwitterException() throws TwitterException {
+    public void testTweetTwitterException() throws TwitterServiceException {
 
         // Test that postTweet() properly calls catchTwitterException() in exception case
 
         String message = "Some Twitter Exception";
         Response expectedResponse = mock(Response.class);
-        TwitterException dummyException = mock(TwitterException.class);
+        TwitterServiceException dummyException = mock(TwitterServiceException.class);
 
         when(service.postTweet(anyString())).thenThrow(dummyException);
         when(exceptionHandler.catchTwitterException(dummyException)).thenReturn(expectedResponse);
@@ -131,7 +133,7 @@ public class PostTweetResourceTest {
     }
 
     @Test
-    public void testTweetGeneralException() throws TwitterException {
+    public void testTweetGeneralException() throws TwitterServiceException {
         String message = "Some Twitter Exception";
         RuntimeException dummyException = mock(RuntimeException.class);
 

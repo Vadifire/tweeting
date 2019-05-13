@@ -51,7 +51,7 @@ dependencies {
 // Display test results for individual unit tests
 test {
     testLogging {
-        events "PASSED", "STARTED", "FAILED", "SKIPPED"
+        exceptionFormat = 'full'
     }
     // testLogging.showStandardStreams = true //allow print line
 }

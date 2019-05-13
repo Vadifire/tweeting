@@ -69,6 +69,7 @@ public class TweetingApplication extends Application<TweetingConfiguration> {
             final PostTweetResource tweetResource = new PostTweetResource(service);
             env.jersey().register(tweetResource);
             logger.debug("Registered resource: {}", tweetResource.getClass().getName());
+
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             System.exit(1);

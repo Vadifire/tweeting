@@ -13,7 +13,7 @@ import static org.mockito.Mockito.*;
 public class TwitterExceptionHandlerTest {
 
     // Mocked TwitterException
-    TwitterException mockedException;
+    TwitterServiceException mockedException;
 
     // Class under test
     TwitterExceptionHandler exceptionHandler;
@@ -23,7 +23,7 @@ public class TwitterExceptionHandlerTest {
 
     @Before
     public void setUp() {
-        mockedException = mock(TwitterException.class);
+        mockedException = mock(TwitterServiceException.class);
         attemptedAction = "some action";
 
         exceptionHandler = new TwitterExceptionHandler(attemptedAction);
@@ -82,11 +82,10 @@ public class TwitterExceptionHandlerTest {
     @Test
     public void testGeneralException() {
         RuntimeException dummyRuntimeException = mock(RuntimeException.class);
-        TwitterException dummyTwitterException = mock(TwitterException.class);
 
-        when(dummyTwitterException.getErrorCode()).thenThrow(dummyRuntimeException);
+        when(mockedException.getErrorCode()).thenThrow(dummyRuntimeException);
 
-        Response actualResponse = exceptionHandler.catchTwitterException(dummyTwitterException);
+        Response actualResponse = exceptionHandler.catchTwitterException(mockedException);
 
         assertNotNull(actualResponse);
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), actualResponse.getStatus()); // Verify code

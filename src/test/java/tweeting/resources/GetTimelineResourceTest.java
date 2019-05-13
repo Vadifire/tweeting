@@ -5,13 +5,18 @@ import org.junit.Test;
 import tweeting.services.TwitterService;
 import tweeting.util.ResponseUtil;
 import tweeting.util.TwitterExceptionHandler;
-import twitter4j.*;
+import tweeting.util.TwitterServiceException;
+import twitter4j.ResponseList;
+import twitter4j.Status;
 
 import javax.ws.rs.core.Response;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
+
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
-import static org.mockito.Mockito.*;
 
 public class GetTimelineResourceTest {
 
@@ -27,12 +32,12 @@ public class GetTimelineResourceTest {
         service = mock(TwitterService.class);
         exceptionHandler = mock(TwitterExceptionHandler.class);
 
-        timelineResource = new GetTimelineResource(service); // Use the Mocked service instead of the usual TwitterserviceImpl.
+        timelineResource = new GetTimelineResource(service); // Use the Mocked service instead of Twitter4J impl.
         timelineResource.setExceptionHandler(exceptionHandler); // Ensure no dependency
     }
 
     @Test
-    public void testTimelineSuccess() throws TwitterException {
+    public void testTimelineSuccess() throws TwitterServiceException {
         ResponseList<Status> dummyList = mock(ResponseList.class); // Dummy linked list to return from getHomeTimeline()
         Status mockedStatus = mock(Status.class);
         dummyList.add(mockedStatus); // Populate list with mocked Status
@@ -49,7 +54,7 @@ public class GetTimelineResourceTest {
     }
 
     @Test
-    public void testTimelineNullResponse() throws TwitterException {
+    public void testTimelineNullResponse() throws TwitterServiceException {
         when(service.getTweets()).thenReturn(null);
 
         Response response = timelineResource.getTweets();
@@ -63,12 +68,12 @@ public class GetTimelineResourceTest {
     }
 
     @Test
-    public void testTimelineTwitterException() throws TwitterException {
+    public void testTimelineTwitterException() throws TwitterServiceException {
 
         // Test that getHomeTimeline() properly calls catchTwitterException() in exception case
 
         Response expectedResponse = mock(Response.class);
-        TwitterException dummyException = mock(TwitterException.class);
+        TwitterServiceException dummyException = mock(TwitterServiceException.class);
 
         when(service.getTweets()).thenThrow(dummyException);
         when(exceptionHandler.catchTwitterException(dummyException)).thenReturn(expectedResponse);
@@ -82,7 +87,7 @@ public class GetTimelineResourceTest {
     }
 
     @Test
-    public void testTimelineGeneralException() throws TwitterException {
+    public void testTimelineGeneralException() throws TwitterServiceException {
         RuntimeException dummyException = mock(RuntimeException.class);
 
         when(service.getTweets()).thenThrow(dummyException);

@@ -3,7 +3,6 @@ package tweeting.util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tweeting.TweetingApplication;
-import twitter4j.TwitterException;
 
 import javax.ws.rs.core.Response;
 
@@ -19,7 +18,7 @@ public class TwitterExceptionHandler {
     /*
      * Catches the TwitterException in resource classes and returns appropriate Response
      */
-    public Response catchTwitterException(TwitterException exception) {
+    public Response catchTwitterException(TwitterServiceException exception) {
         try {
             if (exception.getErrorCode() == TwitterErrorCode.BAD_AUTH_DATA.getCode() ||
                     exception.getErrorCode() == TwitterErrorCode.COULD_NOT_AUTH.getCode()) {

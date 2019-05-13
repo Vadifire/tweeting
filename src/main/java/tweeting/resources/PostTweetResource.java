@@ -6,9 +6,9 @@ import org.slf4j.LoggerFactory;
 import tweeting.services.TwitterService;
 import tweeting.util.ResponseUtil;
 import tweeting.util.TwitterExceptionHandler;
+import tweeting.util.TwitterServiceException;
 import twitter4j.Status;
 import twitter4j.TwitterException;
-import twitter4j.util.CharacterUtil;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
@@ -50,12 +50,12 @@ public class PostTweetResource {
                 return Response.status(Response.Status.BAD_REQUEST).
                         entity(ResponseUtil.getNullParamErrorMessage(ATTEMPTED_ACTION, MESSAGE_PARAM)).build();
             }
-            if (message.length() > CharacterUtil.MAX_TWEET_LENGTH || StringUtils.isBlank(message)) {
+            if (message.length() > service.getMaxCharacterLength() || StringUtils.isBlank(message)) {
                 logger.debug("Message parameter is blank or over the {} character limit. Sending 400 Bad Request " +
-                        "error.", CharacterUtil.MAX_TWEET_LENGTH);
+                        "error.", service.getMaxCharacterLength());
                 return Response.status(Response.Status.BAD_REQUEST).
                         entity(ResponseUtil.getParamBadLengthErrorMessage(ATTEMPTED_ACTION, MESSAGE_PARAM,
-                                PARAM_UNIT, CharacterUtil.MAX_TWEET_LENGTH)).build();
+                                PARAM_UNIT, service.getMaxCharacterLength())).build();
             }
             final Status returnedStatus = service.postTweet(message); // Status should be updated to message
             logger.info("Successfully posted '{}' to Twitter. Sending 201 Created response.", message);
@@ -65,7 +65,7 @@ public class PostTweetResource {
             Response response = responseBuilder.entity(returnedStatus).build();
             return response;
 
-        } catch (TwitterException e) {
+        } catch (TwitterServiceException e) {
             return exceptionHandler.catchTwitterException(e);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);

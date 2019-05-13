@@ -6,11 +6,13 @@ import tweeting.conf.AccessTokenDetails;
 import tweeting.conf.ConsumerAPIKeys;
 import tweeting.conf.TwitterOAuthCredentials;
 import tweeting.resources.GetTimelineResource;
+import tweeting.util.TwitterServiceException;
 import twitter4j.Status;
 import twitter4j.TwitterException;
 import twitter4j.Twitter;
 import twitter4j.TwitterFactory;
 import twitter4j.conf.ConfigurationBuilder;
+import twitter4j.util.CharacterUtil;
 
 import java.util.List;
 
@@ -49,12 +51,23 @@ public class TwitterService {
         }
     }
 
-    public List<Status> getTweets() throws TwitterException {
-        return api.getHomeTimeline();
+    public List<Status> getTweets() throws TwitterServiceException {
+        try {
+            return api.getHomeTimeline();
+        } catch (TwitterException te) {
+            throw new TwitterServiceException(te);
+        }
     }
 
-    public Status postTweet(String message) throws TwitterException {
-        return api.updateStatus(message);
+    public Status postTweet(String message) throws TwitterServiceException {
+        try {
+            return api.updateStatus(message);
+        } catch (TwitterException te) {
+            throw new TwitterServiceException(te);
+        }
     }
 
+    public int getMaxCharacterLength() {
+        return CharacterUtil.MAX_TWEET_LENGTH;
+    }
 }

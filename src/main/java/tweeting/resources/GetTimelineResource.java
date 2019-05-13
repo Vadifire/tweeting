@@ -30,7 +30,6 @@ public class GetTimelineResource {
 
     private TwitterExceptionHandler exceptionHandler;
 
-
     public GetTimelineResource(TwitterService service) {
         this.service = service;
         setExceptionHandler(new TwitterExceptionHandler(ATTEMPTED_ACTION));
@@ -45,7 +44,7 @@ public class GetTimelineResource {
     @GET
     public Response getTweets() {
         try {
-            List<Status> statuses = service.getTweets();
+            final List<Status> statuses = service.getTweets();
             if (statuses == null) {
                 logger.warn("Twitter failed to respond with a valid home timeline. " +
                         "Sending 500 Internal Server Error.");

@@ -57,7 +57,7 @@ public class PostTweetResource {
                         entity(ResponseUtil.getParamBadLengthErrorMessage(ATTEMPTED_ACTION, MESSAGE_PARAM,
                                 PARAM_UNIT, CharacterUtil.MAX_TWEET_LENGTH)).build();
             }
-            Status returnedStatus = service.postTweet(message); // Status should be updated to message
+            final Status returnedStatus = service.postTweet(message); // Status should be updated to message
             logger.info("Successfully posted '{}' to Twitter. Sending 201 Created response.", message);
             // Return successful response with returned status
             Response.ResponseBuilder responseBuilder = Response.status(Response.Status.CREATED);

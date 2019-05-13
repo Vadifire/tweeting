@@ -2,9 +2,8 @@ package tweeting.resources;
 
 import org.junit.Before;
 import org.junit.Test;
+import tweeting.services.TwitterService;
 import tweeting.util.ResponseUtil;
-import tweeting.util.TwitterExceptionHandler;
-import twitter4j.*;
 
 import javax.ws.rs.core.Response;
 
@@ -15,80 +14,37 @@ import static org.mockito.Mockito.*;
 public class GetTimelineResourceTest {
 
     // Mocked classes
-    Twitter api;
-    TwitterExceptionHandler exceptionHandler;
+    TwitterService service;
 
-    // Resource under test
+    // Class under test
     GetTimelineResource timelineResource;
 
     @Before
     public void setUp() {
-        api = mock(Twitter.class);
-        exceptionHandler = mock(TwitterExceptionHandler.class);
-
-        timelineResource = new GetTimelineResource(api); // Use the Mocked API instead of the usual TwitterAPIImpl.
-        timelineResource.setExceptionHandler(exceptionHandler); // Ensure no dependency
+        service = mock(TwitterService.class);
+        timelineResource = new GetTimelineResource(service); // Use the Mocked Service instead of real impl
     }
 
     @Test
-    public void testTimelineSuccess() throws TwitterException {
-        ResponseList<Status> dummyList = mock(ResponseList.class); // Dummy linked list to return from getHomeTimeline()
-        Status mockedStatus = mock(Status.class);
-        dummyList.add(mockedStatus); // Populate list with mocked Status
+    public void TestGetTimeline() {
+        Response dummyResponse = mock(Response.class);
+        when(service.getHomeTimeline()).thenReturn(dummyResponse);
 
-        when(api.getHomeTimeline()).thenReturn(dummyList);
+        Response actualResponse = timelineResource.getHomeTimeline();
 
-        Response response = timelineResource.getTweets();
-
-        verify(api).getHomeTimeline(); // Verify we have actually made the call to getHomeTimeline()
-
-        assertNotNull(response);
-        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus()); // Verify correct response code
-        assertEquals(dummyList, response.getEntity()); // Verify correct content
-    }
-
-    @Test
-    public void testTimelineNullResponse() throws TwitterException {
-        when(api.getHomeTimeline()).thenReturn(null);
-
-        Response response = timelineResource.getTweets();
-
-        verify(api).getHomeTimeline(); // Verify we have actually made the call to getHomeTimeline()
-
-        assertNotNull(response);
-        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus()); // Verify code
-        assertEquals(ResponseUtil.getNullResponseErrorMessage(GetTimelineResource.ATTEMPTED_ACTION),
-                response.getEntity().toString());
-    }
-
-    @Test
-    public void testTimelineTwitterException() throws TwitterException {
-
-        // Test that getHomeTimeline() properly calls catchTwitterException() in exception case
-
-        Response expectedResponse = mock(Response.class);
-        TwitterException dummyException = mock(TwitterException.class);
-
-        when(api.getHomeTimeline()).thenThrow(dummyException);
-        when(exceptionHandler.catchTwitterException(dummyException)).thenReturn(expectedResponse);
-
-        Response actualResponse = timelineResource.getTweets();
-
-        verify(api).getHomeTimeline();
-        verify(exceptionHandler).catchTwitterException(dummyException);
+        verify(service).getHomeTimeline();
         assertNotNull(actualResponse);
-        assertEquals(expectedResponse, actualResponse);
+        assertEquals(dummyResponse, actualResponse);
     }
 
     @Test
-    public void testTimelineGeneralException() throws TwitterException {
+    public void TestGetTimelineException() {
         RuntimeException dummyException = mock(RuntimeException.class);
+        when(service.getHomeTimeline()).thenThrow(dummyException);
 
-        when(api.getHomeTimeline()).thenThrow(dummyException);
+        Response actualResponse = timelineResource.getHomeTimeline();
 
-        Response actualResponse = timelineResource.getTweets();
-
-        verify(api).getHomeTimeline();
+        verify(service).getHomeTimeline();
         assertNotNull(actualResponse);
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), actualResponse.getStatus()); // Verify code
         assertEquals(ResponseUtil.getServiceUnavailableErrorMessage(GetTimelineResource.ATTEMPTED_ACTION),

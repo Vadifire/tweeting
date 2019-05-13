@@ -11,6 +11,7 @@ import tweeting.resources.PostTweetResource;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import tweeting.services.TwitterService;
 import tweeting.util.LogFilter;
 import twitter4j.Twitter;
 import twitter4j.TwitterFactory;
@@ -55,11 +56,11 @@ public class TweetingApplication extends Application<TweetingConfiguration> {
             configurationBuilder.setOAuthAccessToken(accessTokenDetails.getAccessToken());
             configurationBuilder.setOAuthAccessTokenSecret(accessTokenDetails.getAccessTokenSecret());
             TwitterFactory twitterFactory = new TwitterFactory(configurationBuilder.build());
-            logger.info("Twitter credentials have been configured using the {} configuration file.",
+            logger.info("TwitterService credentials have been configured using the {} configuration file.",
                     getConfigFileName());
 
             // Use Default API Impl (Twitter4J)
-            Twitter api = twitterFactory.getInstance();
+            TwitterService service = TwitterService.getInstance();
 
             logger.debug("Adding log filter");
             LogFilter logFilter = new LogFilter();
@@ -76,10 +77,10 @@ public class TweetingApplication extends Application<TweetingConfiguration> {
             logger.debug("Health check has been registered: {}", healthCheck.getClass().getName());
 
             logger.debug("Registering resources");
-            final GetTimelineResource timelineResource = new GetTimelineResource(api);
+            final GetTimelineResource timelineResource = new GetTimelineResource(service);
             env.jersey().register(timelineResource);
             logger.debug("Registered resource: {}", timelineResource.getClass().getName());
-            final PostTweetResource tweetResource = new PostTweetResource(api);
+            final PostTweetResource tweetResource = new PostTweetResource(service);
             env.jersey().register(tweetResource);
             logger.debug("Registered resource: {}", tweetResource.getClass().getName());
         } catch (Exception e) {

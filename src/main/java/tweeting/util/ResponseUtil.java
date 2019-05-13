@@ -9,7 +9,7 @@ package tweeting.util;
 public class ResponseUtil {
 
     public static String getNetworkErrorMessage(String attemptedAction) {
-        return "Could not " + attemptedAction + " because connection to Twitter failed.";
+        return "Could not " + attemptedAction + " because connection to TwitterService failed.";
     }
 
     public static String getServiceUnavailableErrorMessage(String attemptedAction) {
@@ -21,7 +21,7 @@ public class ResponseUtil {
     }
 
     public static String getNullResponseErrorMessage(String attemptedAction) {
-        return "Failed to " + attemptedAction + " from Twitter.";
+        return "Failed to " + attemptedAction + " from TwitterService.";
     }
 
     public static String getNullParamErrorMessage(String attemptedAction, String missingParam) {

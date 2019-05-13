@@ -52,6 +52,7 @@ dependencies {
 test {
     testLogging {
         events "PASSED", "STARTED", "FAILED", "SKIPPED"
+        exceptionFormat = 'full'
     }
     // testLogging.showStandardStreams = true //allow print line
 }

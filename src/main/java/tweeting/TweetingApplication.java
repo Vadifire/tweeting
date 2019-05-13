@@ -11,6 +11,7 @@ import tweeting.resources.PostTweetResource;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import tweeting.services.TwitterService;
 import tweeting.util.LogFilter;
 import twitter4j.Twitter;
 import twitter4j.TwitterFactory;
@@ -75,11 +76,14 @@ public class TweetingApplication extends Application<TweetingConfiguration> {
             env.healthChecks().register(healthCheckName, healthCheck);
             logger.debug("Health check has been registered: {}", healthCheck.getClass().getName());
 
+            TwitterService service = TwitterService.getInstance();
+            service.setAPI(api);
+
             logger.debug("Registering resources");
-            final GetTimelineResource timelineResource = new GetTimelineResource(api);
+            final GetTimelineResource timelineResource = new GetTimelineResource(service);
             env.jersey().register(timelineResource);
             logger.debug("Registered resource: {}", timelineResource.getClass().getName());
-            final PostTweetResource tweetResource = new PostTweetResource(api);
+            final PostTweetResource tweetResource = new PostTweetResource(service);
             env.jersey().register(tweetResource);
             logger.debug("Registered resource: {}", tweetResource.getClass().getName());
         } catch (Exception e) {

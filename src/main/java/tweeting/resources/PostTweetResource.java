@@ -3,10 +3,10 @@ package tweeting.resources;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tweeting.services.TwitterService;
 import tweeting.util.ResponseUtil;
 import tweeting.util.TwitterExceptionHandler;
 import twitter4j.Status;
-import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.util.CharacterUtil;
 
@@ -26,12 +26,12 @@ public class PostTweetResource {
     public static final String PARAM_UNIT = "characters";
     private static final Logger logger = LoggerFactory.getLogger(PostTweetResource.class);
 
-    private Twitter api;
+    private TwitterService service;
 
     private TwitterExceptionHandler exceptionHandler;
 
-    public PostTweetResource(Twitter api) {
-        this.api = api;
+    public PostTweetResource(TwitterService service) {
+        this.service = service;
         setExceptionHandler(new TwitterExceptionHandler(ATTEMPTED_ACTION));
     }
 
@@ -57,7 +57,7 @@ public class PostTweetResource {
                         entity(ResponseUtil.getParamBadLengthErrorMessage(ATTEMPTED_ACTION, MESSAGE_PARAM,
                                 PARAM_UNIT, CharacterUtil.MAX_TWEET_LENGTH)).build();
             }
-            Status returnedStatus = api.updateStatus(message); // Status should be updated to message
+            Status returnedStatus = service.postTweet(message); // Status should be updated to message
             logger.info("Successfully posted '{}' to Twitter. Sending 201 Created response.", message);
             // Return successful response with returned status
             Response.ResponseBuilder responseBuilder = Response.status(Response.Status.CREATED);

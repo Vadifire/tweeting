@@ -1,7 +1,7 @@
 package tweeting.util;
 
 /*
- * TwitterService Error Codes (https://developer.twitter.com/en/docs/basics/response-codes.html)
+ * Twitter Error Codes (https://developer.twitter.com/en/docs/basics/response-codes.html)
  */
 public enum TwitterErrorCode {
 

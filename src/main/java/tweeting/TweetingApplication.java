@@ -13,7 +13,6 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import tweeting.services.TwitterService;
 import tweeting.util.LogFilter;
-import twitter4j.Twitter;
 import twitter4j.TwitterFactory;
 import twitter4j.conf.ConfigurationBuilder;
 
@@ -56,11 +55,12 @@ public class TweetingApplication extends Application<TweetingConfiguration> {
             configurationBuilder.setOAuthAccessToken(accessTokenDetails.getAccessToken());
             configurationBuilder.setOAuthAccessTokenSecret(accessTokenDetails.getAccessTokenSecret());
             TwitterFactory twitterFactory = new TwitterFactory(configurationBuilder.build());
-            logger.info("TwitterService credentials have been configured using the {} configuration file.",
+            logger.info("Twitter credentials have been configured using the {} configuration file.",
                     getConfigFileName());
 
             // Use Default API Impl (Twitter4J)
             TwitterService service = TwitterService.getInstance();
+            service.setTwitterAPI(twitterFactory.getInstance());
 
             logger.debug("Adding log filter");
             LogFilter logFilter = new LogFilter();

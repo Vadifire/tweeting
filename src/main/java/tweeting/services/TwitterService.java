@@ -35,8 +35,9 @@ public class TwitterService {
     public static TwitterService getInstance() {
         if (instance == null) {
             synchronized (TwitterService.class) {
-                if (instance == null)
+                if (instance == null) {
                     instance = new TwitterService();
+                }
             }
         }
         return instance;
@@ -59,7 +60,7 @@ public class TwitterService {
                                 PostTweetResource.PARAM_UNIT, CharacterUtil.MAX_TWEET_LENGTH)).build();
             }
             Status returnedStatus = api.updateStatus(message); // Status should be updated to message
-            logger.info("Successfully posted '{}' to TwitterService. Sending 201 Created response.", message);
+            logger.info("Successfully posted '{}' to Twitter. Sending 201 Created response.", message);
             // Return successful response with returned status
             Response.ResponseBuilder responseBuilder = Response.status(Response.Status.CREATED);
             responseBuilder.type(MediaType.APPLICATION_JSON);
@@ -79,12 +80,12 @@ public class TwitterService {
         try {
             List<Status> statuses = api.getHomeTimeline();
             if (statuses == null) {
-                logger.warn("TwitterService failed to respond with a valid home timeline. " +
+                logger.warn("Twitter failed to respond with a valid home timeline. " +
                         "Sending 500 Internal Server Error.");
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).
                         entity(ResponseUtil.getNullResponseErrorMessage(GetTimelineResource.ATTEMPTED_ACTION)).build();
             }
-            logger.info("Successfully retrieved home timeline from TwitterService. Sending 200 OK response.");
+            logger.info("Successfully retrieved home timeline from Twitter. Sending 200 OK response.");
             return Response.ok(statuses).build(); // Successfully got timeline
 
         } catch (TwitterException e) {
@@ -103,19 +104,19 @@ public class TwitterService {
         try {
             if (exception.getErrorCode() == TwitterErrorCode.BAD_AUTH_DATA.getCode() ||
                     exception.getErrorCode() == TwitterErrorCode.COULD_NOT_AUTH.getCode()) {
-                logger.error("TwitterService authentication failed. Please restart server with valid TwitterService credentials." +
-                                " TwitterService credentials can be generated or retrieved here: " +
+                logger.error("Twitter authentication failed. Please restart server with valid Twitter credentials." +
+                                " Twitter credentials can be generated or retrieved here: " +
                                 " https://developer.twitter.com/en/apps. Configuration file used for credentials: {}",
                         TweetingApplication.getConfigFileName(), exception);
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).
                         entity(ResponseUtil.getServiceUnavailableErrorMessage(attemptedAction)).build();
 
             } else if (exception.isCausedByNetworkIssue()) {
-                logger.error("Connection to TwitterService failed.", exception);
+                logger.error("Connection to Twitter failed.", exception);
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).
                         entity(ResponseUtil.getNetworkErrorMessage(attemptedAction)).build();
             } else { // 'Other' fail-safe
-                logger.error("Request to TwitterService failed. Error code: {} Error message: \"{}\"",
+                logger.error("Request to Twitter failed. Error code: {} Error message: \"{}\"",
                         exception.getErrorCode(), exception.getMessage(), exception);
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).
                         entity(ResponseUtil.getOtherErrorMessage(attemptedAction, exception.getErrorMessage())).build();

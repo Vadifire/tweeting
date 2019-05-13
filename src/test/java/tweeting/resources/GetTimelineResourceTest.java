@@ -4,17 +4,13 @@ import org.junit.Before;
 import org.junit.Test;
 import tweeting.util.ResponseUtil;
 import tweeting.util.TwitterExceptionHandler;
-import twitter4j.ResponseList;
-import twitter4j.Status;
-import twitter4j.Twitter;
-import twitter4j.TwitterException;
+import twitter4j.*;
 
 import javax.ws.rs.core.Response;
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
 import static org.mockito.Mockito.*;
-
 
 public class GetTimelineResourceTest {
 
@@ -32,7 +28,6 @@ public class GetTimelineResourceTest {
 
         timelineResource = new GetTimelineResource(api); // Use the Mocked API instead of the usual TwitterAPIImpl.
         timelineResource.setExceptionHandler(exceptionHandler); // Ensure no dependency
-
     }
 
     @Test
@@ -67,7 +62,7 @@ public class GetTimelineResourceTest {
     }
 
     @Test
-    public void testTimelineException() throws TwitterException {
+    public void testTimelineTwitterException() throws TwitterException {
 
         // Test that getHomeTimeline() properly calls catchTwitterException() in exception case
 
@@ -83,6 +78,21 @@ public class GetTimelineResourceTest {
         verify(exceptionHandler).catchTwitterException(dummyException);
         assertNotNull(actualResponse);
         assertEquals(expectedResponse, actualResponse);
+    }
+
+    @Test
+    public void testTimelineGeneralException() throws TwitterException {
+        RuntimeException dummyException = mock(RuntimeException.class);
+
+        when(api.getHomeTimeline()).thenThrow(dummyException);
+
+        Response actualResponse = timelineResource.getTweets();
+
+        verify(api).getHomeTimeline();
+        assertNotNull(actualResponse);
+        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), actualResponse.getStatus()); // Verify code
+        assertEquals(ResponseUtil.getServiceUnavailableErrorMessage(GetTimelineResource.ATTEMPTED_ACTION),
+                actualResponse.getEntity().toString());
     }
 
 }

@@ -2,12 +2,14 @@ package tweeting.conf;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 public class TwitterOAuthCredentials {
 
     @NotNull
     @JsonProperty
+    @Valid
     private AccessTokenDetails accessTokenDetails;
 
     public void setAccessTokenDetails(AccessTokenDetails accessTokenDetails) {
@@ -20,6 +22,7 @@ public class TwitterOAuthCredentials {
 
     @NotNull
     @JsonProperty
+    @Valid
     private ConsumerAPIKeys consumerAPIKeys;
 
     public void setConsumerAPIKeys(ConsumerAPIKeys consumerAPIKeys) {

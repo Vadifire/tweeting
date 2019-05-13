@@ -20,6 +20,10 @@ build
 # Ignore IntelliJ idea directory
 .idea
 
-#Ignore auth credentials 
+# Ignore auth credentials
 twitter4j.properties
 config.yml
+
+# Ignore log files
+log
+*.log

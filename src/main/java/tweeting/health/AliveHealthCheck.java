@@ -1,6 +1,8 @@
 package tweeting.health;
 
 import com.codahale.metrics.health.HealthCheck;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /*
  * Used to report that the Server is still alive.
@@ -11,9 +13,17 @@ import com.codahale.metrics.health.HealthCheck;
 
 public class AliveHealthCheck extends HealthCheck {
 
+    private static final Logger logger = LoggerFactory.getLogger(HealthCheck.class);
+
     @Override
     public Result check() {
-        return Result.healthy();
+        try {
+            logger.info("Application is healthy. Sending 200 OK response.");
+            return Result.healthy();
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            return Result.unhealthy("Server encountered error while performing health check.");
+        }
     }
 
 }

@@ -10,10 +10,14 @@ import javax.ws.rs.core.Response;
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
 
 import org.junit.Before;
 import org.junit.Test;
+import twitter4j.util.CharacterUtil;
 
 public class PostTweetResourceTest {
 
@@ -45,6 +49,7 @@ public class PostTweetResourceTest {
 
         verify(api).updateStatus(message);
         assertNotNull(response);
+        System.out.println(response.getStatus());
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
         assertEquals(mockedStatus, response.getEntity());
     }
@@ -63,19 +68,19 @@ public class PostTweetResourceTest {
     public void testTweetZeroLength() {
         String message = "";
 
-        Response response = tweetResource.postTweet(message); //0 length test case
+        Response response = tweetResource.postTweet(message); // 0 length test case
 
         assertNotNull(response);
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
         assertEquals(ResponseUtil.getParamBadLengthErrorMessage(PostTweetResource.ATTEMPTED_ACTION,
-                PostTweetResource.MESSAGE_PARAM, PostTweetResource.PARAM_UNIT, PostTweetResource.MIN_TWEET_LENGTH,
-                PostTweetResource.MAX_TWEET_LENGTH), response.getEntity().toString());
+                PostTweetResource.MESSAGE_PARAM, PostTweetResource.PARAM_UNIT,
+                CharacterUtil.MAX_TWEET_LENGTH), response.getEntity().toString());
     }
 
     @Test
     public void testTweetMaxLength() throws TwitterException {
         StringBuilder sb = new StringBuilder();
-        for (int i = 0 ; i < PostTweetResource.MAX_TWEET_LENGTH; i++) {
+        for (int i = 0 ; i < CharacterUtil.MAX_TWEET_LENGTH; i++) {
             sb.append("a"); // single character
         }
 
@@ -92,7 +97,7 @@ public class PostTweetResourceTest {
     @Test
     public void testTweetTooLong() {
         StringBuilder sb = new StringBuilder();
-        for (int i = 0 ; i < PostTweetResource.MAX_TWEET_LENGTH+1; i++) {
+        for (int i = 0 ; i < CharacterUtil.MAX_TWEET_LENGTH+1; i++) {
             sb.append("a"); // single character
         }
 
@@ -101,12 +106,12 @@ public class PostTweetResourceTest {
         assertNotNull(response);
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
         assertEquals(ResponseUtil.getParamBadLengthErrorMessage(PostTweetResource.ATTEMPTED_ACTION,
-                PostTweetResource.MESSAGE_PARAM, PostTweetResource.PARAM_UNIT,
-                1, PostTweetResource.MAX_TWEET_LENGTH), response.getEntity().toString());
+                PostTweetResource.MESSAGE_PARAM, PostTweetResource.PARAM_UNIT, CharacterUtil.MAX_TWEET_LENGTH),
+                response.getEntity().toString());
     }
 
     @Test
-    public void testTweetException() throws TwitterException {
+    public void testTweetTwitterException() throws TwitterException {
 
         // Test that postTweet() properly calls catchTwitterException() in exception case
 
@@ -123,5 +128,21 @@ public class PostTweetResourceTest {
         verify(exceptionHandler).catchTwitterException(dummyException);
         assertNotNull(actualResponse);
         assertEquals(expectedResponse, actualResponse);
+    }
+
+    @Test
+    public void testTweetGeneralException() throws TwitterException {
+        String message = "Some Twitter Exception";
+        RuntimeException dummyException = mock(RuntimeException.class);
+
+        when(api.updateStatus(anyString())).thenThrow(dummyException);
+
+        Response actualResponse = tweetResource.postTweet(message);
+
+        verify(api).updateStatus(message);
+        assertNotNull(actualResponse);
+        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), actualResponse.getStatus()); // Verify code
+        assertEquals(ResponseUtil.getServiceUnavailableErrorMessage(PostTweetResource.ATTEMPTED_ACTION),
+                actualResponse.getEntity().toString());
     }
 }

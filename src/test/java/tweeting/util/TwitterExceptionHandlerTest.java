@@ -37,7 +37,7 @@ public class TwitterExceptionHandlerTest {
 
         assertNotNull(response);
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
-        assertEquals(ResponseUtil.getAuthFailErrorMessage(attemptedAction), response.getEntity().toString());
+        assertEquals(ResponseUtil.getServiceUnavailableErrorMessage(attemptedAction), response.getEntity().toString());
     }
 
     @Test
@@ -48,7 +48,7 @@ public class TwitterExceptionHandlerTest {
 
         assertNotNull(response);
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
-        assertEquals(ResponseUtil.getAuthFailErrorMessage(attemptedAction), response.getEntity().toString());
+        assertEquals(ResponseUtil.getServiceUnavailableErrorMessage(attemptedAction), response.getEntity().toString());
     }
 
     @Test
@@ -77,6 +77,22 @@ public class TwitterExceptionHandlerTest {
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
         assertEquals(ResponseUtil.getOtherErrorMessage(attemptedAction, dummyCauseMessage),
                 response.getEntity().toString());
+    }
+
+    @Test
+    public void testGeneralException() {
+        RuntimeException dummyRuntimeException = mock(RuntimeException.class);
+        TwitterException dummyTwitterException = mock(TwitterException.class);
+
+        when(dummyTwitterException.getErrorCode()).thenThrow(dummyRuntimeException);
+
+        Response actualResponse = exceptionHandler.catchTwitterException(dummyTwitterException);
+
+        assertNotNull(actualResponse);
+        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), actualResponse.getStatus()); // Verify code
+        assertEquals(ResponseUtil.getServiceUnavailableErrorMessage(attemptedAction),
+                actualResponse.getEntity().toString());
+
     }
 
 

@@ -42,6 +42,11 @@ public class TwitterService {
         }
         return instance;
     }
+    
+    // API must be set to make calls to Twitter4J
+    public void setTwitterAPI(Twitter api) {
+        this.api = api;
+    }
 
     public Response postTweet(String message) {
         try {
@@ -127,11 +132,4 @@ public class TwitterService {
                     entity(ResponseUtil.getServiceUnavailableErrorMessage(attemptedAction))).build();
         }
     }
-
-    // Used for mocking
-    public void setTwitterAPI(Twitter api) {
-        this.api = api;
-    }
-
-
 }

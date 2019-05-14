@@ -8,13 +8,7 @@ public class TwitterServiceException extends Exception {
     private int errorCode;
 
     public TwitterServiceException(TwitterException te) {
-        super(te.getErrorMessage(), te);
-        this.twitterException = te;
-    }
-
-    // Allow overwriting of Twitter4J's message.
-    public TwitterServiceException(String message, TwitterException te) {
-        super(message, te);
+        super(te.isCausedByNetworkIssue() ? "No response from Twitter" : te.getErrorMessage(), te);
         this.twitterException = te;
     }
 

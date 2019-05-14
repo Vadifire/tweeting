@@ -59,19 +59,6 @@ public class TwitterServiceTest {
         }
     }
 
-    @Test(expected = TwitterServiceException.class)
-    public void testGetTweetsNetworkException() throws TwitterException, TwitterServiceException {
-        TwitterException te = mock(TwitterException.class);
-        when(api.getHomeTimeline()).thenThrow(te);
-        when(te.isCausedByNetworkIssue()).thenReturn(true);
-        try {
-            service.getTweets();
-        } catch (TwitterServiceException e) {
-            assertTrue(e.isCausedByNetworkIssue());
-            throw e;
-        }
-    }
-
     @Test
     public void testPostTweetSuccess() throws TwitterException, TwitterServiceException {
         Status mockedStatus = mock(Status.class);
@@ -124,25 +111,12 @@ public class TwitterServiceTest {
     public void testPostTweetServiceException() throws TwitterException, TwitterServiceException {
         TwitterException te = mock(TwitterException.class);
         when(api.updateStatus(anyString())).thenThrow(te);
-        when(te.isCausedByNetworkIssue()).thenReturn(false);
-        try {
-            service.postTweet("some message");
-        } catch (TwitterServiceException e) {
-            throw e;
-        }
-    }
-
-    @Test(expected = TwitterServiceException.class)
-    public void testPostTweetNetworkException() throws TwitterException, TwitterServiceException {
-        TwitterException te = mock(TwitterException.class);
-        when(api.getHomeTimeline()).thenThrow(te);
         when(te.isCausedByNetworkIssue()).thenReturn(true);
         try {
-            service.getTweets();
+            service.postTweet("some message");
         } catch (TwitterServiceException e) {
             assertTrue(e.isCausedByNetworkIssue());
             throw e;
         }
     }
-
 }

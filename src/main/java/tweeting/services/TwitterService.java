@@ -66,7 +66,7 @@ public class TwitterService {
         try {
             return api.getHomeTimeline();
         } catch (TwitterException te) {
-            throw createTwitterServiceException(te);
+            throw new TwitterServiceException(te);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return null;
@@ -93,18 +93,10 @@ public class TwitterService {
         try {
             return api.updateStatus(message);
         } catch (TwitterException te) {
-            throw createTwitterServiceException(te);
+            throw new TwitterServiceException(te);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return null;
-        }
-    }
-
-    private TwitterServiceException createTwitterServiceException(TwitterException te) {
-        if (te.isCausedByNetworkIssue()) {
-            return new TwitterServiceException("No response from Twitter.", te);
-        } else {
-            return new TwitterServiceException(te); //Default builder
         }
     }
 

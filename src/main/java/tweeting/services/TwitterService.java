@@ -27,28 +27,36 @@ public class TwitterService {
     private TwitterService() {
     }
 
-    // 'Double Checked Locking' to make getInstance() thread safe
     public static TwitterService getInstance(TwitterOAuthCredentials auth) {
         try {
             if (instance == null) {
-                ConsumerAPIKeys consumerAPIKeys = auth.getConsumerAPIKeys();
-                AccessTokenDetails accessTokenDetails = auth.getAccessTokenDetails();
-                ConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
-                configurationBuilder.setDebugEnabled(true);
-                configurationBuilder.setJSONStoreEnabled(true); // Need in order to use getRawJSON
-                configurationBuilder.setOAuthConsumerKey(consumerAPIKeys.getConsumerAPIKey());
-                configurationBuilder.setOAuthConsumerSecret(consumerAPIKeys.getConsumerAPISecretKey());
-                configurationBuilder.setOAuthAccessToken(accessTokenDetails.getAccessToken());
-                configurationBuilder.setOAuthAccessTokenSecret(accessTokenDetails.getAccessTokenSecret());
-                TwitterFactory twitterFactory = new TwitterFactory(configurationBuilder.build());
                 instance = new TwitterService();
-                instance.api = twitterFactory.getInstance();
             }
+            ConsumerAPIKeys consumerAPIKeys = auth.getConsumerAPIKeys();
+            AccessTokenDetails accessTokenDetails = auth.getAccessTokenDetails();
+            ConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
+            configurationBuilder.setDebugEnabled(true);
+            configurationBuilder.setJSONStoreEnabled(true); // Need in order to use getRawJSON
+            configurationBuilder.setOAuthConsumerKey(consumerAPIKeys.getConsumerAPIKey());
+            configurationBuilder.setOAuthConsumerSecret(consumerAPIKeys.getConsumerAPISecretKey());
+            configurationBuilder.setOAuthAccessToken(accessTokenDetails.getAccessToken());
+            configurationBuilder.setOAuthAccessTokenSecret(accessTokenDetails.getAccessTokenSecret());
+            TwitterFactory twitterFactory = new TwitterFactory(configurationBuilder.build());
+            instance.api = twitterFactory.getInstance();
             return instance;
         } catch (Exception e) {
             logger.error(e.getMessage(), e); // Log error message in cause initialization fails
             throw e;
         }
+    }
+
+    public static TwitterService getInstance() {
+        if (instance == null) {
+            instance = new TwitterService();
+            TwitterFactory.getSingleton();
+            logger.warn("TwitterService has been instantiated with no Twitter credentials.");
+        }
+        return instance;
     }
 
     public List<Status> getTweets() throws TwitterServiceException {

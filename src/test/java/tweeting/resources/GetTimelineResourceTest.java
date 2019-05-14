@@ -38,7 +38,7 @@ public class GetTimelineResourceTest {
 
     @Test
     public void testTimelineSuccess() throws TwitterServiceException {
-        ResponseList<Status> dummyList = mock(ResponseList.class); // Dummy linked list to return from getHomeTimeline()
+        ResponseList<Status> dummyList = mock(ResponseList.class); // Dummy list to return from getTweets()
         Status mockedStatus = mock(Status.class);
         dummyList.add(mockedStatus); // Populate list with mocked Status
 
@@ -46,7 +46,7 @@ public class GetTimelineResourceTest {
 
         Response response = timelineResource.getTweets();
 
-        verify(service).getTweets(); // Verify we have actually made the call to getHomeTimeline()
+        verify(service).getTweets(); // Verify we have actually made the call to getTweets()
 
         assertNotNull(response);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus()); // Verify correct response code

@@ -41,7 +41,7 @@ public class TweetingApplication extends Application<TweetingConfiguration> {
         try {
             logger.debug("Configuring Tweeting application");
             TwitterOAuthCredentials auth = config.getAuthorization();
-            final TwitterService service = TwitterService.getInstance(auth);
+            TwitterService.getInstance(auth);
 
             logger.info("Twitter credentials have been configured using the {} configuration file.",
                     getConfigFileName());

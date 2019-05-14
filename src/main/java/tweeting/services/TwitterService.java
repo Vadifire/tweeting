@@ -54,7 +54,8 @@ public class TwitterService {
         if (instance == null) {
             instance = new TwitterService();
             TwitterFactory.getSingleton();
-            logger.warn("TwitterService has been instantiated with no Twitter credentials.");
+            logger.warn("TwitterService has been instantiated with no Twitter credentials. Please call getInstance" +
+                    "with TwitterOAuthCredentials parameter to set credentials to support calls to Twitter.");
         }
         return instance;
     }

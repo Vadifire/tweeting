@@ -18,9 +18,9 @@ public class TwitterServiceException extends Exception {
         this.errorCode = errorCode.getCode();
     }
 
-    // Used for parameter NullPointerExceptions
-    public TwitterServiceException(String message, Exception cause) {
-        super(message, cause);
+    // Used for NullPointerExceptions caused by missing parameter
+    public TwitterServiceException(String parameter, NullPointerException cause) {
+        super(parameter, cause);
     }
 
     public int getErrorCode() {
@@ -43,7 +43,7 @@ public class TwitterServiceException extends Exception {
 
     public String getMissingParam() {
         if (this.getCause() instanceof NullPointerException) {
-            return this.getCause().getMessage(); //
+            return this.getCause().getMessage();
         } else {
             return null;
         }

@@ -65,17 +65,17 @@ public class TwitterService {
         try {
             return api.getHomeTimeline();
         } catch (TwitterException te) {
-            throw new TwitterServiceException(te);
+            throw createTwitterServiceException(te);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return null;
         }
     }
 
-    public Status postTweet(String message) throws TwitterServiceException{
+    public Status postTweet(String message) throws TwitterServiceException {
         // Prelim checks (avoid calling to Twitter if unnecessary)
         if (message == null) {
-            TwitterServiceException e =  new TwitterServiceException("Request is missing message parameter.",
+            TwitterServiceException e = new TwitterServiceException("Request is missing message parameter.",
                     new NullPointerException("message"));
             throw e;
         }
@@ -92,10 +92,18 @@ public class TwitterService {
         try {
             return api.updateStatus(message);
         } catch (TwitterException te) {
-            throw new TwitterServiceException(te);
+            throw createTwitterServiceException(te);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return null;
+        }
+    }
+
+    private TwitterServiceException createTwitterServiceException(TwitterException te) {
+        if (te.isCausedByNetworkIssue()) {
+            return new TwitterServiceException("No response from Twitter.", te);
+        } else {
+            return new TwitterServiceException(te); //Default builder
         }
     }
 }

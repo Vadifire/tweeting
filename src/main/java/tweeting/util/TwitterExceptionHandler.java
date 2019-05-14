@@ -3,6 +3,8 @@ package tweeting.util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tweeting.TweetingApplication;
+import tweeting.services.TwitterErrorCode;
+import tweeting.services.TwitterServiceException;
 
 import javax.ws.rs.core.Response;
 
@@ -28,16 +30,15 @@ public class TwitterExceptionHandler {
                         TweetingApplication.getConfigFileName(), exception);
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).
                         entity(ResponseUtil.getServiceUnavailableErrorMessage(attemptedAction)).build();
-
             } else if (exception.isCausedByNetworkIssue()) {
                 logger.error("Connection to Twitter failed.", exception);
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).
                         entity(ResponseUtil.getNetworkErrorMessage(attemptedAction)).build();
             } else { // 'Other' fail-safe
-                logger.error("Request to Twitter failed. Error code: {} Error message: \"{}\"",
-                        exception.getErrorCode(), exception.getMessage(), exception);
+                logger.error("Request to Twitter failed. Error code: {}",
+                        exception.getErrorCode(), exception);
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).
-                        entity(ResponseUtil.getOtherErrorMessage(attemptedAction, exception.getErrorMessage())).build();
+                        entity(ResponseUtil.getOtherErrorMessage(attemptedAction, exception.getMessage())).build();
             }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);

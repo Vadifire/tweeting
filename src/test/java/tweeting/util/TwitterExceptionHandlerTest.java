@@ -2,7 +2,8 @@ package tweeting.util;
 
 import org.junit.Before;
 import org.junit.Test;
-import twitter4j.*;
+import tweeting.services.TwitterErrorCode;
+import tweeting.services.TwitterServiceException;
 
 import javax.ws.rs.core.Response;
 
@@ -69,7 +70,7 @@ public class TwitterExceptionHandlerTest {
 
         when(mockedException.getErrorCode()).thenReturn(-1); // Test some other error code
         when(mockedException.isCausedByNetworkIssue()).thenReturn(false); // Don't rely on Twitter4J impl.
-        when(mockedException.getErrorMessage()).thenReturn(dummyCauseMessage);
+        when(mockedException.getMessage()).thenReturn(dummyCauseMessage);
 
         Response response = exceptionHandler.catchTwitterException(mockedException);
 

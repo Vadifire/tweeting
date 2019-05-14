@@ -1,12 +1,11 @@
 package tweeting.services;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tweeting.conf.AccessTokenDetails;
 import tweeting.conf.ConsumerAPIKeys;
 import tweeting.conf.TwitterOAuthCredentials;
-import tweeting.resources.GetTimelineResource;
-import tweeting.util.TwitterServiceException;
 import twitter4j.Status;
 import twitter4j.TwitterException;
 import twitter4j.Twitter;
@@ -22,7 +21,9 @@ public class TwitterService {
 
     private Twitter api;
 
-    private static final Logger logger = LoggerFactory.getLogger(GetTimelineResource.class);
+    private static final Logger logger = LoggerFactory.getLogger(TwitterService.class);
+
+    public static final int MAX_TWEET_LENGTH = CharacterUtil.MAX_TWEET_LENGTH; // To not expose Twitter4J
 
     private TwitterService() {
     }
@@ -71,7 +72,23 @@ public class TwitterService {
         }
     }
 
-    public Status postTweet(String message) throws TwitterServiceException {
+    public Status postTweet(String message) throws TwitterServiceException{
+        // Prelim checks (avoid calling to Twitter if unnecessary)
+        if (message == null) {
+            TwitterServiceException e =  new TwitterServiceException("Request is missing message parameter.",
+                    new NullPointerException("message"));
+            throw e;
+        }
+        if (StringUtils.isBlank(message)) {
+            TwitterServiceException e = new TwitterServiceException("Message parameter is blank.",
+                    TwitterErrorCode.MESSAGE_BLANK);
+            throw e;
+        } else if (message.length() > MAX_TWEET_LENGTH) {
+            TwitterServiceException e = new TwitterServiceException("Message parameter is over the  "
+                    + MAX_TWEET_LENGTH + " character limit.", TwitterErrorCode.MESSAGE_TOO_LONG);
+            throw e;
+        }
+
         try {
             return api.updateStatus(message);
         } catch (TwitterException te) {
@@ -80,9 +97,5 @@ public class TwitterService {
             logger.error(e.getMessage(), e);
             return null;
         }
-    }
-
-    public int getMaxCharacterLength() {
-        return CharacterUtil.MAX_TWEET_LENGTH;
     }
 }

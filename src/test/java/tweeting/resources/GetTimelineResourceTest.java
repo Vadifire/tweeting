@@ -5,7 +5,7 @@ import org.junit.Test;
 import tweeting.services.TwitterService;
 import tweeting.util.ResponseUtil;
 import tweeting.util.TwitterExceptionHandler;
-import tweeting.util.TwitterServiceException;
+import tweeting.services.TwitterServiceException;
 import twitter4j.ResponseList;
 import twitter4j.Status;
 
@@ -54,21 +54,7 @@ public class GetTimelineResourceTest {
     }
 
     @Test
-    public void testTimelineNullResponse() throws TwitterServiceException {
-        when(service.getTweets()).thenReturn(null);
-
-        Response response = timelineResource.getTweets();
-
-        verify(service).getTweets(); // Verify we have actually made the call to getHomeTimeline()
-
-        assertNotNull(response);
-        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus()); // Verify code
-        assertEquals(ResponseUtil.getNullResponseErrorMessage(GetTimelineResource.ATTEMPTED_ACTION),
-                response.getEntity().toString());
-    }
-
-    @Test
-    public void testTimelineTwitterException() throws TwitterServiceException {
+    public void testTimelineServiceException() throws TwitterServiceException {
 
         // Test that getHomeTimeline() properly calls catchTwitterException() in exception case
 

@@ -1,12 +1,12 @@
 package tweeting.resources;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tweeting.services.TwitterErrorCode;
 import tweeting.services.TwitterService;
 import tweeting.util.ResponseUtil;
 import tweeting.util.TwitterExceptionHandler;
-import tweeting.util.TwitterServiceException;
+import tweeting.services.TwitterServiceException;
 import twitter4j.Status;
 
 import javax.ws.rs.Consumes;
@@ -44,18 +44,6 @@ public class PostTweetResource {
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public Response postTweet(@FormParam(MESSAGE_PARAM) String message) { // Receives message from JSON data
         try {
-            if (message == null) {
-                logger.debug("Request is missing message parameter. Sending 400 Bad Request error.");
-                return Response.status(Response.Status.BAD_REQUEST).
-                        entity(ResponseUtil.getNullParamErrorMessage(ATTEMPTED_ACTION, MESSAGE_PARAM)).build();
-            }
-            if (message.length() > service.getMaxCharacterLength() || StringUtils.isBlank(message)) {
-                logger.debug("Message parameter is blank or over the {} character limit. Sending 400 Bad Request " +
-                        "error.", service.getMaxCharacterLength());
-                return Response.status(Response.Status.BAD_REQUEST).
-                        entity(ResponseUtil.getParamBadLengthErrorMessage(ATTEMPTED_ACTION, MESSAGE_PARAM,
-                                PARAM_UNIT, service.getMaxCharacterLength())).build();
-            }
             final Status returnedStatus = service.postTweet(message); // Status should be updated to message
             logger.info("Successfully posted '{}' to Twitter. Sending 201 Created response.", message);
             // Return successful response with returned status
@@ -63,9 +51,21 @@ public class PostTweetResource {
             responseBuilder.type(MediaType.APPLICATION_JSON);
             Response response = responseBuilder.entity(returnedStatus).build();
             return response;
-
         } catch (TwitterServiceException e) {
-            return exceptionHandler.catchTwitterException(e);
+            if (e.isCausedByNullParam()) {
+                logger.debug("Request is missing message parameter. Sending 400 Bad Request error.", e);
+                return Response.status(Response.Status.BAD_REQUEST).
+                        entity(ResponseUtil.getNullParamErrorMessage(ATTEMPTED_ACTION, MESSAGE_PARAM)).build();
+            } else if (e.getErrorCode() == TwitterErrorCode.MESSAGE_BLANK.getCode() ||
+                    e.getErrorCode() == TwitterErrorCode.MESSAGE_TOO_LONG.getCode()) {
+                    logger.debug("Message parameter is blank or over the {} character limit. Sending 400 Bad Request " +
+                            "error.", service.MAX_TWEET_LENGTH, e);
+                    return Response.status(Response.Status.BAD_REQUEST).
+                            entity(ResponseUtil.getParamBadLengthErrorMessage(ATTEMPTED_ACTION, MESSAGE_PARAM,
+                                    PARAM_UNIT, service.MAX_TWEET_LENGTH)).build();
+            } else {
+                return exceptionHandler.catchTwitterException(e);
+            }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return (Response.status(Response.Status.INTERNAL_SERVER_ERROR).

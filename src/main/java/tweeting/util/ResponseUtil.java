@@ -20,10 +20,6 @@ public class ResponseUtil {
         return "Could not " + attemptedAction + ": " + errorMessage;
     }
 
-    public static String getNullResponseErrorMessage(String attemptedAction) {
-        return "Failed to " + attemptedAction + " from Twitter.";
-    }
-
     public static String getNullParamErrorMessage(String attemptedAction, String missingParam) {
         return "Could not " + attemptedAction + " because no " + missingParam + " was specified.";
     }

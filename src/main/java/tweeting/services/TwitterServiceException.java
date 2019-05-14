@@ -13,8 +13,8 @@ public class TwitterServiceException extends Exception {
     }
 
     // Allow overwriting of Twitter4J's message.
-    public TwitterServiceException(String customMessage, TwitterException te) {
-        super(customMessage, te);
+    public TwitterServiceException(String message, TwitterException te) {
+        super(message, te);
         this.twitterException = te;
     }
 
@@ -24,6 +24,7 @@ public class TwitterServiceException extends Exception {
         this.errorCode = errorCode.getCode();
     }
 
+    // Used for parameter NullPointerExceptions
     public TwitterServiceException(String message, Exception cause) {
         super(message, cause);
     }

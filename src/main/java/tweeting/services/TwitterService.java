@@ -7,13 +7,14 @@ import tweeting.conf.AccessTokenDetails;
 import tweeting.conf.ConsumerAPIKeys;
 import tweeting.conf.TwitterOAuthCredentials;
 import twitter4j.Status;
-import twitter4j.TwitterException;
 import twitter4j.Twitter;
+import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.conf.ConfigurationBuilder;
 import twitter4j.util.CharacterUtil;
 
 import java.util.List;
+
 
 public class TwitterService {
 
@@ -105,5 +106,10 @@ public class TwitterService {
         } else {
             return new TwitterServiceException(te); //Default builder
         }
+    }
+
+    // Used for mocking purposes
+    public void setAPI(Twitter api) {
+        this.api = api;
     }
 }

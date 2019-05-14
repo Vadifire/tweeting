@@ -65,6 +65,9 @@ public class TwitterService {
             return api.getHomeTimeline();
         } catch (TwitterException te) {
             throw new TwitterServiceException(te);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            return null;
         }
     }
 
@@ -73,6 +76,9 @@ public class TwitterService {
             return api.updateStatus(message);
         } catch (TwitterException te) {
             throw new TwitterServiceException(te);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            return null;
         }
     }
 

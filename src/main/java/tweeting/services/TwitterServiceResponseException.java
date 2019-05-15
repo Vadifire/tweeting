@@ -5,13 +5,13 @@ import twitter4j.TwitterException;
 /*
  * An exception that occurs while using TwitterService and fails while making a call to Twitter
  */
-public class BadTwitterServiceResponseException extends Exception {
+public class TwitterServiceResponseException extends Exception {
 
-    public BadTwitterServiceResponseException(TwitterException cause) {
+    public TwitterServiceResponseException(TwitterException cause) {
         super(cause.getErrorMessage(), cause);
     }
 
-    public BadTwitterServiceResponseException(String message, TwitterException cause) {
+    public TwitterServiceResponseException(String message, TwitterException cause) {
         super(message, cause);
     }
 

@@ -57,8 +57,6 @@ public class TwitterServiceTest {
     @Test
     public void testGetTweetsSuccess() throws TwitterException, BadTwitterServiceResponseException {
         ResponseList<Status> dummyList = mock(ResponseList.class);
-        Status mockedStatus = mock(Status.class);
-        dummyList.add(mockedStatus);
         when(api.getHomeTimeline()).thenReturn(dummyList);
 
         List<Status> actualList = service.getHomeTimeline();

@@ -5,7 +5,7 @@ import java.util.Date;
 public class Tweet {
 
     private String message;
-    private User user;
+    private TwitterUser user;
     private Date createdAt;
 
     public String getMessage() {
@@ -16,11 +16,11 @@ public class Tweet {
         this.message = message;
     }
 
-    public User getUser() {
+    public TwitterUser getUser() {
         return user;
     }
 
-    public void setUser(User user) {
+    public void setUser(TwitterUser user) {
         this.user = user;
     }
 

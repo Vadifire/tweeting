@@ -5,7 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tweeting.conf.TwitterOAuthCredentials;
 import tweeting.models.Tweet;
-import tweeting.models.User;
+import tweeting.models.TwitterUser;
 import tweeting.util.ResponseUtil;
 import twitter4j.Status;
 import twitter4j.Twitter;
@@ -91,7 +91,7 @@ public class TwitterService {
     private Tweet constructTweet(Status status){
         Tweet tweet = new Tweet();
         tweet.setMessage(status.getText());
-        User user = new User();
+        TwitterUser user = new TwitterUser();
         user.setTwitterHandle(status.getUser().getScreenName());
         user.setName(status.getUser().getName());
         user.setProfileImageUrl(status.getUser().getProfileImageURL());

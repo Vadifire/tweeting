@@ -1,6 +1,6 @@
 package tweeting.models;
 
-public class User {
+public class TwitterUser {
 
     private String twitterHandle;
     private String name;

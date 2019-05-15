@@ -3,8 +3,8 @@ package tweeting.resources;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tweeting.models.Tweet;
-import tweeting.services.BadTwitterServiceResponseException;
 import tweeting.services.TwitterService;
+import tweeting.services.TwitterServiceResponseException;
 import tweeting.util.ResponseUtil;
 
 import javax.ws.rs.Consumes;
@@ -13,10 +13,9 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
-
+import javax.ws.rs.core.Response;
 import java.util.List;
 import java.util.stream.Collectors;
-import javax.ws.rs.core.Response;
 
 @Path("/api/1.0/tweet/filter")
 @Produces(MediaType.APPLICATION_JSON)
@@ -48,7 +47,7 @@ public class GetFilteredTimelineResource {
                     .collect(Collectors.toList());
             logger.info("Successfully retrieved home timeline from Twitter. Sending 200 OK response.");
             return Response.ok(filteredTweets).build(); // Successfully got timeline
-        } catch (BadTwitterServiceResponseException e) {
+        } catch (TwitterServiceResponseException e) {
             logger.error("Sending 500 Internal Server error", e);
             return (Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage())).build();
         } catch (Exception e) {

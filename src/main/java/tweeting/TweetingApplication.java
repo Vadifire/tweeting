@@ -70,9 +70,9 @@ public class TweetingApplication extends Application<TweetingConfiguration> {
             final PostTweetResource tweetResource = new PostTweetResource(service);
             env.jersey().register(tweetResource);
             logger.debug("Registered resource: {}", tweetResource.getClass().getName());
-            final GetFilteredTimelineResource filteredResource = new GetFilteredTimelineResource(service);
-            env.jersey().register(filteredResource);
-            logger.debug("Registered resource: {}", filteredResource.getClass().getName());
+            final GetFilteredTimelineResource filterResource = new GetFilteredTimelineResource(service);
+            env.jersey().register(filterResource);
+            logger.debug("Registered resource: {}", filterResource.getClass().getName());
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             System.exit(1);

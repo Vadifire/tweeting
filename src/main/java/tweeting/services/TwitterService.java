@@ -3,8 +3,6 @@ package tweeting.services;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import tweeting.conf.AccessTokenDetails;
-import tweeting.conf.ConsumerAPIKeys;
 import tweeting.conf.TwitterOAuthCredentials;
 import tweeting.models.Tweet;
 import tweeting.models.User;
@@ -34,26 +32,19 @@ public class TwitterService {
     }
 
     public static TwitterService getInstance(TwitterOAuthCredentials auth) {
-        try {
-            if (instance == null) {
-                instance = new TwitterService();
-            }
-            ConsumerAPIKeys consumerAPIKeys = auth.getConsumerAPIKeys();
-            AccessTokenDetails accessTokenDetails = auth.getAccessTokenDetails();
-            ConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
-            configurationBuilder.setDebugEnabled(true);
-            configurationBuilder.setJSONStoreEnabled(true); // Need in order to use getRawJSON
-            configurationBuilder.setOAuthConsumerKey(consumerAPIKeys.getConsumerAPIKey());
-            configurationBuilder.setOAuthConsumerSecret(consumerAPIKeys.getConsumerAPISecretKey());
-            configurationBuilder.setOAuthAccessToken(accessTokenDetails.getAccessToken());
-            configurationBuilder.setOAuthAccessTokenSecret(accessTokenDetails.getAccessTokenSecret());
-            TwitterFactory twitterFactory = new TwitterFactory(configurationBuilder.build());
-            instance.api = twitterFactory.getInstance();
-            return instance;
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e); // Log error message in cause initialization fails
-            throw e;
+        if (instance == null) {
+            instance = new TwitterService();
         }
+        ConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
+        configurationBuilder.setDebugEnabled(true);
+        configurationBuilder.setJSONStoreEnabled(true); // Need in order to use getRawJSON
+        configurationBuilder.setOAuthConsumerKey(auth.getConsumerAPIKey());
+        configurationBuilder.setOAuthConsumerSecret(auth.getConsumerAPISecretKey());
+        configurationBuilder.setOAuthAccessToken(auth.getAccessToken());
+        configurationBuilder.setOAuthAccessTokenSecret(auth.getAccessTokenSecret());
+        TwitterFactory twitterFactory = new TwitterFactory(configurationBuilder.build());
+        instance.api = twitterFactory.getInstance();
+        return instance;
     }
 
     public static TwitterService getInstance() {
@@ -71,9 +62,6 @@ public class TwitterService {
             return constructTweetList(api.getHomeTimeline());
         } catch (TwitterException te) {
             throw createServerException(te);
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            return null;
         }
     }
 
@@ -88,9 +76,6 @@ public class TwitterService {
             return constructTweet(api.updateStatus(message));
         } catch (TwitterException te) {
             throw createServerException(te);
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            return null;
         }
     }
 
@@ -127,5 +112,8 @@ public class TwitterService {
     // Used for mocking purposes
     public void setAPI(Twitter api) {
         this.api = api;
+    }
+    public Twitter getAPI() {
+        return api;
     }
 }

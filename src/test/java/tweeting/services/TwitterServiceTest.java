@@ -6,6 +6,7 @@ import tweeting.models.Tweet;
 import tweeting.conf.TwitterOAuthCredentials;
 import tweeting.models.TwitterUser;
 import tweeting.util.ResponseUtil;
+import twitter4j.RateLimitStatus;
 import twitter4j.ResponseList;
 import twitter4j.Status;
 import twitter4j.Twitter;
@@ -13,6 +14,7 @@ import twitter4j.TwitterException;
 import twitter4j.User;
 import twitter4j.util.CharacterUtil;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -21,6 +23,7 @@ import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.verify;
 
@@ -85,18 +88,27 @@ public class TwitterServiceTest {
         assertEquals(tokenSecret, apiCreated.getConfiguration().getOAuthAccessTokenSecret());
     }
 
-    /*@Test
+    @Test
     public void testGetTweetsSuccess() throws TwitterException, BadTwitterServiceResponseException {
-        List<Status> dummyList = Arrays.asList(mockedStatus);
-
+        ResponseListImpl<Status> dummyList = new ResponseListImpl<>();
         dummyList.add(mockedStatus);
+
         when(api.getHomeTimeline()).thenReturn(dummyList);
 
         List<Tweet> actualList = service.getHomeTimeline();
 
         verify(api).getHomeTimeline();
-        assertEquals(dummyList, actualList);
-    }*/
+        assertNotNull(actualList);
+        assertEquals(dummyList.size(), actualList.size());
+        Tweet tweet = actualList.get(0); // Test tweet is correctly constructed
+        assertNotNull(tweet);
+        assertEquals(dummyMessage, tweet.getMessage());
+        assertEquals(dummyName, tweet.getUser().getName());
+        assertEquals(dummyScreenName, tweet.getUser().getTwitterHandle());
+        assertEquals(dummyDate, tweet.getCreatedAt());
+        assertEquals(dummyURL, tweet.getUser().getProfileImageUrl());
+
+    }
 
     @Test(expected = BadTwitterServiceResponseException.class)
     public void testGetTweetsServerException() throws TwitterException, BadTwitterServiceResponseException {
@@ -215,5 +227,20 @@ public class TwitterServiceTest {
             assertEquals(errorMessage, e.getMessage());
             throw e;
         }
+    }
+
+}
+
+// Need some class to implement ResponseList for testing purposes
+class ResponseListImpl<T> extends ArrayList<T> implements ResponseList<T> {
+
+    @Override
+    public RateLimitStatus getRateLimitStatus() {
+        return null;
+    }
+
+    @Override
+    public int getAccessLevel() {
+        return 0;
     }
 }

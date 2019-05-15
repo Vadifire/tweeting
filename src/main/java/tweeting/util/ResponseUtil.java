@@ -6,27 +6,21 @@ package tweeting.util;
  * This reduces duplicate code for resources
  */
 
+import twitter4j.util.CharacterUtil;
+
 public class ResponseUtil {
 
-    public static String getNetworkErrorMessage(String attemptedAction) {
-        return "Could not " + attemptedAction + " because connection to Twitter failed.";
+    public static String getServiceUnavailableErrorMessage() {
+        return "Service is temporarily unavailable.";
     }
 
-    public static String getServiceUnavailableErrorMessage(String attemptedAction) {
-        return "Could not " + attemptedAction + " because service is temporarily unavailable.";
+    public static String getNullTweetErrorMessage() {
+        return "Could not post tweet because message parameter is missing.";
     }
 
-    public static String getOtherErrorMessage(String attemptedAction, String errorMessage) {
-        return "Could not " + attemptedAction + ": " + errorMessage;
-    }
-
-    public static String getNullParamErrorMessage(String attemptedAction, String missingParam) {
-        return "Could not " + attemptedAction + " because no " + missingParam + " was specified.";
-    }
-
-    public static String getParamBadLengthErrorMessage(String attemptedAction, String param, String unit, int max) {
-        return "Could not " + attemptedAction + " because " + param + " must be not blank and within " + max + " " +
-                unit;
+    public static String getInvalidTweetErrorMessage() {
+        return "Could not post tweet because message was either blank or longer than " + CharacterUtil.MAX_TWEET_LENGTH
+                + " characters.";
     }
 
 }

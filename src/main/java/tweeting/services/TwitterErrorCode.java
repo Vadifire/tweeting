@@ -5,7 +5,7 @@ package tweeting.services;
  */
 public enum TwitterErrorCode {
 
-    BAD_AUTH_DATA(215), COULD_NOT_AUTH(32), MESSAGE_BLANK(170), MESSAGE_TOO_LONG(186);
+    BAD_AUTH_DATA(215), COULD_NOT_AUTH(32);
 
     TwitterErrorCode(int code) {
         this.code = code;

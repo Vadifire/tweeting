@@ -34,15 +34,15 @@ public class GetTimelineResourceTest {
 
     @Test
     public void testTimelineSuccess() throws BadTwitterServiceResponseException {
-        ResponseList<Status> dummyList = mock(ResponseList.class); // Dummy list to return from getTweets()
+        ResponseList<Status> dummyList = mock(ResponseList.class); // Dummy list to return from getHomeTimeline()
         Status mockedStatus = mock(Status.class);
         dummyList.add(mockedStatus); // Populate list with mocked Status
 
-        when(service.getTweets()).thenReturn(dummyList);
+        when(service.getHomeTimeline()).thenReturn(dummyList);
 
-        Response response = timelineResource.getTweets();
+        Response response = timelineResource.getHomeTimeline();
 
-        verify(service).getTweets(); // Verify we have actually made the call to getTweets()
+        verify(service).getHomeTimeline(); // Verify we have actually made the call to getHomeTimeline()
 
         assertNotNull(response);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus()); // Verify correct response code
@@ -55,11 +55,11 @@ public class GetTimelineResourceTest {
         BadTwitterServiceResponseException dummyException = new BadTwitterServiceResponseException(dummyErrorMessage,
                 null);
 
-        when(service.getTweets()).thenThrow(dummyException);
+        when(service.getHomeTimeline()).thenThrow(dummyException);
 
-        Response actualResponse = timelineResource.getTweets();
+        Response actualResponse = timelineResource.getHomeTimeline();
 
-        verify(service).getTweets();
+        verify(service).getHomeTimeline();
         assertNotNull(actualResponse);
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), actualResponse.getStatus());
         assertEquals(dummyErrorMessage, actualResponse.getEntity().toString());
@@ -69,14 +69,14 @@ public class GetTimelineResourceTest {
     public void testTimelineGeneralException() throws BadTwitterServiceResponseException {
         RuntimeException dummyException = new RuntimeException();
 
-        when(service.getTweets()).thenThrow(dummyException);
+        when(service.getHomeTimeline()).thenThrow(dummyException);
 
-        Response actualResponse = timelineResource.getTweets();
+        Response actualResponse = timelineResource.getHomeTimeline();
 
-        verify(service).getTweets();
+        verify(service).getHomeTimeline();
         assertNotNull(actualResponse);
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), actualResponse.getStatus()); // Verify code
-        assertEquals(ResponseUtil.getServiceUnavailableErrorMessage(GetTimelineResource.ATTEMPTED_ACTION),
+        assertEquals(ResponseUtil.getServiceUnavailableErrorMessage(),
                 actualResponse.getEntity().toString());
     }
 

@@ -19,8 +19,6 @@ import javax.ws.rs.core.Response;
 public class PostTweetResource {
 
     /* Constants */
-    public static final String MESSAGE_PARAM = "message"; // Used in ResponseUtil
-    public static final String ATTEMPTED_ACTION = "post tweet";
     private static final Logger logger = LoggerFactory.getLogger(PostTweetResource.class);
 
     private TwitterService service;
@@ -37,7 +35,7 @@ public class PostTweetResource {
      */
     @POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    public Response postTweet(@FormParam(MESSAGE_PARAM) String message) { // Receives message from JSON data
+    public Response postTweet(@FormParam("message") String message) { // Receives message from JSON data
         try {
             final Status returnedStatus = service.postTweet(message); // Status should be updated to message
             logger.info("Successfully posted '{}' to Twitter. Sending 201 Created response.", message);
@@ -55,7 +53,7 @@ public class PostTweetResource {
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return (Response.status(Response.Status.INTERNAL_SERVER_ERROR).
-                    entity(ResponseUtil.getServiceUnavailableErrorMessage(ATTEMPTED_ACTION))).build();
+                    entity(ResponseUtil.getServiceUnavailableErrorMessage())).build();
         }
     }
 

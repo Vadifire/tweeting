@@ -22,9 +22,6 @@ public class GetTimelineResource {
 
     private static final Logger logger = LoggerFactory.getLogger(GetTimelineResource.class);
 
-    /* Constants */
-    public static final String ATTEMPTED_ACTION = "retrieve home timeline";
-
     private TwitterService service;
 
     public GetTimelineResource(TwitterService service) {
@@ -38,9 +35,9 @@ public class GetTimelineResource {
      * Replace HOST and PORT with configured values
      */
     @GET
-    public Response getTweets() {
+    public Response getHomeTimeline() {
         try {
-            final List<Status> statuses = service.getTweets();
+            final List<Status> statuses = service.getHomeTimeline();
             logger.info("Successfully retrieved home timeline from Twitter. Sending 200 OK response.");
             return Response.ok(statuses).build(); // Successfully got timeline
         } catch (BadTwitterServiceResponseException e) {
@@ -49,7 +46,7 @@ public class GetTimelineResource {
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return (Response.status(Response.Status.INTERNAL_SERVER_ERROR).
-                    entity(ResponseUtil.getServiceUnavailableErrorMessage(ATTEMPTED_ACTION))).build();
+                    entity(ResponseUtil.getServiceUnavailableErrorMessage())).build();
         }
     }
 

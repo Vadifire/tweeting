@@ -1,7 +1,7 @@
 package tweeting.resources;
 
-import tweeting.services.BadTwitterServiceCallException;
 import tweeting.services.BadTwitterServiceResponseException;
+import tweeting.services.BadTwitterServiceCallException;
 import tweeting.services.TwitterService;
 import tweeting.util.ResponseUtil;
 import twitter4j.Status;
@@ -71,7 +71,8 @@ public class PostTweetResourceTest {
     public void testTweetServerException() throws BadTwitterServiceResponseException, BadTwitterServiceCallException {
         String dummyMessage = "some message";
         String dummyErrorMessage = "some error message";
-        BadTwitterServiceResponseException dummyException = new BadTwitterServiceResponseException(dummyErrorMessage, null);
+        BadTwitterServiceResponseException dummyException = new BadTwitterServiceResponseException(dummyErrorMessage,
+                null);
 
         when(service.postTweet(anyString())).thenThrow(dummyException);
 
@@ -95,7 +96,7 @@ public class PostTweetResourceTest {
         verify(service).postTweet(message);
         assertNotNull(actualResponse);
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), actualResponse.getStatus()); // Verify code
-        assertEquals(ResponseUtil.getServiceUnavailableErrorMessage(PostTweetResource.ATTEMPTED_ACTION),
+        assertEquals(ResponseUtil.getServiceUnavailableErrorMessage(),
                 actualResponse.getEntity().toString());
     }
 

@@ -2,6 +2,7 @@ package tweeting.services;
 
 import org.junit.Before;
 import org.junit.Test;
+import tweeting.util.ResponseUtil;
 import twitter4j.ResponseList;
 import twitter4j.Status;
 import twitter4j.Twitter;
@@ -38,7 +39,7 @@ public class TwitterServiceTest {
         dummyList.add(mockedStatus);
         when(api.getHomeTimeline()).thenReturn(dummyList);
 
-        List<Status> actualList = service.getTweets();
+        List<Status> actualList = service.getHomeTimeline();
 
         verify(api).getHomeTimeline();
         assertEquals(dummyList, actualList);
@@ -48,16 +49,55 @@ public class TwitterServiceTest {
     public void testGetTweetsServerException() throws TwitterException, BadTwitterServiceResponseException {
         TwitterException te = mock(TwitterException.class);
         when(api.getHomeTimeline()).thenThrow(te);
-        when(te.isCausedByNetworkIssue()).thenReturn(false);
         try {
-            service.getTweets();
+            service.getHomeTimeline();
         } catch (BadTwitterServiceResponseException e) {
             throw e;
         }
     }
 
+    @Test(expected = BadTwitterServiceResponseException.class)
+    public void testGetTweetsNetworkException() throws TwitterException, BadTwitterServiceResponseException {
+        TwitterException te = mock(TwitterException.class);
+        when(api.getHomeTimeline()).thenThrow(te);
+        when(te.isCausedByNetworkIssue()).thenReturn(true);
+        try {
+            service.getHomeTimeline();
+        } catch (BadTwitterServiceResponseException e) {
+            assertEquals(ResponseUtil.getServiceUnavailableErrorMessage(), e.getMessage());
+            throw e;
+        }
+    }
+
+    @Test(expected = BadTwitterServiceResponseException.class)
+    public void testGetTweetsBadAuthException() throws TwitterException, BadTwitterServiceResponseException {
+        TwitterException te = mock(TwitterException.class);
+        when(api.getHomeTimeline()).thenThrow(te);
+        when(te.getErrorCode()).thenReturn(TwitterErrorCode.BAD_AUTH_DATA.getCode());
+        try {
+            service.getHomeTimeline();
+        } catch (BadTwitterServiceResponseException e) {
+            assertEquals(ResponseUtil.getServiceUnavailableErrorMessage(), e.getMessage());
+            throw e;
+        }
+    }
+
+    @Test(expected = BadTwitterServiceResponseException.class)
+    public void testGetTweetsCouldNotAuthException() throws TwitterException, BadTwitterServiceResponseException {
+        TwitterException te = mock(TwitterException.class);
+        when(api.getHomeTimeline()).thenThrow(te);
+        when(te.getErrorCode()).thenReturn(TwitterErrorCode.COULD_NOT_AUTH.getCode());
+        try {
+            service.getHomeTimeline();
+        } catch (BadTwitterServiceResponseException e) {
+            assertEquals(ResponseUtil.getServiceUnavailableErrorMessage(), e.getMessage());
+            throw e;
+        }
+    }
+
     @Test
-    public void testPostTweetSuccess() throws TwitterException, BadTwitterServiceResponseException, BadTwitterServiceCallException {
+    public void testPostTweetSuccess() throws TwitterException, BadTwitterServiceResponseException,
+            BadTwitterServiceCallException {
         Status mockedStatus = mock(Status.class);
         String dummyMessage = "some message";
 
@@ -74,6 +114,7 @@ public class TwitterServiceTest {
         try{
             service.postTweet(null);
         } catch (BadTwitterServiceCallException e) {
+            assertEquals(ResponseUtil.getNullTweetErrorMessage(), e.getMessage());
             throw e;
         }
     }
@@ -83,10 +124,10 @@ public class TwitterServiceTest {
         try{
             service.postTweet("");
         } catch (BadTwitterServiceCallException e) {
+            assertEquals(ResponseUtil.getInvalidTweetErrorMessage(), e.getMessage());
             throw e;
         }
     }
-
 
     @Test(expected = BadTwitterServiceCallException.class)
     public void testPostTweetTooLong() throws BadTwitterServiceResponseException, BadTwitterServiceCallException {
@@ -97,6 +138,7 @@ public class TwitterServiceTest {
             }
             service.postTweet(sb.toString());
         } catch (BadTwitterServiceCallException e) {
+            assertEquals(ResponseUtil.getInvalidTweetErrorMessage(), e.getMessage());
             throw e;
         }
     }
@@ -106,7 +148,6 @@ public class TwitterServiceTest {
             BadTwitterServiceCallException {
         TwitterException te = mock(TwitterException.class);
         when(api.updateStatus(anyString())).thenThrow(te);
-        when(te.isCausedByNetworkIssue()).thenReturn(true);
         try {
             service.postTweet("some message");
         } catch (BadTwitterServiceResponseException e) {

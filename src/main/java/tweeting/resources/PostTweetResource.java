@@ -7,7 +7,6 @@ import tweeting.services.BadTwitterServiceCallException;
 import tweeting.services.BadTwitterServiceResponseException;
 import tweeting.services.TwitterService;
 import tweeting.util.ResponseUtil;
-import twitter4j.Status;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;

@@ -228,7 +228,7 @@ public class TwitterServiceTest {
 
 }
 
-// Need some class to implement ResponseList for testing purposes
+// Need some class to implement ResponseList to stub getHomeTimeline()
 class ResponseListImpl<T> extends ArrayList<T> implements ResponseList<T> {
 
     @Override

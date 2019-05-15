@@ -2,6 +2,7 @@ package tweeting.resources;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tweeting.models.Tweet;
 import tweeting.services.BadTwitterServiceCallException;
 import tweeting.services.BadTwitterServiceResponseException;
 import tweeting.services.TwitterService;
@@ -37,7 +38,7 @@ public class PostTweetResource {
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public Response postTweet(@FormParam("message") String message) { // Receives message from JSON data
         try {
-            final Status returnedStatus = service.postTweet(message); // Status should be updated to message
+            final Tweet returnedStatus = service.postTweet(message); // Status should be updated to message
             logger.info("Successfully posted '{}' to Twitter. Sending 201 Created response.", message);
             // Return successful response with returned status
             Response.ResponseBuilder responseBuilder = Response.status(Response.Status.CREATED);

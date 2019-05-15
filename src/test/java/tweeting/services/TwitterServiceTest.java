@@ -2,6 +2,7 @@ package tweeting.services;
 
 import org.junit.Before;
 import org.junit.Test;
+import tweeting.models.Tweet;
 import tweeting.util.ResponseUtil;
 import twitter4j.ResponseList;
 import twitter4j.Status;
@@ -39,7 +40,7 @@ public class TwitterServiceTest {
         dummyList.add(mockedStatus);
         when(api.getHomeTimeline()).thenReturn(dummyList);
 
-        List<Status> actualList = service.getHomeTimeline();
+        List<Tweet> actualList = service.getHomeTimeline();
 
         verify(api).getHomeTimeline();
         assertEquals(dummyList, actualList);
@@ -106,10 +107,10 @@ public class TwitterServiceTest {
 
         when(api.updateStatus(anyString())).thenReturn(mockedStatus);
 
-        Status actualStatus = service.postTweet(dummyMessage);
+        Tweet actualTweet = service.postTweet(dummyMessage);
 
         verify(api).updateStatus(anyString());
-        assertEquals(mockedStatus, actualStatus);
+        assertEquals(mockedStatus, actualTweet);
     }
 
     @Test(expected = BadTwitterServiceCallException.class)

@@ -1,5 +1,6 @@
 package tweeting.resources;
 
+import tweeting.models.Tweet;
 import tweeting.services.BadTwitterServiceResponseException;
 import tweeting.services.BadTwitterServiceCallException;
 import tweeting.services.TwitterService;
@@ -22,7 +23,6 @@ public class PostTweetResourceTest {
 
     // Mocked classes
     TwitterService service;
-    Status mockedStatus;
 
     // Resource to test
     PostTweetResource tweetResource;
@@ -30,7 +30,6 @@ public class PostTweetResourceTest {
     @Before
     public void setUp() {
         service = mock(TwitterService.class);
-        mockedStatus = mock(Status.class);
 
         tweetResource = new PostTweetResource(service); //Use the Mocked service instead of the usual Twitter4J impl
     }
@@ -38,8 +37,9 @@ public class PostTweetResourceTest {
     @Test
     public void testTweetSuccess() throws BadTwitterServiceResponseException, BadTwitterServiceCallException {
         String message = "No Twitter Exception";
+        Tweet tweet = new Tweet();
 
-        when(service.postTweet(anyString())).thenReturn(mockedStatus);
+        when(service.postTweet(anyString())).thenReturn(tweet);
 
         Response response = tweetResource.postTweet(message); // Simple valid message case
 
@@ -47,7 +47,7 @@ public class PostTweetResourceTest {
         assertNotNull(response);
         System.out.println(response.getStatus());
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
-        assertEquals(mockedStatus, response.getEntity());
+        assertEquals(tweet, response.getEntity());
     }
 
     @Test

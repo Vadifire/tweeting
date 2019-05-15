@@ -2,6 +2,7 @@ package tweeting.resources;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tweeting.models.Tweet;
 import tweeting.services.BadTwitterServiceResponseException;
 import tweeting.services.TwitterService;
 import tweeting.util.ResponseUtil;
@@ -37,7 +38,7 @@ public class GetTimelineResource {
     @GET
     public Response getHomeTimeline() {
         try {
-            final List<Status> statuses = service.getHomeTimeline();
+            final List<Tweet> statuses = service.getHomeTimeline();
             logger.info("Successfully retrieved home timeline from Twitter. Sending 200 OK response.");
             return Response.ok(statuses).build(); // Successfully got timeline
         } catch (BadTwitterServiceResponseException e) {

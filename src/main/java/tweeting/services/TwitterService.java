@@ -6,6 +6,8 @@ import org.slf4j.LoggerFactory;
 import tweeting.conf.AccessTokenDetails;
 import tweeting.conf.ConsumerAPIKeys;
 import tweeting.conf.TwitterOAuthCredentials;
+import tweeting.models.Tweet;
+import tweeting.models.User;
 import tweeting.util.ResponseUtil;
 import twitter4j.Status;
 import twitter4j.Twitter;
@@ -14,6 +16,7 @@ import twitter4j.TwitterFactory;
 import twitter4j.conf.ConfigurationBuilder;
 import twitter4j.util.CharacterUtil;
 
+import java.util.LinkedList;
 import java.util.List;
 
 
@@ -63,9 +66,9 @@ public class TwitterService {
         return instance;
     }
 
-    public List<Status> getHomeTimeline() throws BadTwitterServiceResponseException {
+    public List<Tweet> getHomeTimeline() throws BadTwitterServiceResponseException {
         try {
-            return api.getHomeTimeline();
+            return constructTweetList(api.getHomeTimeline());
         } catch (TwitterException te) {
             throw createServerException(te);
         } catch (Exception e) {
@@ -74,7 +77,7 @@ public class TwitterService {
         }
     }
 
-    public Status postTweet(String message) throws BadTwitterServiceResponseException, BadTwitterServiceCallException {
+    public Tweet postTweet(String message) throws BadTwitterServiceResponseException, BadTwitterServiceCallException {
         // Prelim checks (avoid calling to Twitter if unnecessary)
         if (message == null) {
             throw new BadTwitterServiceCallException(ResponseUtil.getNullTweetErrorMessage());
@@ -82,7 +85,7 @@ public class TwitterService {
             throw new BadTwitterServiceCallException(ResponseUtil.getInvalidTweetErrorMessage());
         }
         try {
-            return api.updateStatus(message);
+            return constructTweet(api.updateStatus(message));
         } catch (TwitterException te) {
             throw createServerException(te);
         } catch (Exception e) {
@@ -99,6 +102,27 @@ public class TwitterService {
             return new BadTwitterServiceResponseException(te);
         }
     }
+
+    private Tweet constructTweet(Status status){
+        Tweet tweet = new Tweet();
+        tweet.setMessage(status.getText());
+        User user = new User();
+        user.setTwitterHandle(status.getUser().getScreenName());
+        user.setName(status.getUser().getName());
+        user.setProfileImageUrl(status.getUser().getProfileImageURL());
+        tweet.setUser(user);
+        tweet.setCreatedAt(status.getCreatedAt());
+        return tweet;
+    }
+
+    private LinkedList<Tweet> constructTweetList(List<Status> statuses) {
+        LinkedList<Tweet> listOfTweets = new LinkedList<>();
+        for (Status status : statuses) {
+            listOfTweets.add(constructTweet(status));
+        }
+        return listOfTweets;
+    }
+
 
     // Used for mocking purposes
     public void setAPI(Twitter api) {

@@ -1,36 +1,62 @@
 package tweeting.conf;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.hibernate.validator.constraints.NotEmpty;
 
-import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 public class TwitterOAuthCredentials {
 
-    @NotNull
     @JsonProperty
-    @Valid
-    private AccessTokenDetails accessTokenDetails;
-
-    public void setAccessTokenDetails(AccessTokenDetails accessTokenDetails) {
-        this.accessTokenDetails = accessTokenDetails;
-    }
-
-    public AccessTokenDetails getAccessTokenDetails() {
-        return accessTokenDetails;
-    }
-
+    @NotEmpty
     @NotNull
-    @JsonProperty
-    @Valid
-    private ConsumerAPIKeys consumerAPIKeys;
+    private String consumerAPIKey;
 
-    public void setConsumerAPIKeys(ConsumerAPIKeys consumerAPIKeys) {
-        this.consumerAPIKeys = consumerAPIKeys;
+    public void setConsumerAPIKey(String consumerAPIKey) {
+        this.consumerAPIKey = consumerAPIKey;
     }
 
-    public ConsumerAPIKeys getConsumerAPIKeys() {
-        return consumerAPIKeys;
+    public String getConsumerAPIKey() {
+        return consumerAPIKey;
+    }
+
+    @JsonProperty
+    @NotEmpty
+    @NotNull
+    private String consumerAPISecretKey;
+
+    public void setConsumerAPISecretKey(String consumerAPISecretKey) {
+        this.consumerAPISecretKey = consumerAPISecretKey;
+    }
+
+    public String getConsumerAPISecretKey() {
+        return consumerAPISecretKey;
+    }
+
+    @JsonProperty
+    @NotNull
+    @NotEmpty
+    private String accessToken;
+
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
+    }
+
+    public String getAccessToken() {
+        return accessToken;
+    }
+
+    @JsonProperty
+    @NotNull
+    @NotEmpty
+    private String accessTokenSecret;
+
+    public void setAccessTokenSecret(String accessTokenSecret) {
+        this.accessTokenSecret = accessTokenSecret;
+    }
+
+    public String getAccessTokenSecret() {
+        return accessTokenSecret;
     }
 
 }

@@ -17,16 +17,30 @@ public class TwitterOAuthCredentialsTest {
     }
 
     @Test
-    public void testGetConsumerAPIKeys() {
-        ConsumerAPIKeys mockedKeys = mock(ConsumerAPIKeys.class);
-        twitterOAuthCredentials.setConsumerAPIKeys(mockedKeys);
-        assertEquals(mockedKeys, twitterOAuthCredentials.getConsumerAPIKeys());
+    public void testGetAccessToken() {
+        String dummyToken = "some token";
+        twitterOAuthCredentials.setAccessToken(dummyToken);
+        assertEquals(dummyToken, twitterOAuthCredentials.getAccessToken());
     }
 
     @Test
-    public void testGetAccessTokenDetails() {
-        AccessTokenDetails mockedTokenDetails = mock(AccessTokenDetails.class);
-        twitterOAuthCredentials.setAccessTokenDetails(mockedTokenDetails);
-        assertEquals(mockedTokenDetails, twitterOAuthCredentials.getAccessTokenDetails());
+    public void testGetAccessTokenSecret() {
+        String dummyKey = "some key";
+        twitterOAuthCredentials.setAccessTokenSecret(dummyKey);
+        assertEquals(dummyKey, twitterOAuthCredentials.getAccessTokenSecret());
+    }
+
+    @Test
+    public void testGetApiKey() {
+        String dummyKey = "some key";
+        twitterOAuthCredentials.setConsumerAPIKey(dummyKey);
+        assertEquals(dummyKey, twitterOAuthCredentials.getConsumerAPIKey());
+    }
+
+    @Test
+    public void testGetApiSecretKey() {
+        String dummySecret = "some secret";
+        twitterOAuthCredentials.setConsumerAPISecretKey(dummySecret);
+        assertEquals(dummySecret, twitterOAuthCredentials.getConsumerAPISecretKey());
     }
 }

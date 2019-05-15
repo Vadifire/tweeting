@@ -3,8 +3,6 @@ package tweeting.services;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import tweeting.conf.AccessTokenDetails;
-import tweeting.conf.ConsumerAPIKeys;
 import tweeting.conf.TwitterOAuthCredentials;
 import tweeting.util.ResponseUtil;
 import twitter4j.Status;
@@ -35,15 +33,13 @@ public class TwitterService {
             if (instance == null) {
                 instance = new TwitterService();
             }
-            ConsumerAPIKeys consumerAPIKeys = auth.getConsumerAPIKeys();
-            AccessTokenDetails accessTokenDetails = auth.getAccessTokenDetails();
             ConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
             configurationBuilder.setDebugEnabled(true);
             configurationBuilder.setJSONStoreEnabled(true); // Need in order to use getRawJSON
-            configurationBuilder.setOAuthConsumerKey(consumerAPIKeys.getConsumerAPIKey());
-            configurationBuilder.setOAuthConsumerSecret(consumerAPIKeys.getConsumerAPISecretKey());
-            configurationBuilder.setOAuthAccessToken(accessTokenDetails.getAccessToken());
-            configurationBuilder.setOAuthAccessTokenSecret(accessTokenDetails.getAccessTokenSecret());
+            configurationBuilder.setOAuthConsumerKey(auth.getConsumerAPIKey());
+            configurationBuilder.setOAuthConsumerSecret(auth.getConsumerAPISecretKey());
+            configurationBuilder.setOAuthAccessToken(auth.getAccessToken());
+            configurationBuilder.setOAuthAccessTokenSecret(auth.getAccessTokenSecret());
             TwitterFactory twitterFactory = new TwitterFactory(configurationBuilder.build());
             instance.api = twitterFactory.getInstance();
             return instance;
@@ -68,9 +64,6 @@ public class TwitterService {
             return api.getHomeTimeline();
         } catch (TwitterException te) {
             throw createServerException(te);
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            return null;
         }
     }
 
@@ -85,9 +78,6 @@ public class TwitterService {
             return api.updateStatus(message);
         } catch (TwitterException te) {
             throw createServerException(te);
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            return null;
         }
     }
 
@@ -103,5 +93,8 @@ public class TwitterService {
     // Used for mocking purposes
     public void setAPI(Twitter api) {
         this.api = api;
+    }
+    public Twitter getAPI() {
+        return api;
     }
 }

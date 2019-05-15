@@ -9,6 +9,7 @@ import tweeting.util.ResponseUtil;
 
 import javax.ws.rs.core.Response;
 import java.util.LinkedList;
+import java.util.Optional;
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
@@ -39,7 +40,7 @@ public class UserTimelineResourceTest {
 
         when(service.getUserTimeline()).thenReturn(dummyList);
 
-        Response response = filterResource.getUserTimeline("");
+        Response response = filterResource.getUserTimeline(Optional.of(""));
 
         verify(service).getUserTimeline(); // Verify we have actually made the call to getHomeTimeline()
 
@@ -56,7 +57,7 @@ public class UserTimelineResourceTest {
 
         when(service.getUserTimeline()).thenThrow(dummyException);
 
-        Response actualResponse = filterResource.getUserTimeline("");
+        Response actualResponse = filterResource.getUserTimeline(Optional.of(""));
 
         verify(service).getUserTimeline();
         assertNotNull(actualResponse);
@@ -70,7 +71,7 @@ public class UserTimelineResourceTest {
 
         when(service.getUserTimeline()).thenThrow(dummyException);
 
-        Response actualResponse = filterResource.getUserTimeline("");
+        Response actualResponse = filterResource.getUserTimeline(Optional.of(""));
 
         verify(service).getUserTimeline();
         assertNotNull(actualResponse);

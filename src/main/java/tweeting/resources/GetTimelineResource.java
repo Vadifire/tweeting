@@ -2,10 +2,9 @@ package tweeting.resources;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tweeting.services.BadTwitterServiceResponseException;
 import tweeting.services.TwitterService;
 import tweeting.util.ResponseUtil;
-import tweeting.util.TwitterExceptionHandler;
-import tweeting.services.TwitterServiceException;
 import twitter4j.Status;
 
 import javax.ws.rs.GET;
@@ -28,11 +27,8 @@ public class GetTimelineResource {
 
     private TwitterService service;
 
-    private TwitterExceptionHandler exceptionHandler;
-
     public GetTimelineResource(TwitterService service) {
         this.service = service;
-        setExceptionHandler(new TwitterExceptionHandler(ATTEMPTED_ACTION));
     }
 
     /*
@@ -47,20 +43,14 @@ public class GetTimelineResource {
             final List<Status> statuses = service.getTweets();
             logger.info("Successfully retrieved home timeline from Twitter. Sending 200 OK response.");
             return Response.ok(statuses).build(); // Successfully got timeline
-        } catch (TwitterServiceException e) {
-            return exceptionHandler.catchTwitterException(e);
+        } catch (BadTwitterServiceResponseException e) {
+            logger.error("Sending 500 Internal Server error", e);
+            return (Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage())).build();
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return (Response.status(Response.Status.INTERNAL_SERVER_ERROR).
                     entity(ResponseUtil.getServiceUnavailableErrorMessage(ATTEMPTED_ACTION))).build();
         }
-    }
-
-    /*
-     * Used for mocking purposes
-     */
-    public void setExceptionHandler(TwitterExceptionHandler exceptionHandler) {
-        this.exceptionHandler = exceptionHandler;
     }
 
 }

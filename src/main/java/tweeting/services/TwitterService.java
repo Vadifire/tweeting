@@ -62,41 +62,44 @@ public class TwitterService {
         return instance;
     }
 
-    public List<Status> getTweets() throws TwitterServiceException {
+    public List<Status> getTweets() throws BadTwitterServiceResponseException {
         try {
             return api.getHomeTimeline();
         } catch (TwitterException te) {
-            throw new TwitterServiceException(te);
+            throw createServerException(te);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return null;
         }
     }
 
-    public Status postTweet(String message) throws TwitterServiceException {
+    public Status postTweet(String message) throws BadTwitterServiceResponseException, BadTwitterServiceCallException {
         // Prelim checks (avoid calling to Twitter if unnecessary)
         if (message == null) {
-            TwitterServiceException e = new TwitterServiceException("Request is missing message parameter.",
-                    new NullPointerException("message"));
-            throw e;
+            throw new BadTwitterServiceCallException("Message parameter is missing.");
         }
         if (StringUtils.isBlank(message)) {
-            TwitterServiceException e = new TwitterServiceException("Message parameter is blank.",
-                    TwitterErrorCode.MESSAGE_BLANK);
-            throw e;
+            throw new BadTwitterServiceCallException("Message parameter is blank.");
         } else if (message.length() > MAX_TWEET_LENGTH) {
-            TwitterServiceException e = new TwitterServiceException("Message parameter is over the  "
-                    + MAX_TWEET_LENGTH + " character limit.", TwitterErrorCode.MESSAGE_TOO_LONG);
-            throw e;
+            throw new BadTwitterServiceCallException("Message parameter is over the " + MAX_TWEET_LENGTH +
+                    " character limit.");
         }
-
         try {
             return api.updateStatus(message);
         } catch (TwitterException te) {
-            throw new TwitterServiceException(te);
+            throw createServerException(te);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return null;
+        }
+    }
+
+    private BadTwitterServiceResponseException createServerException(TwitterException te) {
+        if (te.isCausedByNetworkIssue() || te.getErrorCode() == TwitterErrorCode.BAD_AUTH_DATA.getCode() ||
+                te.getErrorCode() == TwitterErrorCode.COULD_NOT_AUTH.getCode()) {
+            return new BadTwitterServiceResponseException("Service is temporarily unavailable.", te);
+        } else {
+            return new BadTwitterServiceResponseException(te);
         }
     }
 

@@ -2,10 +2,9 @@ package tweeting.resources;
 
 import org.junit.Before;
 import org.junit.Test;
+import tweeting.services.BadTwitterServiceResponseException;
 import tweeting.services.TwitterService;
 import tweeting.util.ResponseUtil;
-import tweeting.util.TwitterExceptionHandler;
-import tweeting.services.TwitterServiceException;
 import twitter4j.ResponseList;
 import twitter4j.Status;
 
@@ -22,7 +21,6 @@ public class GetTimelineResourceTest {
 
     // Mocked classes
     TwitterService service;
-    TwitterExceptionHandler exceptionHandler;
 
     // Resource under test
     GetTimelineResource timelineResource;
@@ -30,14 +28,12 @@ public class GetTimelineResourceTest {
     @Before
     public void setUp() {
         service = mock(TwitterService.class);
-        exceptionHandler = mock(TwitterExceptionHandler.class);
 
         timelineResource = new GetTimelineResource(service); // Use the Mocked service instead of Twitter4J impl.
-        timelineResource.setExceptionHandler(exceptionHandler); // Ensure no dependency
     }
 
     @Test
-    public void testTimelineSuccess() throws TwitterServiceException {
+    public void testTimelineSuccess() throws BadTwitterServiceResponseException {
         ResponseList<Status> dummyList = mock(ResponseList.class); // Dummy list to return from getTweets()
         Status mockedStatus = mock(Status.class);
         dummyList.add(mockedStatus); // Populate list with mocked Status
@@ -54,27 +50,24 @@ public class GetTimelineResourceTest {
     }
 
     @Test
-    public void testTimelineServiceException() throws TwitterServiceException {
-
-        // Test that getHomeTimeline() properly calls catchTwitterException() in exception case
-
-        Response expectedResponse = mock(Response.class);
-        TwitterServiceException dummyException = mock(TwitterServiceException.class);
+    public void testTimelineServerException() throws BadTwitterServiceResponseException {
+        String dummyErrorMessage = "some message";
+        BadTwitterServiceResponseException dummyException = new BadTwitterServiceResponseException(dummyErrorMessage,
+                null);
 
         when(service.getTweets()).thenThrow(dummyException);
-        when(exceptionHandler.catchTwitterException(dummyException)).thenReturn(expectedResponse);
 
         Response actualResponse = timelineResource.getTweets();
 
         verify(service).getTweets();
-        verify(exceptionHandler).catchTwitterException(dummyException);
         assertNotNull(actualResponse);
-        assertEquals(expectedResponse, actualResponse);
+        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), actualResponse.getStatus());
+        assertEquals(dummyErrorMessage, actualResponse.getEntity().toString());
     }
 
     @Test
-    public void testTimelineGeneralException() throws TwitterServiceException {
-        RuntimeException dummyException = mock(RuntimeException.class);
+    public void testTimelineGeneralException() throws BadTwitterServiceResponseException {
+        RuntimeException dummyException = new RuntimeException();
 
         when(service.getTweets()).thenThrow(dummyException);
 

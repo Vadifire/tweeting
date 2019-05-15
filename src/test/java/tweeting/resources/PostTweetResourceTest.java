@@ -1,10 +1,9 @@
 package tweeting.resources;
 
-import tweeting.services.TwitterErrorCode;
+import tweeting.services.BadTwitterServiceCallException;
+import tweeting.services.BadTwitterServiceResponseException;
 import tweeting.services.TwitterService;
 import tweeting.util.ResponseUtil;
-import tweeting.util.TwitterExceptionHandler;
-import tweeting.services.TwitterServiceException;
 import twitter4j.Status;
 
 import javax.ws.rs.core.Response;
@@ -19,13 +18,11 @@ import static org.mockito.Mockito.verify;
 
 import org.junit.Before;
 import org.junit.Test;
-import twitter4j.util.CharacterUtil;
 
 public class PostTweetResourceTest {
 
     // Mocked classes
     TwitterService service;
-    TwitterExceptionHandler exceptionHandler;
     Status mockedStatus;
 
     // Resource to test
@@ -35,14 +32,12 @@ public class PostTweetResourceTest {
     public void setUp() {
         service = mock(TwitterService.class);
         mockedStatus = mock(Status.class);
-        exceptionHandler = mock(TwitterExceptionHandler.class);
 
         tweetResource = new PostTweetResource(service); //Use the Mocked service instead of the usual Twitter4J impl
-        tweetResource.setExceptionHandler(exceptionHandler); // Ensure no dependency
     }
 
     @Test
-    public void testTweetValid() throws TwitterServiceException {
+    public void testTweetSuccess() throws BadTwitterServiceResponseException, BadTwitterServiceCallException {
         String message = "No Twitter Exception";
 
         when(service.postTweet(anyString())).thenReturn(mockedStatus);
@@ -57,96 +52,41 @@ public class PostTweetResourceTest {
     }
 
     @Test
-    public void testTweetNullCase() throws TwitterServiceException {
-        TwitterServiceException tse = mock(TwitterServiceException.class);
-        when(tse.isCausedByNullParam()).thenReturn(true);
-        when(service.postTweet(any())).thenThrow(tse);
-
-        Response response = tweetResource.postTweet(null); // Null test case
-
-        assertNotNull(response);
-        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
-        assertEquals(ResponseUtil.getNullParamErrorMessage(PostTweetResource.ATTEMPTED_ACTION,
-                PostTweetResource.MESSAGE_PARAM), response.getEntity().toString());
-    }
-
-    @Test
-    public void testTweetZeroLength() throws TwitterServiceException {
-        TwitterServiceException tse = mock(TwitterServiceException.class);
-        when(tse.isCausedByNullParam()).thenReturn(false);
-        when(tse.getErrorCode()).thenReturn(TwitterErrorCode.MESSAGE_BLANK.getCode());
-        when(service.postTweet(anyString())).thenThrow(tse);
-
-        Response response = tweetResource.postTweet(""); // 0 length test case
-
-        assertNotNull(response);
-        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
-        assertEquals(ResponseUtil.getParamBadLengthErrorMessage(PostTweetResource.ATTEMPTED_ACTION,
-                PostTweetResource.MESSAGE_PARAM, PostTweetResource.PARAM_UNIT,
-                CharacterUtil.MAX_TWEET_LENGTH), response.getEntity().toString());
-    }
-
-    @Test
-    public void testTweetMaxLength() throws TwitterServiceException {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < CharacterUtil.MAX_TWEET_LENGTH; i++) {
-            sb.append("a"); // single character
-        }
-
-        when(service.postTweet(anyString())).thenReturn(mockedStatus); // Return a status without TwitterException
-
-        Response response = tweetResource.postTweet(sb.toString()); // Max length test case
-
-        verify(service).postTweet(sb.toString());
-        assertNotNull(response);
-        assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
-        assertEquals(mockedStatus, response.getEntity());
-    }
-
-    @Test
-    public void testTweetTooLong() throws TwitterServiceException {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < CharacterUtil.MAX_TWEET_LENGTH + 1; i++) {
-            sb.append("a"); // single character
-        }
-        TwitterServiceException tse = mock(TwitterServiceException.class);
-        when(tse.isCausedByNullParam()).thenReturn(false);
-        when(tse.getErrorCode()).thenReturn(TwitterErrorCode.MESSAGE_TOO_LONG.getCode());
-        when(service.postTweet(anyString())).thenThrow(tse);
-
-        Response response = tweetResource.postTweet(sb.toString());
-
-        assertNotNull(response);
-        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
-        assertEquals(ResponseUtil.getParamBadLengthErrorMessage(PostTweetResource.ATTEMPTED_ACTION,
-                PostTweetResource.MESSAGE_PARAM, PostTweetResource.PARAM_UNIT, CharacterUtil.MAX_TWEET_LENGTH),
-                response.getEntity().toString());
-    }
-
-    @Test
-    public void testOtherTweetServiceException() throws TwitterServiceException {
-
-        // Test that postTweet() properly calls catchTwitterException() in exception case
-
-        String message = "Some Twitter Exception";
-        Response expectedResponse = mock(Response.class);
-        TwitterServiceException dummyException = mock(TwitterServiceException.class);
+    public void testTweetClientException() throws BadTwitterServiceResponseException, BadTwitterServiceCallException {
+        String dummyMessage = "some message";
+        String dummyErrorMessage = "some error message";
+        BadTwitterServiceCallException dummyException = new BadTwitterServiceCallException(dummyErrorMessage);
 
         when(service.postTweet(anyString())).thenThrow(dummyException);
-        when(exceptionHandler.catchTwitterException(dummyException)).thenReturn(expectedResponse);
 
-        Response actualResponse = tweetResource.postTweet(message);
+        Response actualResponse = tweetResource.postTweet(dummyMessage);
 
-        verify(service).postTweet(message);
-        verify(exceptionHandler).catchTwitterException(dummyException);
+        verify(service).postTweet(dummyMessage);
         assertNotNull(actualResponse);
-        assertEquals(expectedResponse, actualResponse);
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), actualResponse.getStatus());
+        assertEquals(dummyErrorMessage, actualResponse.getEntity().toString());
     }
 
     @Test
-    public void testTweetGeneralException() throws TwitterServiceException {
-        String message = "Some Twitter Exception";
-        RuntimeException dummyException = mock(RuntimeException.class);
+    public void testTweetServerException() throws BadTwitterServiceResponseException, BadTwitterServiceCallException {
+        String dummyMessage = "some message";
+        String dummyErrorMessage = "some error message";
+        BadTwitterServiceResponseException dummyException = new BadTwitterServiceResponseException(dummyErrorMessage, null);
+
+        when(service.postTweet(anyString())).thenThrow(dummyException);
+
+        Response actualResponse = tweetResource.postTweet(dummyMessage);
+
+        verify(service).postTweet(dummyMessage);
+        assertNotNull(actualResponse);
+        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), actualResponse.getStatus());
+        assertEquals(dummyErrorMessage, actualResponse.getEntity().toString());
+    }
+
+    @Test
+    public void testTweetGeneralException() throws BadTwitterServiceResponseException, BadTwitterServiceCallException {
+        String message = "Twitter Exception";
+        RuntimeException dummyException = new RuntimeException();
 
         when(service.postTweet(anyString())).thenThrow(dummyException);
 
@@ -158,4 +98,5 @@ public class PostTweetResourceTest {
         assertEquals(ResponseUtil.getServiceUnavailableErrorMessage(PostTweetResource.ATTEMPTED_ACTION),
                 actualResponse.getEntity().toString());
     }
+
 }

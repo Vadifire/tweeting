@@ -11,8 +11,9 @@
 # Cache of project
 .gradletasknamecache
 
-# Ignore Gradle build output directory
+# Ignore output directories
 build
+out
 
 # Ignore DS_STORE
 *.DS_Store

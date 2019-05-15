@@ -47,11 +47,14 @@ public class TwitterServiceTest {
 
     @Test(expected = BadTwitterServiceResponseException.class)
     public void testGetTweetsServerException() throws TwitterException, BadTwitterServiceResponseException {
+        String errorMessage = "some error message";
         TwitterException te = mock(TwitterException.class);
         when(api.getHomeTimeline()).thenThrow(te);
+        when(te.getErrorMessage()).thenReturn(errorMessage);
         try {
             service.getHomeTimeline();
         } catch (BadTwitterServiceResponseException e) {
+            assertEquals(errorMessage, e.getMessage());
             throw e;
         }
     }
@@ -146,11 +149,14 @@ public class TwitterServiceTest {
     @Test(expected = BadTwitterServiceResponseException.class)
     public void testPostTweetServerException() throws TwitterException, BadTwitterServiceResponseException,
             BadTwitterServiceCallException {
+        String errorMessage = "some error message";
         TwitterException te = mock(TwitterException.class);
         when(api.updateStatus(anyString())).thenThrow(te);
+        when(te.getErrorMessage()).thenReturn(errorMessage);
         try {
             service.postTweet("some message");
         } catch (BadTwitterServiceResponseException e) {
+            assertEquals(errorMessage, e.getMessage());
             throw e;
         }
     }

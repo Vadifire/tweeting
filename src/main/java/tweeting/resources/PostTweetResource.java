@@ -1,14 +1,12 @@
 package tweeting.resources;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tweeting.services.TwitterServiceCallException;
+import tweeting.services.TwitterServiceResponseException;
+import tweeting.services.TwitterService;
 import tweeting.util.ResponseUtil;
-import tweeting.util.TwitterExceptionHandler;
 import twitter4j.Status;
-import twitter4j.Twitter;
-import twitter4j.TwitterException;
-import twitter4j.util.CharacterUtil;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
@@ -21,18 +19,12 @@ import javax.ws.rs.core.Response;
 public class PostTweetResource {
 
     /* Constants */
-    public static final String MESSAGE_PARAM = "message"; // Used in ResponseUtil
-    public static final String ATTEMPTED_ACTION = "post tweet";
-    public static final String PARAM_UNIT = "characters";
     private static final Logger logger = LoggerFactory.getLogger(PostTweetResource.class);
 
-    private Twitter api;
+    private TwitterService service;
 
-    private TwitterExceptionHandler exceptionHandler;
-
-    public PostTweetResource(Twitter api) {
-        this.api = api;
-        setExceptionHandler(new TwitterExceptionHandler(ATTEMPTED_ACTION));
+    public PostTweetResource(TwitterService service) {
+        this.service = service;
     }
 
     /*
@@ -43,42 +35,26 @@ public class PostTweetResource {
      */
     @POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    public Response postTweet(@FormParam(MESSAGE_PARAM) String message) { // Receives message from JSON data
+    public Response postTweet(@FormParam("message") String message) { // Receives message from JSON data
         try {
-            if (message == null) {
-                logger.debug("Request is missing message parameter. Sending 400 Bad Request error.");
-                return Response.status(Response.Status.BAD_REQUEST).
-                        entity(ResponseUtil.getNullParamErrorMessage(ATTEMPTED_ACTION, MESSAGE_PARAM)).build();
-            }
-            if (message.length() > CharacterUtil.MAX_TWEET_LENGTH || StringUtils.isBlank(message)) {
-                logger.debug("Message parameter is blank or over the {} character limit. Sending 400 Bad Request " +
-                        "error.", CharacterUtil.MAX_TWEET_LENGTH);
-                return Response.status(Response.Status.BAD_REQUEST).
-                        entity(ResponseUtil.getParamBadLengthErrorMessage(ATTEMPTED_ACTION, MESSAGE_PARAM,
-                                PARAM_UNIT, CharacterUtil.MAX_TWEET_LENGTH)).build();
-            }
-            Status returnedStatus = api.updateStatus(message); // Status should be updated to message
+            final Status returnedStatus = service.postTweet(message); // Status should be updated to message
             logger.info("Successfully posted '{}' to Twitter. Sending 201 Created response.", message);
             // Return successful response with returned status
             Response.ResponseBuilder responseBuilder = Response.status(Response.Status.CREATED);
             responseBuilder.type(MediaType.APPLICATION_JSON);
             Response response = responseBuilder.entity(returnedStatus).build();
             return response;
-
-        } catch (TwitterException e) {
-            return exceptionHandler.catchTwitterException(e);
+        } catch (TwitterServiceCallException e) {
+            logger.debug("Sending 400 Bad Request error", e);
+            return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
+        } catch (TwitterServiceResponseException e) {
+            logger.error("Sending 500 Internal Server error", e);
+            return (Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage())).build();
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return (Response.status(Response.Status.INTERNAL_SERVER_ERROR).
-                    entity(ResponseUtil.getServiceUnavailableErrorMessage(ATTEMPTED_ACTION))).build();
+                    entity(ResponseUtil.getServiceUnavailableErrorMessage())).build();
         }
-    }
-
-    /*
-     * Used for mocking purposes
-     */
-    public void setExceptionHandler(TwitterExceptionHandler exceptionHandler) {
-        this.exceptionHandler = exceptionHandler;
     }
 
 }

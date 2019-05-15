@@ -1,8 +1,6 @@
 package tweeting;
 
-import tweeting.conf.AccessTokenDetails;
 import tweeting.conf.TwitterOAuthCredentials;
-import tweeting.conf.ConsumerAPIKeys;
 import tweeting.conf.TweetingConfiguration;
 import tweeting.health.AliveHealthCheck;
 import tweeting.resources.GetTimelineResource;
@@ -11,10 +9,8 @@ import tweeting.resources.PostTweetResource;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import tweeting.services.TwitterService;
 import tweeting.util.LogFilter;
-import twitter4j.Twitter;
-import twitter4j.TwitterFactory;
-import twitter4j.conf.ConfigurationBuilder;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,21 +41,12 @@ public class TweetingApplication extends Application<TweetingConfiguration> {
         try {
             logger.debug("Configuring Tweeting application");
             TwitterOAuthCredentials auth = config.getAuthorization();
-            ConsumerAPIKeys consumerAPIKeys = auth.getConsumerAPIKeys();
-            AccessTokenDetails accessTokenDetails = auth.getAccessTokenDetails();
-            ConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
-            configurationBuilder.setDebugEnabled(true);
-            configurationBuilder.setJSONStoreEnabled(true); // Needed in order to use getRawJSON
-            configurationBuilder.setOAuthConsumerKey(consumerAPIKeys.getConsumerAPIKey());
-            configurationBuilder.setOAuthConsumerSecret(consumerAPIKeys.getConsumerAPISecretKey());
-            configurationBuilder.setOAuthAccessToken(accessTokenDetails.getAccessToken());
-            configurationBuilder.setOAuthAccessTokenSecret(accessTokenDetails.getAccessTokenSecret());
-            TwitterFactory twitterFactory = new TwitterFactory(configurationBuilder.build());
+            final TwitterService service = TwitterService.getInstance(auth);
+
             logger.info("Twitter credentials have been configured using the {} configuration file.",
                     getConfigFileName());
 
             // Use Default API Impl (Twitter4J)
-            Twitter api = twitterFactory.getInstance();
 
             logger.debug("Adding log filter");
             LogFilter logFilter = new LogFilter();
@@ -76,10 +63,10 @@ public class TweetingApplication extends Application<TweetingConfiguration> {
             logger.debug("Health check has been registered: {}", healthCheck.getClass().getName());
 
             logger.debug("Registering resources");
-            final GetTimelineResource timelineResource = new GetTimelineResource(api);
+            final GetTimelineResource timelineResource = new GetTimelineResource(service);
             env.jersey().register(timelineResource);
             logger.debug("Registered resource: {}", timelineResource.getClass().getName());
-            final PostTweetResource tweetResource = new PostTweetResource(api);
+            final PostTweetResource tweetResource = new PostTweetResource(service);
             env.jersey().register(tweetResource);
             logger.debug("Registered resource: {}", tweetResource.getClass().getName());
         } catch (Exception e) {

@@ -2,11 +2,10 @@ package tweeting.resources;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tweeting.services.TwitterServiceResponseException;
+import tweeting.services.TwitterService;
 import tweeting.util.ResponseUtil;
-import tweeting.util.TwitterExceptionHandler;
 import twitter4j.Status;
-import twitter4j.Twitter;
-import twitter4j.TwitterException;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -23,17 +22,10 @@ public class GetTimelineResource {
 
     private static final Logger logger = LoggerFactory.getLogger(GetTimelineResource.class);
 
-    /* Constants */
-    public static final String ATTEMPTED_ACTION = "retrieve home timeline";
+    private TwitterService service;
 
-    private Twitter api;
-
-    private TwitterExceptionHandler exceptionHandler;
-
-
-    public GetTimelineResource(Twitter api) {
-        this.api = api;
-        setExceptionHandler(new TwitterExceptionHandler(ATTEMPTED_ACTION));
+    public GetTimelineResource(TwitterService service) {
+        this.service = service;
     }
 
     /*
@@ -43,32 +35,19 @@ public class GetTimelineResource {
      * Replace HOST and PORT with configured values
      */
     @GET
-    public Response getTweets() {
+    public Response getHomeTimeline() {
         try {
-            List<Status> statuses = api.getHomeTimeline();
-            if (statuses == null) {
-                logger.warn("Twitter failed to respond with a valid home timeline. " +
-                        "Sending 500 Internal Server Error.");
-                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).
-                        entity(ResponseUtil.getNullResponseErrorMessage(ATTEMPTED_ACTION)).build();
-            }
+            final List<Status> statuses = service.getHomeTimeline();
             logger.info("Successfully retrieved home timeline from Twitter. Sending 200 OK response.");
             return Response.ok(statuses).build(); // Successfully got timeline
-
-        } catch (TwitterException e) {
-            return exceptionHandler.catchTwitterException(e);
+        } catch (TwitterServiceResponseException e) {
+            logger.error("Sending 500 Internal Server error", e);
+            return (Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage())).build();
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return (Response.status(Response.Status.INTERNAL_SERVER_ERROR).
-                    entity(ResponseUtil.getServiceUnavailableErrorMessage(ATTEMPTED_ACTION))).build();
+                    entity(ResponseUtil.getServiceUnavailableErrorMessage())).build();
         }
-    }
-
-    /*
-     * Used for mocking purposes
-     */
-    public void setExceptionHandler(TwitterExceptionHandler exceptionHandler) {
-        this.exceptionHandler = exceptionHandler;
     }
 
 }

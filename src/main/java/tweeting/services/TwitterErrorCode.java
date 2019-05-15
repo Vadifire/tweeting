@@ -1,4 +1,4 @@
-package tweeting.util;
+package tweeting.services;
 
 /*
  * Twitter Error Codes (https://developer.twitter.com/en/docs/basics/response-codes.html)

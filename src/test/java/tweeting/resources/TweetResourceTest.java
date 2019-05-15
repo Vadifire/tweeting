@@ -18,19 +18,19 @@ import static org.mockito.Mockito.verify;
 import org.junit.Before;
 import org.junit.Test;
 
-public class PostTweetResourceTest {
+public class TweetResourceTest {
 
     // Mocked classes
     TwitterService service;
 
     // Resource to test
-    PostTweetResource tweetResource;
+    TweetResource tweetResource;
 
     @Before
     public void setUp() {
         service = mock(TwitterService.class);
 
-        tweetResource = new PostTweetResource(service); //Use the Mocked service instead of the usual Twitter4J impl
+        tweetResource = new TweetResource(service); //Use the Mocked service instead of the usual Twitter4J impl
     }
 
     @Test

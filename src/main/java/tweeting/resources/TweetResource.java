@@ -16,14 +16,14 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 @Path("/api/1.0/twitter/tweet/")
-public class PostTweetResource {
+public class TweetResource {
 
     /* Constants */
-    private static final Logger logger = LoggerFactory.getLogger(PostTweetResource.class);
+    private static final Logger logger = LoggerFactory.getLogger(TweetResource.class);
 
     private TwitterService service;
 
-    public PostTweetResource(TwitterService service) {
+    public TweetResource(TwitterService service) {
         this.service = service;
     }
 

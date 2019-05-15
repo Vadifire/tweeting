@@ -3,9 +3,9 @@ package tweeting;
 import tweeting.conf.TwitterOAuthCredentials;
 import tweeting.conf.TweetingConfiguration;
 import tweeting.health.AliveHealthCheck;
-import tweeting.resources.GetFilteredTimelineResource;
-import tweeting.resources.GetTimelineResource;
-import tweeting.resources.PostTweetResource;
+import tweeting.resources.UserTimelineResource;
+import tweeting.resources.HomeTimelineResource;
+import tweeting.resources.TweetResource;
 
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
@@ -64,15 +64,15 @@ public class TweetingApplication extends Application<TweetingConfiguration> {
             logger.debug("Health check has been registered: {}", healthCheck.getClass().getName());
 
             logger.debug("Registering resources");
-            final GetTimelineResource timelineResource = new GetTimelineResource(service);
-            env.jersey().register(timelineResource);
-            logger.debug("Registered resource: {}", timelineResource.getClass().getName());
-            final PostTweetResource tweetResource = new PostTweetResource(service);
+            final HomeTimelineResource homeTimelineResource = new HomeTimelineResource(service);
+            env.jersey().register(homeTimelineResource);
+            logger.debug("Registered resource: {}", homeTimelineResource.getClass().getName());
+            final TweetResource tweetResource = new TweetResource(service);
             env.jersey().register(tweetResource);
             logger.debug("Registered resource: {}", tweetResource.getClass().getName());
-            final GetFilteredTimelineResource filterResource = new GetFilteredTimelineResource(service);
-            env.jersey().register(filterResource);
-            logger.debug("Registered resource: {}", filterResource.getClass().getName());
+            final UserTimelineResource userTimelineResource = new UserTimelineResource(service);
+            env.jersey().register(userTimelineResource);
+            logger.debug("Registered resource: {}", userTimelineResource.getClass().getName());
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             System.exit(1);

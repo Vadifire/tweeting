@@ -65,6 +65,14 @@ public class TwitterService {
         }
     }
 
+    public List<Tweet> getUserTimeline() throws TwitterServiceResponseException {
+        try {
+            return constructTweetList(api.getUserTimeline());
+        } catch (TwitterException te) {
+            throw createServerException(te);
+        }
+    }
+
     public Tweet postTweet(String message) throws TwitterServiceResponseException, TwitterServiceCallException {
         // Prelim checks (avoid calling to Twitter if unnecessary)
         if (message == null) {

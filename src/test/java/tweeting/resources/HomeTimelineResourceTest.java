@@ -3,42 +3,45 @@ package tweeting.resources;
 import org.junit.Before;
 import org.junit.Test;
 import tweeting.models.Tweet;
-import tweeting.services.TwitterService;
 import tweeting.services.TwitterServiceResponseException;
+import tweeting.services.TwitterService;
 import tweeting.util.ResponseUtil;
 
 import javax.ws.rs.core.Response;
+
 import java.util.LinkedList;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
-public class GetFilteredTimelineResourceTest {
+public class HomeTimelineResourceTest {
 
     // Mocked classes
     TwitterService service;
 
     // Resource under test
-    GetFilteredTimelineResource filterResource;
+    HomeTimelineResource timelineResource;
 
     @Before
     public void setUp() {
         service = mock(TwitterService.class);
-        filterResource = new GetFilteredTimelineResource(service); // Mock service instead of Twitter4J impl.
+
+        timelineResource = new HomeTimelineResource(service); // Use the Mocked service instead of Twitter4J impl.
     }
 
     @Test
-    public void testFilterSuccess() throws TwitterServiceResponseException {
+    public void testTimelineSuccess() throws TwitterServiceResponseException {
         LinkedList<Tweet> dummyList = new LinkedList<>();
         Tweet dummyTweet = new Tweet();
         dummyList.add(dummyTweet);
 
         when(service.getHomeTimeline()).thenReturn(dummyList);
 
-        Response response = filterResource.getHomeTimelineFiltered("");
+        Response response = timelineResource.getHomeTimeline();
 
         verify(service).getHomeTimeline(); // Verify we have actually made the call to getHomeTimeline()
 
@@ -48,14 +51,14 @@ public class GetFilteredTimelineResourceTest {
     }
 
     @Test
-    public void testFilterServerException() throws TwitterServiceResponseException {
+    public void testTimelineServerException() throws TwitterServiceResponseException {
         String dummyErrorMessage = "some message";
         TwitterServiceResponseException dummyException = new TwitterServiceResponseException(dummyErrorMessage,
                 null);
 
         when(service.getHomeTimeline()).thenThrow(dummyException);
 
-        Response actualResponse = filterResource.getHomeTimelineFiltered("");
+        Response actualResponse = timelineResource.getHomeTimeline();
 
         verify(service).getHomeTimeline();
         assertNotNull(actualResponse);
@@ -64,12 +67,12 @@ public class GetFilteredTimelineResourceTest {
     }
 
     @Test
-    public void testFilterGeneralException() throws TwitterServiceResponseException {
+    public void testTimelineGeneralException() throws TwitterServiceResponseException {
         RuntimeException dummyException = new RuntimeException();
 
         when(service.getHomeTimeline()).thenThrow(dummyException);
 
-        Response actualResponse = filterResource.getHomeTimelineFiltered("");
+        Response actualResponse = timelineResource.getHomeTimeline();
 
         verify(service).getHomeTimeline();
         assertNotNull(actualResponse);
@@ -77,6 +80,5 @@ public class GetFilteredTimelineResourceTest {
         assertEquals(ResponseUtil.getServiceUnavailableErrorMessage(),
                 actualResponse.getEntity().toString());
     }
-
 
 }

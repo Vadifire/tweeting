@@ -64,4 +64,20 @@ public class GetTimelineResourceTest {
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), actualResponse.getStatus());
         assertEquals(dummyErrorMessage, actualResponse.getEntity().toString());
     }
+
+    @Test
+    public void testTimelineGeneralException() throws BadTwitterServiceResponseException {
+        RuntimeException dummyException = new RuntimeException();
+
+        when(service.getHomeTimeline()).thenThrow(dummyException);
+
+        Response actualResponse = timelineResource.getHomeTimeline();
+
+        verify(service).getHomeTimeline();
+        assertNotNull(actualResponse);
+        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), actualResponse.getStatus()); // Verify code
+        assertEquals(ResponseUtil.getServiceUnavailableErrorMessage(),
+                actualResponse.getEntity().toString());
+    }
+
 }

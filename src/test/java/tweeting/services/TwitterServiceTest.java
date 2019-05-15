@@ -136,7 +136,7 @@ public class TwitterServiceTest {
 
     @Test(expected = BadTwitterServiceCallException.class)
     public void testPostTweetNull() throws BadTwitterServiceResponseException, BadTwitterServiceCallException {
-        try{
+        try {
             service.postTweet(null);
         } catch (BadTwitterServiceCallException e) {
             assertEquals(ResponseUtil.getNullTweetErrorMessage(), e.getMessage());
@@ -146,7 +146,7 @@ public class TwitterServiceTest {
 
     @Test(expected = BadTwitterServiceCallException.class)
     public void testPostTweetBlank() throws BadTwitterServiceResponseException, BadTwitterServiceCallException {
-        try{
+        try {
             service.postTweet("");
         } catch (BadTwitterServiceCallException e) {
             assertEquals(ResponseUtil.getInvalidTweetErrorMessage(), e.getMessage());
@@ -156,7 +156,7 @@ public class TwitterServiceTest {
 
     @Test(expected = BadTwitterServiceCallException.class)
     public void testPostTweetTooLong() throws BadTwitterServiceResponseException, BadTwitterServiceCallException {
-        try{
+        try {
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < CharacterUtil.MAX_TWEET_LENGTH + 1; i++) {
                 sb.append("a"); // single character

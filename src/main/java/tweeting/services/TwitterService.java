@@ -29,24 +29,19 @@ public class TwitterService {
     }
 
     public static TwitterService getInstance(TwitterOAuthCredentials auth) {
-        try {
-            if (instance == null) {
-                instance = new TwitterService();
-            }
-            ConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
-            configurationBuilder.setDebugEnabled(true);
-            configurationBuilder.setJSONStoreEnabled(true); // Need in order to use getRawJSON
-            configurationBuilder.setOAuthConsumerKey(auth.getConsumerAPIKey());
-            configurationBuilder.setOAuthConsumerSecret(auth.getConsumerAPISecretKey());
-            configurationBuilder.setOAuthAccessToken(auth.getAccessToken());
-            configurationBuilder.setOAuthAccessTokenSecret(auth.getAccessTokenSecret());
-            TwitterFactory twitterFactory = new TwitterFactory(configurationBuilder.build());
-            instance.api = twitterFactory.getInstance();
-            return instance;
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e); // Log error message in cause initialization fails
-            throw e;
+        if (instance == null) {
+            instance = new TwitterService();
         }
+        ConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
+        configurationBuilder.setDebugEnabled(true);
+        configurationBuilder.setJSONStoreEnabled(true); // Need in order to use getRawJSON
+        configurationBuilder.setOAuthConsumerKey(auth.getConsumerAPIKey());
+        configurationBuilder.setOAuthConsumerSecret(auth.getConsumerAPISecretKey());
+        configurationBuilder.setOAuthAccessToken(auth.getAccessToken());
+        configurationBuilder.setOAuthAccessTokenSecret(auth.getAccessTokenSecret());
+        TwitterFactory twitterFactory = new TwitterFactory(configurationBuilder.build());
+        instance.api = twitterFactory.getInstance();
+        return instance;
     }
 
     public static TwitterService getInstance() {

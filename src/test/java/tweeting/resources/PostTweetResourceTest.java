@@ -83,20 +83,4 @@ public class PostTweetResourceTest {
         assertEquals(dummyErrorMessage, actualResponse.getEntity().toString());
     }
 
-    @Test
-    public void testTweetGeneralException() throws BadTwitterServiceResponseException, BadTwitterServiceCallException {
-        String message = "Twitter Exception";
-        RuntimeException dummyException = new RuntimeException();
-
-        when(service.postTweet(anyString())).thenThrow(dummyException);
-
-        Response actualResponse = tweetResource.postTweet(message);
-
-        verify(service).postTweet(message);
-        assertNotNull(actualResponse);
-        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), actualResponse.getStatus()); // Verify code
-        assertEquals(ResponseUtil.getServiceUnavailableErrorMessage(),
-                actualResponse.getEntity().toString());
-    }
-
 }

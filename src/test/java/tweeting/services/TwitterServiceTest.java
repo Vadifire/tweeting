@@ -4,15 +4,18 @@ import org.junit.Before;
 import org.junit.Test;
 import tweeting.conf.TwitterOAuthCredentials;
 import tweeting.util.ResponseUtil;
+import twitter4j.RateLimitStatus;
 import twitter4j.ResponseList;
 import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.util.CharacterUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.assertNotNull;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -56,13 +59,18 @@ public class TwitterServiceTest {
 
     @Test
     public void testGetTweetsSuccess() throws TwitterException, BadTwitterServiceResponseException {
-        ResponseList<Status> dummyList = mock(ResponseList.class);
+        ResponseListImpl<Status> dummyList = new ResponseListImpl<>();
+        Status mockedStatus = mock(Status.class);
+        dummyList.add(mockedStatus);
+
         when(api.getHomeTimeline()).thenReturn(dummyList);
 
         List<Status> actualList = service.getHomeTimeline();
 
         verify(api).getHomeTimeline();
+        assertNotNull(actualList);
         assertEquals(dummyList, actualList);
+
     }
 
     @Test(expected = BadTwitterServiceResponseException.class)
@@ -180,4 +188,19 @@ public class TwitterServiceTest {
             throw e;
         }
     }
+
+    // Need some class to implement ResponseList for testing purposes
+    class ResponseListImpl<T> extends ArrayList<T> implements ResponseList<T> {
+
+        @Override
+        public RateLimitStatus getRateLimitStatus() {
+            return null;
+        }
+
+        @Override
+        public int getAccessLevel() {
+            return 0;
+        }
+    }
+
 }

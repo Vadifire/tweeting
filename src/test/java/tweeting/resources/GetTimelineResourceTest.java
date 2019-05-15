@@ -2,17 +2,13 @@ package tweeting.resources;
 
 import org.junit.Before;
 import org.junit.Test;
-import tweeting.models.Tweet;
-import tweeting.services.BadTwitterServiceResponseException;
+import tweeting.services.TwitterServiceResponseException;
 import tweeting.services.TwitterService;
 import tweeting.util.ResponseUtil;
 import twitter4j.ResponseList;
 import twitter4j.Status;
 
 import javax.ws.rs.core.Response;
-
-import java.util.LinkedList;
-import java.util.List;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -37,10 +33,10 @@ public class GetTimelineResourceTest {
     }
 
     @Test
-    public void testTimelineSuccess() throws BadTwitterServiceResponseException {
-        List<Tweet> dummyList = new LinkedList<>(); // Dummy list to return from getHomeTimeline()
-        Tweet tweet = new Tweet();
-        dummyList.add(tweet); // Populate list with mocked Status
+    public void testTimelineSuccess() throws TwitterServiceResponseException {
+        ResponseList<Status> dummyList = mock(ResponseList.class); // Dummy list to return from getHomeTimeline()
+        Status mockedStatus = mock(Status.class);
+        dummyList.add(mockedStatus); // Populate list with mocked Status
 
         when(service.getHomeTimeline()).thenReturn(dummyList);
 
@@ -54,9 +50,9 @@ public class GetTimelineResourceTest {
     }
 
     @Test
-    public void testTimelineServerException() throws BadTwitterServiceResponseException {
+    public void testTimelineServerException() throws TwitterServiceResponseException {
         String dummyErrorMessage = "some message";
-        BadTwitterServiceResponseException dummyException = new BadTwitterServiceResponseException(dummyErrorMessage,
+        TwitterServiceResponseException dummyException = new TwitterServiceResponseException(dummyErrorMessage,
                 null);
 
         when(service.getHomeTimeline()).thenThrow(dummyException);
@@ -70,7 +66,7 @@ public class GetTimelineResourceTest {
     }
 
     @Test
-    public void testTimelineGeneralException() throws BadTwitterServiceResponseException {
+    public void testTimelineGeneralException() throws TwitterServiceResponseException {
         RuntimeException dummyException = new RuntimeException();
 
         when(service.getHomeTimeline()).thenThrow(dummyException);

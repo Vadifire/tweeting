@@ -57,7 +57,7 @@ public class TwitterService {
         return instance;
     }
 
-    public List<Tweet> getHomeTimeline() throws BadTwitterServiceResponseException {
+    public List<Tweet> getHomeTimeline() throws TwitterServiceResponseException {
         try {
             return constructTweetList(api.getHomeTimeline());
         } catch (TwitterException te) {
@@ -65,12 +65,12 @@ public class TwitterService {
         }
     }
 
-    public Tweet postTweet(String message) throws BadTwitterServiceResponseException, BadTwitterServiceCallException {
+    public Tweet postTweet(String message) throws TwitterServiceResponseException, TwitterServiceCallException {
         // Prelim checks (avoid calling to Twitter if unnecessary)
         if (message == null) {
-            throw new BadTwitterServiceCallException(ResponseUtil.getNullTweetErrorMessage());
+            throw new TwitterServiceCallException(ResponseUtil.getNullTweetErrorMessage());
         } else if (message.length() > MAX_TWEET_LENGTH || StringUtils.isBlank(message)) {
-            throw new BadTwitterServiceCallException(ResponseUtil.getInvalidTweetErrorMessage());
+            throw new TwitterServiceCallException(ResponseUtil.getInvalidTweetErrorMessage());
         }
         try {
             return constructTweet(api.updateStatus(message));
@@ -79,12 +79,12 @@ public class TwitterService {
         }
     }
 
-    private BadTwitterServiceResponseException createServerException(TwitterException te) {
+    private TwitterServiceResponseException createServerException(TwitterException te) {
         if (te.isCausedByNetworkIssue() || te.getErrorCode() == TwitterErrorCode.BAD_AUTH_DATA.getCode() ||
                 te.getErrorCode() == TwitterErrorCode.COULD_NOT_AUTH.getCode()) {
-            return new BadTwitterServiceResponseException(ResponseUtil.getServiceUnavailableErrorMessage(), te);
+            return new TwitterServiceResponseException(ResponseUtil.getServiceUnavailableErrorMessage(), te);
         } else {
-            return new BadTwitterServiceResponseException(te);
+            return new TwitterServiceResponseException(te);
         }
     }
 
@@ -107,7 +107,6 @@ public class TwitterService {
         }
         return listOfTweets;
     }
-
 
     // Used for mocking purposes
     public void setAPI(Twitter api) {

@@ -3,11 +3,10 @@ package tweeting.resources;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tweeting.models.Tweet;
-import tweeting.services.BadTwitterServiceCallException;
-import tweeting.services.BadTwitterServiceResponseException;
+import tweeting.services.TwitterServiceCallException;
+import tweeting.services.TwitterServiceResponseException;
 import tweeting.services.TwitterService;
 import tweeting.util.ResponseUtil;
-import twitter4j.Status;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
@@ -45,10 +44,10 @@ public class PostTweetResource {
             responseBuilder.type(MediaType.APPLICATION_JSON);
             Response response = responseBuilder.entity(returnedStatus).build();
             return response;
-        } catch (BadTwitterServiceCallException e) {
+        } catch (TwitterServiceCallException e) {
             logger.debug("Sending 400 Bad Request error", e);
             return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
-        } catch (BadTwitterServiceResponseException e) {
+        } catch (TwitterServiceResponseException e) {
             logger.error("Sending 500 Internal Server error", e);
             return (Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage())).build();
         } catch (Exception e) {

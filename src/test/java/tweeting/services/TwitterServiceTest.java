@@ -58,7 +58,7 @@ public class TwitterServiceTest {
     }
 
     @Test
-    public void testGetTweetsSuccess() throws TwitterException, BadTwitterServiceResponseException {
+    public void testGetTweetsSuccess() throws TwitterException, TwitterServiceResponseException {
         ResponseListImpl<Status> dummyList = new ResponseListImpl<>();
         Status mockedStatus = mock(Status.class);
         dummyList.add(mockedStatus);
@@ -73,62 +73,62 @@ public class TwitterServiceTest {
 
     }
 
-    @Test(expected = BadTwitterServiceResponseException.class)
-    public void testGetTweetsServerException() throws TwitterException, BadTwitterServiceResponseException {
+    @Test(expected = TwitterServiceResponseException.class)
+    public void testGetTweetsServerException() throws TwitterException, TwitterServiceResponseException {
         String errorMessage = "some error message";
         TwitterException te = mock(TwitterException.class);
         when(api.getHomeTimeline()).thenThrow(te);
         when(te.getErrorMessage()).thenReturn(errorMessage);
         try {
             service.getHomeTimeline();
-        } catch (BadTwitterServiceResponseException e) {
+        } catch (TwitterServiceResponseException e) {
             assertEquals(errorMessage, e.getMessage());
             throw e;
         }
     }
 
-    @Test(expected = BadTwitterServiceResponseException.class)
-    public void testGetTweetsNetworkException() throws TwitterException, BadTwitterServiceResponseException {
+    @Test(expected = TwitterServiceResponseException.class)
+    public void testGetTweetsNetworkException() throws TwitterException, TwitterServiceResponseException {
         TwitterException te = mock(TwitterException.class);
         when(api.getHomeTimeline()).thenThrow(te);
         when(te.isCausedByNetworkIssue()).thenReturn(true);
         try {
             service.getHomeTimeline();
-        } catch (BadTwitterServiceResponseException e) {
+        } catch (TwitterServiceResponseException e) {
             assertEquals(ResponseUtil.getServiceUnavailableErrorMessage(), e.getMessage());
             throw e;
         }
     }
 
-    @Test(expected = BadTwitterServiceResponseException.class)
-    public void testGetTweetsBadAuthException() throws TwitterException, BadTwitterServiceResponseException {
+    @Test(expected = TwitterServiceResponseException.class)
+    public void testGetTweetsBadAuthException() throws TwitterException, TwitterServiceResponseException {
         TwitterException te = mock(TwitterException.class);
         when(api.getHomeTimeline()).thenThrow(te);
         when(te.getErrorCode()).thenReturn(TwitterErrorCode.BAD_AUTH_DATA.getCode());
         try {
             service.getHomeTimeline();
-        } catch (BadTwitterServiceResponseException e) {
+        } catch (TwitterServiceResponseException e) {
             assertEquals(ResponseUtil.getServiceUnavailableErrorMessage(), e.getMessage());
             throw e;
         }
     }
 
-    @Test(expected = BadTwitterServiceResponseException.class)
-    public void testGetTweetsCouldNotAuthException() throws TwitterException, BadTwitterServiceResponseException {
+    @Test(expected = TwitterServiceResponseException.class)
+    public void testGetTweetsCouldNotAuthException() throws TwitterException, TwitterServiceResponseException {
         TwitterException te = mock(TwitterException.class);
         when(api.getHomeTimeline()).thenThrow(te);
         when(te.getErrorCode()).thenReturn(TwitterErrorCode.COULD_NOT_AUTH.getCode());
         try {
             service.getHomeTimeline();
-        } catch (BadTwitterServiceResponseException e) {
+        } catch (TwitterServiceResponseException e) {
             assertEquals(ResponseUtil.getServiceUnavailableErrorMessage(), e.getMessage());
             throw e;
         }
     }
 
     @Test
-    public void testPostTweetSuccess() throws TwitterException, BadTwitterServiceResponseException,
-            BadTwitterServiceCallException {
+    public void testPostTweetSuccess() throws TwitterException, TwitterServiceResponseException,
+            TwitterServiceCallException {
         Status mockedStatus = mock(Status.class);
         String dummyMessage = "some message";
 
@@ -140,50 +140,50 @@ public class TwitterServiceTest {
         assertEquals(mockedStatus, actualStatus);
     }
 
-    @Test(expected = BadTwitterServiceCallException.class)
-    public void testPostTweetNull() throws BadTwitterServiceResponseException, BadTwitterServiceCallException {
+    @Test(expected = TwitterServiceCallException.class)
+    public void testPostTweetNull() throws TwitterServiceResponseException, TwitterServiceCallException {
         try {
             service.postTweet(null);
-        } catch (BadTwitterServiceCallException e) {
+        } catch (TwitterServiceCallException e) {
             assertEquals(ResponseUtil.getNullTweetErrorMessage(), e.getMessage());
             throw e;
         }
     }
 
-    @Test(expected = BadTwitterServiceCallException.class)
-    public void testPostTweetBlank() throws BadTwitterServiceResponseException, BadTwitterServiceCallException {
+    @Test(expected = TwitterServiceCallException.class)
+    public void testPostTweetBlank() throws TwitterServiceResponseException, TwitterServiceCallException {
         try {
             service.postTweet("");
-        } catch (BadTwitterServiceCallException e) {
+        } catch (TwitterServiceCallException e) {
             assertEquals(ResponseUtil.getInvalidTweetErrorMessage(), e.getMessage());
             throw e;
         }
     }
 
-    @Test(expected = BadTwitterServiceCallException.class)
-    public void testPostTweetTooLong() throws BadTwitterServiceResponseException, BadTwitterServiceCallException {
+    @Test(expected = TwitterServiceCallException.class)
+    public void testPostTweetTooLong() throws TwitterServiceResponseException, TwitterServiceCallException {
         try {
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < CharacterUtil.MAX_TWEET_LENGTH + 1; i++) {
                 sb.append("a"); // single character
             }
             service.postTweet(sb.toString());
-        } catch (BadTwitterServiceCallException e) {
+        } catch (TwitterServiceCallException e) {
             assertEquals(ResponseUtil.getInvalidTweetErrorMessage(), e.getMessage());
             throw e;
         }
     }
 
-    @Test(expected = BadTwitterServiceResponseException.class)
-    public void testPostTweetServerException() throws TwitterException, BadTwitterServiceResponseException,
-            BadTwitterServiceCallException {
+    @Test(expected = TwitterServiceResponseException.class)
+    public void testPostTweetServerException() throws TwitterException, TwitterServiceResponseException,
+            TwitterServiceCallException {
         String errorMessage = "some error message";
         TwitterException te = mock(TwitterException.class);
         when(api.updateStatus(anyString())).thenThrow(te);
         when(te.getErrorMessage()).thenReturn(errorMessage);
         try {
             service.postTweet("some message");
-        } catch (BadTwitterServiceResponseException e) {
+        } catch (TwitterServiceResponseException e) {
             assertEquals(errorMessage, e.getMessage());
             throw e;
         }

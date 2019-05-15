@@ -1,7 +1,7 @@
 package tweeting.resources;
 
-import tweeting.services.BadTwitterServiceResponseException;
-import tweeting.services.BadTwitterServiceCallException;
+import tweeting.services.TwitterServiceResponseException;
+import tweeting.services.TwitterServiceCallException;
 import tweeting.services.TwitterService;
 import tweeting.util.ResponseUtil;
 import twitter4j.Status;
@@ -36,7 +36,7 @@ public class PostTweetResourceTest {
     }
 
     @Test
-    public void testTweetSuccess() throws BadTwitterServiceResponseException, BadTwitterServiceCallException {
+    public void testTweetSuccess() throws TwitterServiceResponseException, TwitterServiceCallException {
         String message = "No Twitter Exception";
 
         when(service.postTweet(anyString())).thenReturn(mockedStatus);
@@ -51,10 +51,10 @@ public class PostTweetResourceTest {
     }
 
     @Test
-    public void testTweetClientException() throws BadTwitterServiceResponseException, BadTwitterServiceCallException {
+    public void testTweetClientException() throws TwitterServiceResponseException, TwitterServiceCallException {
         String dummyMessage = "some message";
         String dummyErrorMessage = "some error message";
-        BadTwitterServiceCallException dummyException = new BadTwitterServiceCallException(dummyErrorMessage);
+        TwitterServiceCallException dummyException = new TwitterServiceCallException(dummyErrorMessage);
 
         when(service.postTweet(anyString())).thenThrow(dummyException);
 
@@ -67,10 +67,10 @@ public class PostTweetResourceTest {
     }
 
     @Test
-    public void testTweetServerException() throws BadTwitterServiceResponseException, BadTwitterServiceCallException {
+    public void testTweetServerException() throws TwitterServiceResponseException, TwitterServiceCallException {
         String dummyMessage = "some message";
         String dummyErrorMessage = "some error message";
-        BadTwitterServiceResponseException dummyException = new BadTwitterServiceResponseException(dummyErrorMessage,
+        TwitterServiceResponseException dummyException = new TwitterServiceResponseException(dummyErrorMessage,
                 null);
 
         when(service.postTweet(anyString())).thenThrow(dummyException);
@@ -84,7 +84,7 @@ public class PostTweetResourceTest {
     }
 
     @Test
-    public void testTweetGeneralException() throws BadTwitterServiceResponseException, BadTwitterServiceCallException {
+    public void testTweetGeneralException() throws TwitterServiceResponseException, TwitterServiceCallException {
         String message = "Twitter Exception";
         RuntimeException dummyException = new RuntimeException();
 

@@ -2,7 +2,7 @@ package tweeting.resources;
 
 import org.junit.Before;
 import org.junit.Test;
-import tweeting.services.BadTwitterServiceResponseException;
+import tweeting.services.TwitterServiceResponseException;
 import tweeting.services.TwitterService;
 import tweeting.util.ResponseUtil;
 import twitter4j.ResponseList;
@@ -33,7 +33,7 @@ public class GetTimelineResourceTest {
     }
 
     @Test
-    public void testTimelineSuccess() throws BadTwitterServiceResponseException {
+    public void testTimelineSuccess() throws TwitterServiceResponseException {
         ResponseList<Status> dummyList = mock(ResponseList.class); // Dummy list to return from getHomeTimeline()
         Status mockedStatus = mock(Status.class);
         dummyList.add(mockedStatus); // Populate list with mocked Status
@@ -50,9 +50,9 @@ public class GetTimelineResourceTest {
     }
 
     @Test
-    public void testTimelineServerException() throws BadTwitterServiceResponseException {
+    public void testTimelineServerException() throws TwitterServiceResponseException {
         String dummyErrorMessage = "some message";
-        BadTwitterServiceResponseException dummyException = new BadTwitterServiceResponseException(dummyErrorMessage,
+        TwitterServiceResponseException dummyException = new TwitterServiceResponseException(dummyErrorMessage,
                 null);
 
         when(service.getHomeTimeline()).thenThrow(dummyException);
@@ -66,7 +66,7 @@ public class GetTimelineResourceTest {
     }
 
     @Test
-    public void testTimelineGeneralException() throws BadTwitterServiceResponseException {
+    public void testTimelineGeneralException() throws TwitterServiceResponseException {
         RuntimeException dummyException = new RuntimeException();
 
         when(service.getHomeTimeline()).thenThrow(dummyException);

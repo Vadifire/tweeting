@@ -54,7 +54,7 @@ public class TwitterService {
         return instance;
     }
 
-    public List<Status> getHomeTimeline() throws BadTwitterServiceResponseException {
+    public List<Status> getHomeTimeline() throws TwitterServiceResponseException {
         try {
             return api.getHomeTimeline();
         } catch (TwitterException te) {
@@ -62,12 +62,12 @@ public class TwitterService {
         }
     }
 
-    public Status postTweet(String message) throws BadTwitterServiceResponseException, BadTwitterServiceCallException {
+    public Status postTweet(String message) throws TwitterServiceResponseException, TwitterServiceCallException {
         // Prelim checks (avoid calling to Twitter if unnecessary)
         if (message == null) {
-            throw new BadTwitterServiceCallException(ResponseUtil.getNullTweetErrorMessage());
+            throw new TwitterServiceCallException(ResponseUtil.getNullTweetErrorMessage());
         } else if (message.length() > MAX_TWEET_LENGTH || StringUtils.isBlank(message)) {
-            throw new BadTwitterServiceCallException(ResponseUtil.getInvalidTweetErrorMessage());
+            throw new TwitterServiceCallException(ResponseUtil.getInvalidTweetErrorMessage());
         }
         try {
             return api.updateStatus(message);
@@ -76,12 +76,12 @@ public class TwitterService {
         }
     }
 
-    private BadTwitterServiceResponseException createServerException(TwitterException te) {
+    private TwitterServiceResponseException createServerException(TwitterException te) {
         if (te.isCausedByNetworkIssue() || te.getErrorCode() == TwitterErrorCode.BAD_AUTH_DATA.getCode() ||
                 te.getErrorCode() == TwitterErrorCode.COULD_NOT_AUTH.getCode()) {
-            return new BadTwitterServiceResponseException(ResponseUtil.getServiceUnavailableErrorMessage(), te);
+            return new TwitterServiceResponseException(ResponseUtil.getServiceUnavailableErrorMessage(), te);
         } else {
-            return new BadTwitterServiceResponseException(te);
+            return new TwitterServiceResponseException(te);
         }
     }
 

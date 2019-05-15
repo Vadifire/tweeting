@@ -161,16 +161,8 @@ public class TwitterServiceTest {
     }
 
     @Test
-<<<<<<< HEAD
-    public void testPostTweetSuccess() throws TwitterException, BadTwitterServiceResponseException,
-            BadTwitterServiceCallException {
-=======
     public void testPostTweetSuccess() throws TwitterException, TwitterServiceResponseException,
             TwitterServiceCallException {
-        Status mockedStatus = mock(Status.class);
-        String dummyMessage = "some message";
-
->>>>>>> master
         when(api.updateStatus(anyString())).thenReturn(mockedStatus);
 
         Tweet tweet = service.postTweet(dummyMessage);

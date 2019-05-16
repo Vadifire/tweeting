@@ -3,10 +3,9 @@ package tweeting.resources;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tweeting.models.Tweet;
+import tweeting.services.TwitterService;
 import tweeting.services.TwitterServiceCallException;
 import tweeting.services.TwitterServiceResponseException;
-import tweeting.services.TwitterService;
-import tweeting.util.ResponseUtil;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
@@ -53,7 +52,7 @@ public class TweetResource {
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return (Response.status(Response.Status.INTERNAL_SERVER_ERROR).
-                    entity(ResponseUtil.getServiceUnavailableErrorMessage())).build();
+                    entity(TwitterService.SERVICE_UNAVAILABLE_MESSAGE)).build();
         }
     }
 

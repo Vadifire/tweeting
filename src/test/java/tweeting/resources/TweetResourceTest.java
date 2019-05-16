@@ -1,22 +1,20 @@
 package tweeting.resources;
 
+import org.junit.Before;
+import org.junit.Test;
 import tweeting.models.Tweet;
-import tweeting.services.TwitterServiceResponseException;
-import tweeting.services.TwitterServiceCallException;
 import tweeting.services.TwitterService;
-import tweeting.util.ResponseUtil;
+import tweeting.services.TwitterServiceCallException;
+import tweeting.services.TwitterServiceResponseException;
 
 import javax.ws.rs.core.Response;
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.anyString;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-
-import org.junit.Before;
-import org.junit.Test;
+import static org.mockito.Mockito.when;
 
 public class TweetResourceTest {
 
@@ -94,8 +92,7 @@ public class TweetResourceTest {
         verify(service).postTweet(message);
         assertNotNull(actualResponse);
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), actualResponse.getStatus()); // Verify code
-        assertEquals(ResponseUtil.getServiceUnavailableErrorMessage(),
-                actualResponse.getEntity().toString());
+        assertEquals(TwitterService.SERVICE_UNAVAILABLE_MESSAGE, actualResponse.getEntity().toString());
     }
 
 }

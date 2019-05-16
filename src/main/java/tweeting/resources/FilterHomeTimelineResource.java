@@ -27,7 +27,7 @@ public class FilterHomeTimelineResource {
     public static final String FILTER_PARAM = "keyword";
 
     public static final String MISSING_FILTER_MESSAGE = "\"" + FILTER_PARAM + "\" parameter is required to filter" +
-            " home timeline. ";
+            " home timeline.";
 
     private TwitterService service;
 

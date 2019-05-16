@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory;
 import tweeting.conf.TwitterOAuthCredentials;
 import tweeting.models.Tweet;
 import tweeting.models.TwitterUser;
-import tweeting.util.ResponseUtil;
 import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
@@ -68,9 +67,9 @@ public class TwitterService {
     public Tweet postTweet(String message) throws TwitterServiceResponseException, TwitterServiceCallException {
         // Prelim checks (avoid calling to Twitter if unnecessary)
         if (message == null) {
-            throw new TwitterServiceCallException(ResponseUtil.getNullTweetErrorMessage());
+            throw new TwitterServiceCallException(TwitterErrorMessage.NULL_TWEET.getMessage());
         } else if (message.length() > MAX_TWEET_LENGTH || StringUtils.isBlank(message)) {
-            throw new TwitterServiceCallException(ResponseUtil.getInvalidTweetErrorMessage());
+            throw new TwitterServiceCallException(TwitterErrorMessage.INVALID_TWEET.getMessage());
         }
         try {
             return constructTweet(api.updateStatus(message));
@@ -82,20 +81,24 @@ public class TwitterService {
     private TwitterServiceResponseException createServerException(TwitterException te) {
         if (te.isCausedByNetworkIssue() || te.getErrorCode() == TwitterErrorCode.BAD_AUTH_DATA.getCode() ||
                 te.getErrorCode() == TwitterErrorCode.COULD_NOT_AUTH.getCode()) {
-            return new TwitterServiceResponseException(ResponseUtil.getServiceUnavailableErrorMessage(), te);
+            return new TwitterServiceResponseException(TwitterErrorMessage.SERVICE_UNAVAILABLE.getMessage(), te);
         } else {
             return new TwitterServiceResponseException(te);
         }
     }
 
-    private Tweet constructTweet(Status status){
+    private Tweet constructTweet(Status status) {
         Tweet tweet = new Tweet();
         tweet.setMessage(status.getText());
         TwitterUser user = new TwitterUser();
-        user.setTwitterHandle(status.getUser().getScreenName());
-        user.setName(status.getUser().getName());
-        user.setProfileImageUrl(status.getUser().getProfileImageURL());
-        tweet.setUser(user);
+        if (status.getUser() != null) {
+            user.setTwitterHandle(status.getUser().getScreenName());
+            user.setName(status.getUser().getName());
+            user.setProfileImageUrl(status.getUser().getProfileImageURL());
+            tweet.setUser(user);
+        } else {
+            logger.warn("Tweet has no user.");
+        }
         tweet.setCreatedAt(status.getCreatedAt());
         return tweet;
     }
@@ -112,6 +115,7 @@ public class TwitterService {
     public void setAPI(Twitter api) {
         this.api = api;
     }
+
     public Twitter getAPI() {
         return api;
     }

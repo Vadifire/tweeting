@@ -2,18 +2,14 @@ package tweeting.services;
 
 import org.junit.Before;
 import org.junit.Test;
-import tweeting.models.Tweet;
 import tweeting.conf.TwitterOAuthCredentials;
-import tweeting.util.ResponseUtil;
-import twitter4j.RateLimitStatus;
-import twitter4j.ResponseList;
+import tweeting.models.Tweet;
 import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.User;
 import twitter4j.util.CharacterUtil;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -21,8 +17,8 @@ import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class TwitterServiceTest {
 
@@ -129,7 +125,7 @@ public class TwitterServiceTest {
         try {
             service.getHomeTimeline();
         } catch (TwitterServiceResponseException e) {
-            assertEquals(ResponseUtil.getServiceUnavailableErrorMessage(), e.getMessage());
+            assertEquals(TwitterErrorMessage.SERVICE_UNAVAILABLE.getMessage(), e.getMessage());
             throw e;
         }
     }
@@ -142,7 +138,7 @@ public class TwitterServiceTest {
         try {
             service.getHomeTimeline();
         } catch (TwitterServiceResponseException e) {
-            assertEquals(ResponseUtil.getServiceUnavailableErrorMessage(), e.getMessage());
+            assertEquals(TwitterErrorMessage.SERVICE_UNAVAILABLE.getMessage(), e.getMessage());
             throw e;
         }
     }
@@ -155,7 +151,7 @@ public class TwitterServiceTest {
         try {
             service.getHomeTimeline();
         } catch (TwitterServiceResponseException e) {
-            assertEquals(ResponseUtil.getServiceUnavailableErrorMessage(), e.getMessage());
+            assertEquals(TwitterErrorMessage.SERVICE_UNAVAILABLE.getMessage(), e.getMessage());
             throw e;
         }
     }
@@ -182,7 +178,7 @@ public class TwitterServiceTest {
         try {
             service.postTweet(null);
         } catch (TwitterServiceCallException e) {
-            assertEquals(ResponseUtil.getNullTweetErrorMessage(), e.getMessage());
+            assertEquals(TwitterErrorMessage.NULL_TWEET.getMessage(), e.getMessage());
             throw e;
         }
     }
@@ -192,7 +188,7 @@ public class TwitterServiceTest {
         try {
             service.postTweet("");
         } catch (TwitterServiceCallException e) {
-            assertEquals(ResponseUtil.getInvalidTweetErrorMessage(), e.getMessage());
+            assertEquals(TwitterErrorMessage.INVALID_TWEET.getMessage(), e.getMessage());
             throw e;
         }
     }
@@ -206,7 +202,7 @@ public class TwitterServiceTest {
             }
             service.postTweet(sb.toString());
         } catch (TwitterServiceCallException e) {
-            assertEquals(ResponseUtil.getInvalidTweetErrorMessage(), e.getMessage());
+            assertEquals(TwitterErrorMessage.INVALID_TWEET.getMessage(), e.getMessage());
             throw e;
         }
     }
@@ -224,21 +220,6 @@ public class TwitterServiceTest {
             assertEquals(errorMessage, e.getMessage());
             throw e;
         }
-    }
-
-}
-
-// Need some class to implement ResponseList to stub getHomeTimeline()
-class ResponseListImpl<T> extends ArrayList<T> implements ResponseList<T> {
-
-    @Override
-    public RateLimitStatus getRateLimitStatus() {
-        return null;
-    }
-
-    @Override
-    public int getAccessLevel() {
-        return 0;
     }
 
 }

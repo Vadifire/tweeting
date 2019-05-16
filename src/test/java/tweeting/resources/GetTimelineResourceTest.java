@@ -3,20 +3,18 @@ package tweeting.resources;
 import org.junit.Before;
 import org.junit.Test;
 import tweeting.models.Tweet;
-import tweeting.services.TwitterServiceResponseException;
+import tweeting.services.TwitterErrorMessage;
 import tweeting.services.TwitterService;
-import tweeting.util.ResponseUtil;
+import tweeting.services.TwitterServiceResponseException;
 
 import javax.ws.rs.core.Response;
-
 import java.util.LinkedList;
-
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.verify;
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class GetTimelineResourceTest {
 
@@ -77,7 +75,7 @@ public class GetTimelineResourceTest {
         verify(service).getHomeTimeline();
         assertNotNull(actualResponse);
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), actualResponse.getStatus()); // Verify code
-        assertEquals(ResponseUtil.getServiceUnavailableErrorMessage(),
+        assertEquals(TwitterErrorMessage.SERVICE_UNAVAILABLE.getMessage(),
                 actualResponse.getEntity().toString());
     }
 

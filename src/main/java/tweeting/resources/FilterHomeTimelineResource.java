@@ -1,5 +1,6 @@
 package tweeting.resources;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tweeting.models.Tweet;
@@ -48,7 +49,7 @@ public class FilterHomeTimelineResource {
             if (keyword.isPresent()) {
                 final List<Tweet> tweets = service.getHomeTimeline();
                 final List<Tweet> filteredTweets = tweets.stream()
-                        .filter(t -> t.getMessage().toLowerCase().contains(keyword.get().toLowerCase()))
+                        .filter(t -> StringUtils.containsIgnoreCase(t.getMessage(), keyword.get()))
                         .collect(Collectors.toList());
 
                 logger.info("Successfully retrieved home timeline from Twitter. Sending 200 OK response.");

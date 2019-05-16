@@ -3,34 +3,58 @@ package tweeting.services;
 import org.junit.Before;
 import org.junit.Test;
 import tweeting.conf.TwitterOAuthCredentials;
-import tweeting.util.ResponseUtil;
-import twitter4j.RateLimitStatus;
-import twitter4j.ResponseList;
+import tweeting.models.Tweet;
 import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
+import twitter4j.User;
 import twitter4j.util.CharacterUtil;
 
-import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class TwitterServiceTest {
 
     // Mocked classes
     Twitter api;
+    Status mockedStatus;
+    User mockedUser;
+
+    // Dummy vars
+    String dummyName;
+    String dummyScreenName;
+    String dummyURL;
+    String dummyMessage;
+    Date dummyDate;
 
     // Class under test
     TwitterService service;
 
     @Before
     public void setUp() {
+        mockedStatus = mock(Status.class);
+        mockedUser = mock(User.class);
+        dummyMessage = "some message";
+
+        dummyDate = new Date();
+        dummyName = "name";
+        dummyScreenName = "screen name";
+        dummyURL = "url";
+
+        when(mockedStatus.getText()).thenReturn(dummyMessage);
+        when(mockedStatus.getCreatedAt()).thenReturn(dummyDate);
+        when(mockedStatus.getUser()).thenReturn(mockedUser);
+        when(mockedUser.getName()).thenReturn(dummyName);
+        when(mockedUser.getScreenName()).thenReturn(dummyScreenName);
+        when(mockedUser.getProfileImageURL()).thenReturn(dummyURL);
+
         service = TwitterService.getInstance();
         api = mock(Twitter.class);
         service.setAPI(api);
@@ -60,16 +84,22 @@ public class TwitterServiceTest {
     @Test
     public void testGetTweetsSuccess() throws TwitterException, TwitterServiceResponseException {
         ResponseListImpl<Status> dummyList = new ResponseListImpl<>();
-        Status mockedStatus = mock(Status.class);
         dummyList.add(mockedStatus);
 
         when(api.getHomeTimeline()).thenReturn(dummyList);
 
-        List<Status> actualList = service.getHomeTimeline();
+        List<Tweet> actualList = service.getHomeTimeline();
 
         verify(api).getHomeTimeline();
         assertNotNull(actualList);
-        assertEquals(dummyList, actualList);
+        assertEquals(dummyList.size(), actualList.size());
+        Tweet tweet = actualList.get(0); // Test tweet is correctly constructed
+        assertNotNull(tweet);
+        assertEquals(dummyMessage, tweet.getMessage());
+        assertEquals(dummyName, tweet.getUser().getName());
+        assertEquals(dummyScreenName, tweet.getUser().getTwitterHandle());
+        assertEquals(dummyDate, tweet.getCreatedAt());
+        assertEquals(dummyURL, tweet.getUser().getProfileImageUrl());
 
     }
 
@@ -95,7 +125,7 @@ public class TwitterServiceTest {
         try {
             service.getHomeTimeline();
         } catch (TwitterServiceResponseException e) {
-            assertEquals(ResponseUtil.getServiceUnavailableErrorMessage(), e.getMessage());
+            assertEquals(TwitterService.SERVICE_UNAVAILABLE_MESSAGE, e.getMessage());
             throw e;
         }
     }
@@ -108,7 +138,7 @@ public class TwitterServiceTest {
         try {
             service.getHomeTimeline();
         } catch (TwitterServiceResponseException e) {
-            assertEquals(ResponseUtil.getServiceUnavailableErrorMessage(), e.getMessage());
+            assertEquals(TwitterService.SERVICE_UNAVAILABLE_MESSAGE, e.getMessage());
             throw e;
         }
     }
@@ -121,7 +151,7 @@ public class TwitterServiceTest {
         try {
             service.getHomeTimeline();
         } catch (TwitterServiceResponseException e) {
-            assertEquals(ResponseUtil.getServiceUnavailableErrorMessage(), e.getMessage());
+            assertEquals(TwitterService.SERVICE_UNAVAILABLE_MESSAGE, e.getMessage());
             throw e;
         }
     }
@@ -129,15 +159,18 @@ public class TwitterServiceTest {
     @Test
     public void testPostTweetSuccess() throws TwitterException, TwitterServiceResponseException,
             TwitterServiceCallException {
-        Status mockedStatus = mock(Status.class);
-        String dummyMessage = "some message";
-
         when(api.updateStatus(anyString())).thenReturn(mockedStatus);
 
-        Status actualStatus = service.postTweet(dummyMessage);
+        Tweet tweet = service.postTweet(dummyMessage);
 
         verify(api).updateStatus(anyString());
-        assertEquals(mockedStatus, actualStatus);
+        assertNotNull(tweet);
+        assertEquals(dummyMessage, tweet.getMessage());
+        assertEquals(dummyName, tweet.getUser().getName());
+        assertEquals(dummyScreenName, tweet.getUser().getTwitterHandle());
+        assertEquals(dummyDate, tweet.getCreatedAt());
+        assertEquals(dummyURL, tweet.getUser().getProfileImageUrl());
+
     }
 
     @Test(expected = TwitterServiceCallException.class)
@@ -145,7 +178,7 @@ public class TwitterServiceTest {
         try {
             service.postTweet(null);
         } catch (TwitterServiceCallException e) {
-            assertEquals(ResponseUtil.getNullTweetErrorMessage(), e.getMessage());
+            assertEquals(TwitterService.NULL_TWEET_MESSAGE, e.getMessage());
             throw e;
         }
     }
@@ -155,7 +188,7 @@ public class TwitterServiceTest {
         try {
             service.postTweet("");
         } catch (TwitterServiceCallException e) {
-            assertEquals(ResponseUtil.getInvalidTweetErrorMessage(), e.getMessage());
+            assertEquals(TwitterService.INVALID_TWEET_MESSAGE, e.getMessage());
             throw e;
         }
     }
@@ -169,7 +202,7 @@ public class TwitterServiceTest {
             }
             service.postTweet(sb.toString());
         } catch (TwitterServiceCallException e) {
-            assertEquals(ResponseUtil.getInvalidTweetErrorMessage(), e.getMessage());
+            assertEquals(TwitterService.INVALID_TWEET_MESSAGE, e.getMessage());
             throw e;
         }
     }
@@ -186,20 +219,6 @@ public class TwitterServiceTest {
         } catch (TwitterServiceResponseException e) {
             assertEquals(errorMessage, e.getMessage());
             throw e;
-        }
-    }
-
-    // Need some class to implement ResponseList for testing purposes
-    class ResponseListImpl<T> extends ArrayList<T> implements ResponseList<T> {
-
-        @Override
-        public RateLimitStatus getRateLimitStatus() {
-            return null;
-        }
-
-        @Override
-        public int getAccessLevel() {
-            return 0;
         }
     }
 

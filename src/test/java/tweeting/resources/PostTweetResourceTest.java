@@ -1,28 +1,25 @@
 package tweeting.resources;
 
-import tweeting.services.TwitterServiceResponseException;
-import tweeting.services.TwitterServiceCallException;
+import org.junit.Before;
+import org.junit.Test;
+import tweeting.models.Tweet;
 import tweeting.services.TwitterService;
-import tweeting.util.ResponseUtil;
-import twitter4j.Status;
+import tweeting.services.TwitterServiceCallException;
+import tweeting.services.TwitterServiceResponseException;
 
 import javax.ws.rs.core.Response;
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.anyString;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-
-import org.junit.Before;
-import org.junit.Test;
+import static org.mockito.Mockito.when;
 
 public class PostTweetResourceTest {
 
     // Mocked classes
     TwitterService service;
-    Status mockedStatus;
 
     // Resource to test
     PostTweetResource tweetResource;
@@ -30,7 +27,6 @@ public class PostTweetResourceTest {
     @Before
     public void setUp() {
         service = mock(TwitterService.class);
-        mockedStatus = mock(Status.class);
 
         tweetResource = new PostTweetResource(service); //Use the Mocked service instead of the usual Twitter4J impl
     }
@@ -38,8 +34,9 @@ public class PostTweetResourceTest {
     @Test
     public void testTweetSuccess() throws TwitterServiceResponseException, TwitterServiceCallException {
         String message = "No Twitter Exception";
+        Tweet tweet = new Tweet();
 
-        when(service.postTweet(anyString())).thenReturn(mockedStatus);
+        when(service.postTweet(anyString())).thenReturn(tweet);
 
         Response response = tweetResource.postTweet(message); // Simple valid message case
 
@@ -47,7 +44,7 @@ public class PostTweetResourceTest {
         assertNotNull(response);
         System.out.println(response.getStatus());
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
-        assertEquals(mockedStatus, response.getEntity());
+        assertEquals(tweet, response.getEntity());
     }
 
     @Test
@@ -95,8 +92,7 @@ public class PostTweetResourceTest {
         verify(service).postTweet(message);
         assertNotNull(actualResponse);
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), actualResponse.getStatus()); // Verify code
-        assertEquals(ResponseUtil.getServiceUnavailableErrorMessage(),
-                actualResponse.getEntity().toString());
+        assertEquals(TwitterService.SERVICE_UNAVAILABLE_MESSAGE, actualResponse.getEntity().toString());
     }
 
 }

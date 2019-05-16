@@ -2,20 +2,18 @@ package tweeting.resources;
 
 import org.junit.Before;
 import org.junit.Test;
-import tweeting.services.TwitterServiceResponseException;
+import tweeting.models.Tweet;
 import tweeting.services.TwitterService;
-import tweeting.util.ResponseUtil;
-import twitter4j.ResponseList;
-import twitter4j.Status;
+import tweeting.services.TwitterServiceResponseException;
 
 import javax.ws.rs.core.Response;
-
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.verify;
+import java.util.LinkedList;
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class GetTimelineResourceTest {
 
@@ -34,9 +32,9 @@ public class GetTimelineResourceTest {
 
     @Test
     public void testTimelineSuccess() throws TwitterServiceResponseException {
-        ResponseList<Status> dummyList = mock(ResponseList.class); // Dummy list to return from getHomeTimeline()
-        Status mockedStatus = mock(Status.class);
-        dummyList.add(mockedStatus); // Populate list with mocked Status
+        LinkedList<Tweet> dummyList = new LinkedList<>();
+        Tweet dummyTweet = new Tweet();
+        dummyList.add(dummyTweet);
 
         when(service.getHomeTimeline()).thenReturn(dummyList);
 
@@ -76,8 +74,7 @@ public class GetTimelineResourceTest {
         verify(service).getHomeTimeline();
         assertNotNull(actualResponse);
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), actualResponse.getStatus()); // Verify code
-        assertEquals(ResponseUtil.getServiceUnavailableErrorMessage(),
-                actualResponse.getEntity().toString());
+        assertEquals(TwitterService.SERVICE_UNAVAILABLE_MESSAGE, actualResponse.getEntity().toString());
     }
 
 }

@@ -14,8 +14,8 @@ import twitter4j.TwitterFactory;
 import twitter4j.conf.ConfigurationBuilder;
 import twitter4j.util.CharacterUtil;
 
-import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 public class TwitterService {
@@ -108,12 +108,10 @@ public class TwitterService {
         return tweet;
     }
 
-    private LinkedList<Tweet> constructTweetList(List<Status> statuses) {
-        LinkedList<Tweet> listOfTweets = new LinkedList<>();
-        for (Status status : statuses) {
-            listOfTweets.add(constructTweet(status));
-        }
-        return listOfTweets;
+    private List<Tweet> constructTweetList(List<Status> statuses) {
+        return statuses.stream()
+                .map(s -> constructTweet(s))
+                .collect(Collectors.toList());
     }
 
     // Used for mocking purposes

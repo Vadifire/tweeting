@@ -49,7 +49,7 @@ public class FilterHomeTimelineResourceTest {
     }
 
     @Test
-    public void testMissingFilterParam() throws TwitterServiceResponseException {
+    public void testMissingFilterParam() {
         Response actualResponse = filterResource.getHomeTimeline(Optional.ofNullable(null));
 
         assertNotNull(actualResponse);

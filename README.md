@@ -20,6 +20,11 @@ file with the respective values from Twitter.
 
 To start the application, run ```./gradlew run```. The application will start running locally on port 8080.
 
+#### Posting Tweets
+ 
+To post a tweet, run the following command, replacing ```Hello World``` with your desired tweet:
+```curl -i http://localhost:8080/api/1.0/twitter/tweet -d 'message=Hello World'```
+
 #### Retrieving Home Timeline
 
 To retrieve the home timeline , run the following command:
@@ -27,10 +32,12 @@ To retrieve the home timeline , run the following command:
  
 Alternatively, you can simply access ```http://localhost:8080/api/1.0/twitter/timeline``` in browser.
  
-#### Retrieving Tweets
+##### Filtering Home Timeline
+
+To retrieve a filtered version of the home timeline, run the following command, replacing ```world``` with your desired 
+keyword:  ```curl -i http://localhost:8080/api/1.0/tweet/filter?keyword=world```
  
-To post a tweet, run the following command, replacing ```Hello World``` with your desired tweet:
-```curl -i http://localhost:8080/api/1.0/twitter/tweet -d 'message=Hello World'```
+Alternatively, you can simply access ```http://localhost:8080/api/1.0/tweet/filter?keyword=world``` in browser.
 
 ## How To Check Code Coverage
 

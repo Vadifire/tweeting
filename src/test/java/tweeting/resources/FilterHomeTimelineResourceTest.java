@@ -11,9 +11,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
 import static junit.framework.TestCase.assertTrue;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -46,6 +46,15 @@ public class FilterHomeTimelineResourceTest {
             tweets[i] = tweet;
         }
         dummyList = Arrays.asList(tweets);
+    }
+
+    @Test
+    public void testMissingFilterParam() throws TwitterServiceResponseException {
+        Response actualResponse = filterResource.getHomeTimeline(Optional.ofNullable(null));
+
+        assertNotNull(actualResponse);
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), actualResponse.getStatus());
+        assertEquals(FilterHomeTimelineResource.MISSING_FILTER_MESSAGE, actualResponse.getEntity());
     }
 
     @Test
@@ -119,6 +128,5 @@ public class FilterHomeTimelineResourceTest {
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), actualResponse.getStatus()); // Verify code
         assertEquals(TwitterService.SERVICE_UNAVAILABLE_MESSAGE, actualResponse.getEntity().toString());
     }
-
 
 }

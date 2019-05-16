@@ -69,8 +69,8 @@ public class TwitterService {
         }
     }
 
-    public Tweet postTweet(String message) throws TwitterServiceResponseException, TwitterServiceCallException {
-        // Prelim checks (avoid calling to Twitter if unnecessary)
+    public Tweet postTweet(String message) throws TwitterServiceResponseException,
+            TwitterServiceCallException {
         if (message == null) {
             throw new TwitterServiceCallException(NULL_TWEET_MESSAGE);
         } else if (message.length() > MAX_TWEET_LENGTH || StringUtils.isBlank(message)) {

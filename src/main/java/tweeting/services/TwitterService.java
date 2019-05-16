@@ -27,6 +27,11 @@ public class TwitterService {
 
     public static final int MAX_TWEET_LENGTH = CharacterUtil.MAX_TWEET_LENGTH; // To not expose Twitter4J
 
+    public static String SERVICE_UNAVAILABLE_MESSAGE = "Service is temporarily unavailable.";
+    public static String NULL_TWEET_MESSAGE = "Could not post tweet because message parameter is missing.";
+    public static String INVALID_TWEET_MESSAGE = "Could not post tweet because message was either blank or longer than "
+                  + CharacterUtil.MAX_TWEET_LENGTH + " characters.";
+
     private TwitterService() {
     }
 
@@ -67,9 +72,9 @@ public class TwitterService {
     public Tweet postTweet(String message) throws TwitterServiceResponseException, TwitterServiceCallException {
         // Prelim checks (avoid calling to Twitter if unnecessary)
         if (message == null) {
-            throw new TwitterServiceCallException(TwitterErrorMessage.NULL_TWEET.getMessage());
+            throw new TwitterServiceCallException(NULL_TWEET_MESSAGE);
         } else if (message.length() > MAX_TWEET_LENGTH || StringUtils.isBlank(message)) {
-            throw new TwitterServiceCallException(TwitterErrorMessage.INVALID_TWEET.getMessage());
+            throw new TwitterServiceCallException(INVALID_TWEET_MESSAGE);
         }
         try {
             return constructTweet(api.updateStatus(message));
@@ -81,7 +86,7 @@ public class TwitterService {
     private TwitterServiceResponseException createServerException(TwitterException te) {
         if (te.isCausedByNetworkIssue() || te.getErrorCode() == TwitterErrorCode.BAD_AUTH_DATA.getCode() ||
                 te.getErrorCode() == TwitterErrorCode.COULD_NOT_AUTH.getCode()) {
-            return new TwitterServiceResponseException(TwitterErrorMessage.SERVICE_UNAVAILABLE.getMessage(), te);
+            return new TwitterServiceResponseException(SERVICE_UNAVAILABLE_MESSAGE, te);
         } else {
             return new TwitterServiceResponseException(te);
         }

@@ -125,7 +125,7 @@ public class TwitterServiceTest {
         try {
             service.getHomeTimeline();
         } catch (TwitterServiceResponseException e) {
-            assertEquals(TwitterErrorMessage.SERVICE_UNAVAILABLE.getMessage(), e.getMessage());
+            assertEquals(TwitterService.SERVICE_UNAVAILABLE_MESSAGE, e.getMessage());
             throw e;
         }
     }
@@ -138,7 +138,7 @@ public class TwitterServiceTest {
         try {
             service.getHomeTimeline();
         } catch (TwitterServiceResponseException e) {
-            assertEquals(TwitterErrorMessage.SERVICE_UNAVAILABLE.getMessage(), e.getMessage());
+            assertEquals(TwitterService.SERVICE_UNAVAILABLE_MESSAGE, e.getMessage());
             throw e;
         }
     }
@@ -151,7 +151,7 @@ public class TwitterServiceTest {
         try {
             service.getHomeTimeline();
         } catch (TwitterServiceResponseException e) {
-            assertEquals(TwitterErrorMessage.SERVICE_UNAVAILABLE.getMessage(), e.getMessage());
+            assertEquals(TwitterService.SERVICE_UNAVAILABLE_MESSAGE, e.getMessage());
             throw e;
         }
     }
@@ -178,7 +178,7 @@ public class TwitterServiceTest {
         try {
             service.postTweet(null);
         } catch (TwitterServiceCallException e) {
-            assertEquals(TwitterErrorMessage.NULL_TWEET.getMessage(), e.getMessage());
+            assertEquals(TwitterService.NULL_TWEET_MESSAGE, e.getMessage());
             throw e;
         }
     }
@@ -188,7 +188,7 @@ public class TwitterServiceTest {
         try {
             service.postTweet("");
         } catch (TwitterServiceCallException e) {
-            assertEquals(TwitterErrorMessage.INVALID_TWEET.getMessage(), e.getMessage());
+            assertEquals(TwitterService.INVALID_TWEET_MESSAGE, e.getMessage());
             throw e;
         }
     }
@@ -202,7 +202,7 @@ public class TwitterServiceTest {
             }
             service.postTweet(sb.toString());
         } catch (TwitterServiceCallException e) {
-            assertEquals(TwitterErrorMessage.INVALID_TWEET.getMessage(), e.getMessage());
+            assertEquals(TwitterService.INVALID_TWEET_MESSAGE, e.getMessage());
             throw e;
         }
     }

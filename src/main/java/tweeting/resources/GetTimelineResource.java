@@ -3,7 +3,6 @@ package tweeting.resources;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tweeting.models.Tweet;
-import tweeting.services.TwitterErrorMessage;
 import tweeting.services.TwitterService;
 import tweeting.services.TwitterServiceResponseException;
 
@@ -45,7 +44,7 @@ public class GetTimelineResource {
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return (Response.status(Response.Status.INTERNAL_SERVER_ERROR).
-                    entity(TwitterErrorMessage.SERVICE_UNAVAILABLE.getMessage())).build();
+                    entity(TwitterService.SERVICE_UNAVAILABLE_MESSAGE)).build();
         }
     }
 

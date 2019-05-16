@@ -3,7 +3,6 @@ package tweeting.resources;
 import org.junit.Before;
 import org.junit.Test;
 import tweeting.models.Tweet;
-import tweeting.services.TwitterErrorMessage;
 import tweeting.services.TwitterService;
 import tweeting.services.TwitterServiceResponseException;
 
@@ -75,8 +74,7 @@ public class GetTimelineResourceTest {
         verify(service).getHomeTimeline();
         assertNotNull(actualResponse);
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), actualResponse.getStatus()); // Verify code
-        assertEquals(TwitterErrorMessage.SERVICE_UNAVAILABLE.getMessage(),
-                actualResponse.getEntity().toString());
+        assertEquals(TwitterService.SERVICE_UNAVAILABLE_MESSAGE, actualResponse.getEntity().toString());
     }
 
 }

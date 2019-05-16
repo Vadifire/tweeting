@@ -37,9 +37,9 @@ public class FilterHomeTimelineResource {
 
     /*
      * How to use:
-     * curl -i -X GET http://HOST:PORT/api/1.0/tweet/filter
+     * curl -i -X GET http://HOST:PORT/api/1.0/tweet/filter?keyword=KEYWORD
      *
-     * Replace HOST and PORT with configured values
+     * Replace 'KEYWORD' with desired keyword to filter by. Replace HOST and PORT with configured values
      */
     @GET
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)

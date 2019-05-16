@@ -13,6 +13,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.Optional;
 
 @Path("/api/1.0/twitter/tweet/")
 public class TweetResource {
@@ -34,11 +35,10 @@ public class TweetResource {
      */
     @POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    public Response postTweet(@FormParam("message") String message) { // Receives message from JSON data
+    public Response postTweet(@FormParam("message") Optional<String> message) {
         try {
-            final Tweet returnedStatus = service.postTweet(message); // Status should be updated to message
-            logger.info("Successfully posted '{}' to Twitter. Sending 201 Created response.", message);
-            // Return successful response with returned status
+            final Tweet returnedStatus = service.postTweet(message);
+            logger.info("Successfully posted '{}' to Twitter. Sending 201 Created response.", message.get());
             Response.ResponseBuilder responseBuilder = Response.status(Response.Status.CREATED);
             responseBuilder.type(MediaType.APPLICATION_JSON);
             Response response = responseBuilder.entity(returnedStatus).build();

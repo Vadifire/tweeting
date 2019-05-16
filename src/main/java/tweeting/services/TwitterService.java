@@ -27,10 +27,10 @@ public class TwitterService {
 
     public static final int MAX_TWEET_LENGTH = CharacterUtil.MAX_TWEET_LENGTH; // To not expose Twitter4J
 
-    public static String SERVICE_UNAVAILABLE_MESSAGE = "Service is temporarily unavailable.";
-    public static String NULL_TWEET_MESSAGE = "Could not post tweet because message parameter is missing.";
-    public static String INVALID_TWEET_MESSAGE = "Could not post tweet because message was either blank or longer than "
-                  + CharacterUtil.MAX_TWEET_LENGTH + " characters.";
+    public static final String SERVICE_UNAVAILABLE_MESSAGE = "Service is temporarily unavailable.";
+    public static final String NULL_TWEET_MESSAGE = "Could not post tweet because message parameter is missing.";
+    public static final String INVALID_TWEET_MESSAGE = "Could not post tweet because message was either blank or " +
+            "longer than " + CharacterUtil.MAX_TWEET_LENGTH + " characters.";
 
     private TwitterService() {
     }
@@ -64,14 +64,6 @@ public class TwitterService {
     public List<Tweet> getHomeTimeline() throws TwitterServiceResponseException {
         try {
             return constructTweetList(api.getHomeTimeline());
-        } catch (TwitterException te) {
-            throw createServerException(te);
-        }
-    }
-
-    public List<Tweet> getUserTimeline() throws TwitterServiceResponseException {
-        try {
-            return constructTweetList(api.getUserTimeline());
         } catch (TwitterException te) {
             throw createServerException(te);
         }

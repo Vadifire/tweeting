@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 import tweeting.models.Tweet;
 import tweeting.services.TwitterService;
 import tweeting.services.TwitterServiceResponseException;
-import tweeting.util.ResponseUtil;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -21,13 +20,17 @@ import java.util.stream.Collectors;
 @Path("/api/1.0/tweet/filter")
 @Produces(MediaType.APPLICATION_JSON)
 
-public class UserTimelineResource {
+public class FilterHomeTimelineResource {
 
-    private static final Logger logger = LoggerFactory.getLogger(UserTimelineResource.class);
+    private static final Logger logger = LoggerFactory.getLogger(FilterHomeTimelineResource.class);
+
+    public static final String FILTER_PARAM = "keyword";
+
+    public static final String MISSING_FILTER_TEXT = "\"" + FILTER_PARAM + "\" parameter is required. ";
 
     private TwitterService service;
 
-    public UserTimelineResource(TwitterService service) {
+    public FilterHomeTimelineResource(TwitterService service) {
         this.service = service;
     }
 
@@ -39,13 +42,19 @@ public class UserTimelineResource {
      */
     @GET
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    public Response getUserTimeline(@QueryParam("text") Optional<String> filter) {
+    public Response getHomeTimeline(@QueryParam(FILTER_PARAM) Optional<String> keyword) {
         try {
-            final List<Tweet> tweets = service.getUserTimeline();
+            if (!keyword.isPresent()) {
+                logger.debug("\"" + FILTER_PARAM + "\" parameter required for filtering is missing. " +
+                        "Sending 400 Bad Request error");
+                return Response.status(Response.Status.BAD_REQUEST).entity(MISSING_FILTER_TEXT).build();
+            }
+            final List<Tweet> tweets = service.getHomeTimeline();
 
             final List<Tweet> filteredTweets = tweets.stream()
-                    .filter(t -> t.getMessage().contains(filter.get()))
+                    .filter(t -> t.getMessage().contains(keyword.get()))
                     .collect(Collectors.toList());
+
             logger.info("Successfully retrieved home timeline from Twitter. Sending 200 OK response.");
             return Response.ok(filteredTweets).build(); // Successfully got timeline
         } catch (TwitterServiceResponseException e) {
@@ -54,7 +63,7 @@ public class UserTimelineResource {
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return (Response.status(Response.Status.INTERNAL_SERVER_ERROR).
-                    entity(ResponseUtil.getServiceUnavailableErrorMessage())).build();
+                    entity(TwitterService.SERVICE_UNAVAILABLE_MESSAGE).build());
         }
     }
 

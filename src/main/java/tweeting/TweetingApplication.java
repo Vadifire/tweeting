@@ -3,7 +3,7 @@ package tweeting;
 import tweeting.conf.TwitterOAuthCredentials;
 import tweeting.conf.TweetingConfiguration;
 import tweeting.health.AliveHealthCheck;
-import tweeting.resources.UserTimelineResource;
+import tweeting.resources.FilterHomeTimelineResource;
 import tweeting.resources.HomeTimelineResource;
 import tweeting.resources.TweetResource;
 
@@ -70,9 +70,9 @@ public class TweetingApplication extends Application<TweetingConfiguration> {
             final TweetResource tweetResource = new TweetResource(service);
             env.jersey().register(tweetResource);
             logger.debug("Registered resource: {}", tweetResource.getClass().getName());
-            final UserTimelineResource userTimelineResource = new UserTimelineResource(service);
-            env.jersey().register(userTimelineResource);
-            logger.debug("Registered resource: {}", userTimelineResource.getClass().getName());
+            final FilterHomeTimelineResource filterTimelineResource = new FilterHomeTimelineResource(service);
+            env.jersey().register(filterTimelineResource);
+            logger.debug("Registered resource: {}", filterTimelineResource.getClass().getName());
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             System.exit(1);

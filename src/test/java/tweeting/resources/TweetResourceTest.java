@@ -8,7 +8,6 @@ import tweeting.services.TwitterServiceCallException;
 import tweeting.services.TwitterServiceResponseException;
 
 import javax.ws.rs.core.Response;
-import java.util.Optional;
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
@@ -39,9 +38,9 @@ public class TweetResourceTest {
 
         when(service.postTweet(any())).thenReturn(tweet);
 
-        Response response = tweetResource.postTweet(Optional.of(message)); // Simple valid message case
+        Response response = tweetResource.postTweet(message); // Simple valid message case
 
-        verify(service).postTweet(Optional.of(message));
+        verify(service).postTweet(message);
         assertNotNull(response);
         System.out.println(response.getStatus());
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
@@ -56,9 +55,9 @@ public class TweetResourceTest {
 
         when(service.postTweet(any())).thenThrow(dummyException);
 
-        Response actualResponse = tweetResource.postTweet(Optional.of(dummyMessage));
+        Response actualResponse = tweetResource.postTweet(dummyMessage);
 
-        verify(service).postTweet(Optional.of(dummyMessage));
+        verify(service).postTweet(dummyMessage);
         assertNotNull(actualResponse);
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), actualResponse.getStatus());
         assertEquals(dummyErrorMessage, actualResponse.getEntity().toString());
@@ -73,9 +72,9 @@ public class TweetResourceTest {
 
         when(service.postTweet(any())).thenThrow(dummyException);
 
-        Response actualResponse = tweetResource.postTweet(Optional.of(dummyMessage));
+        Response actualResponse = tweetResource.postTweet(dummyMessage);
 
-        verify(service).postTweet(Optional.of(dummyMessage));
+        verify(service).postTweet(dummyMessage);
         assertNotNull(actualResponse);
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), actualResponse.getStatus());
         assertEquals(dummyErrorMessage, actualResponse.getEntity().toString());
@@ -88,9 +87,9 @@ public class TweetResourceTest {
 
         when(service.postTweet(any())).thenThrow(dummyException);
 
-        Response actualResponse = tweetResource.postTweet(Optional.of(message));
+        Response actualResponse = tweetResource.postTweet(message);
 
-        verify(service).postTweet(Optional.of(message));
+        verify(service).postTweet(message);
         assertNotNull(actualResponse);
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), actualResponse.getStatus()); // Verify code
         assertEquals(TwitterService.SERVICE_UNAVAILABLE_MESSAGE, actualResponse.getEntity().toString());

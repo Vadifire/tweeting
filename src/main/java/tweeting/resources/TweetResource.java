@@ -35,10 +35,10 @@ public class TweetResource {
      */
     @POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    public Response postTweet(@FormParam("message") Optional<String> message) {
+    public Response postTweet(@FormParam("message") String message) {
         try {
             final Tweet returnedStatus = service.postTweet(message);
-            logger.info("Successfully posted '{}' to Twitter. Sending 201 Created response.", message.get());
+            logger.info("Successfully posted '{}' to Twitter. Sending 201 Created response.", message);
             return Response.status(Response.Status.CREATED)
                     .entity(returnedStatus)
                     .build();

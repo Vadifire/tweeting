@@ -14,7 +14,6 @@ import twitter4j.conf.ConfigurationBuilder;
 import twitter4j.util.CharacterUtil;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -70,15 +69,14 @@ public class TwitterService {
         }
     }
 
-    public Tweet postTweet(Optional<String> message) throws TwitterServiceResponseException,
+    public Tweet postTweet(String message) throws TwitterServiceResponseException,
             TwitterServiceCallException {
-        if (message.isPresent()) {
-            String msg = message.get();
-            if (msg.length() > MAX_TWEET_LENGTH || StringUtils.isBlank(msg)) {
+        if (message != null ) {
+            if (message.length() > MAX_TWEET_LENGTH || StringUtils.isBlank(message)) {
                 throw new TwitterServiceCallException(INVALID_TWEET_MESSAGE);
             }
             try {
-                return constructTweet(api.updateStatus(msg));
+                return constructTweet(api.updateStatus(message));
             } catch (TwitterException te) {
                 throw createServerException(te);
             }

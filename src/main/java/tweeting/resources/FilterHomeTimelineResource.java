@@ -15,7 +15,6 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Path("/api/1.0/tweet/filter")
@@ -44,13 +43,11 @@ public class FilterHomeTimelineResource {
      */
     @GET
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    public Response getHomeTimeline(@QueryParam(FILTER_PARAM) Optional<String> keyword) {
+    public Response getHomeTimeline(@QueryParam(FILTER_PARAM) String keyword) {
         try {
-            if (keyword.isPresent()) {
-
+            if (keyword != null) {
                 List<Tweet> tweets = service.getHomeTimeline().stream()
-                        .filter(t -> StringUtils.containsIgnoreCase(t.getMessage().orElse(""),
-                                keyword.get()))
+                        .filter(t -> StringUtils.containsIgnoreCase(t.getMessage().orElse(""), keyword))
                         .collect(Collectors.toList());
 
                 logger.info("Successfully retrieved home timeline from Twitter. Sending 200 OK response.");

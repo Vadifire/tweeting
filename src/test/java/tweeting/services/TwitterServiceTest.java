@@ -162,7 +162,7 @@ public class TwitterServiceTest {
             TwitterServiceCallException {
         when(api.updateStatus(anyString())).thenReturn(mockedStatus);
 
-        Tweet tweet = service.postTweet(Optional.of(dummyMessage));
+        Tweet tweet = service.postTweet(dummyMessage);
 
         verify(api).updateStatus(anyString());
         assertNotNull(tweet);
@@ -177,7 +177,7 @@ public class TwitterServiceTest {
     @Test(expected = TwitterServiceCallException.class)
     public void testPostTweetNull() throws TwitterServiceResponseException, TwitterServiceCallException {
         try {
-            service.postTweet(Optional.ofNullable(null));
+            service.postTweet(null);
         } catch (TwitterServiceCallException e) {
             assertEquals(TwitterService.NULL_TWEET_MESSAGE, e.getMessage());
             throw e;
@@ -187,7 +187,7 @@ public class TwitterServiceTest {
     @Test(expected = TwitterServiceCallException.class)
     public void testPostTweetBlank() throws TwitterServiceResponseException, TwitterServiceCallException {
         try {
-            service.postTweet(Optional.of(""));
+            service.postTweet("");
         } catch (TwitterServiceCallException e) {
             assertEquals(TwitterService.INVALID_TWEET_MESSAGE, e.getMessage());
             throw e;
@@ -201,7 +201,7 @@ public class TwitterServiceTest {
             for (int i = 0; i < CharacterUtil.MAX_TWEET_LENGTH + 1; i++) {
                 sb.append("a"); // single character
             }
-            service.postTweet(Optional.of(sb.toString()));
+            service.postTweet(sb.toString());
         } catch (TwitterServiceCallException e) {
             assertEquals(TwitterService.INVALID_TWEET_MESSAGE, e.getMessage());
             throw e;
@@ -216,7 +216,7 @@ public class TwitterServiceTest {
         when(api.updateStatus(anyString())).thenThrow(te);
         when(te.getErrorMessage()).thenReturn(errorMessage);
         try {
-            service.postTweet(Optional.of("some message"));
+            service.postTweet("some message");
         } catch (TwitterServiceResponseException e) {
             assertEquals(errorMessage, e.getMessage());
             throw e;

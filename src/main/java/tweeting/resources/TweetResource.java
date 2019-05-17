@@ -44,7 +44,8 @@ public class TweetResource {
             return response;
         } catch (TwitterServiceCallException e) {
             logger.debug("Sending 400 Bad Request error", e);
-            return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage())
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity(e.getMessage())
                     .build();
         } catch (TwitterServiceResponseException e) {
             logger.error("Sending 500 Internal Server error", e);

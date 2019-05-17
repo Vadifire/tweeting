@@ -171,7 +171,21 @@ public class TwitterServiceTest {
         assertEquals(dummyScreenName, tweet.getUser().get().getTwitterHandle().get());
         assertEquals(dummyDate, tweet.getCreatedAt().get());
         assertEquals(dummyURL, tweet.getUser().get().getProfileImageUrl().get());
+    }
 
+    @Test
+    public void testPostTweetNullUser() throws TwitterException, TwitterServiceResponseException,
+            TwitterServiceCallException {
+        when(api.updateStatus(anyString())).thenReturn(mockedStatus);
+        when(mockedStatus.getUser()).thenReturn(null);
+
+        Tweet tweet = service.postTweet(dummyMessage);
+
+        verify(api).updateStatus(anyString());
+        assertNotNull(tweet);
+        assertEquals(dummyMessage, tweet.getMessage().get());
+        assertEquals(Optional.empty(), tweet.getUser());
+        assertEquals(dummyDate, tweet.getCreatedAt().get());
     }
 
     @Test(expected = TwitterServiceCallException.class)

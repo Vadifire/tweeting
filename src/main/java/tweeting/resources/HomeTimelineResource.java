@@ -2,6 +2,7 @@ package tweeting.resources;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tweeting.models.Tweet;
 import tweeting.services.TwitterService;
 import tweeting.services.TwitterServiceResponseException;
 
@@ -10,6 +11,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.List;
 
 @Path("/api/1.0/twitter/timeline")
 @Produces(MediaType.APPLICATION_JSON)
@@ -33,10 +35,10 @@ public class HomeTimelineResource {
     @GET
     public Response getHomeTimeline() {
         try {
-            final Response response = Response.ok(service.getHomeTimeline())
-                    .build(); // Successfully got timeline
+            final List<Tweet> statuses = service.getHomeTimeline();
             logger.info("Successfully retrieved home timeline from Twitter. Sending 200 OK response.");
-            return response;
+            return Response.ok(statuses)
+                    .build(); // Successfully got timeline
         } catch (TwitterServiceResponseException e) {
             logger.error("Sending 500 Internal Server error", e);
             return (Response.status(Response.Status.INTERNAL_SERVER_ERROR)

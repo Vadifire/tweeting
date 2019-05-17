@@ -61,7 +61,7 @@ public class FilterHomeTimelineResourceTest {
     public void testFilterAllResults() throws TwitterServiceResponseException {
         when(service.getHomeTimeline()).thenReturn(dummyList);
 
-        Response actualResponse = filterResource.getHomeTimeline(Optional.of(tweets[0].getMessage()));
+        Response actualResponse = filterResource.getHomeTimeline((tweets[0].getMessage()));
 
         verify(service).getHomeTimeline(); // Verify we have actually made the call to getHomeTimeline()
         assertNotNull(actualResponse);
@@ -75,7 +75,7 @@ public class FilterHomeTimelineResourceTest {
     public void testFilterOneResult() throws TwitterServiceResponseException {
         when(service.getHomeTimeline()).thenReturn(dummyList);
 
-        Response actualResponse = filterResource.getHomeTimeline(Optional.of(tweets[tweets.length-1].getMessage()));
+        Response actualResponse = filterResource.getHomeTimeline((tweets[tweets.length-1].getMessage()));
 
         verify(service).getHomeTimeline(); // Verify we have actually made the call to getHomeTimeline()
         assertNotNull(actualResponse);
@@ -89,8 +89,8 @@ public class FilterHomeTimelineResourceTest {
     public void testFilterNoResults() throws TwitterServiceResponseException {
         when(service.getHomeTimeline()).thenReturn(dummyList);
 
-        Response actualResponse = filterResource.getHomeTimeline(Optional.of(tweets[tweets.length-1].getMessage() +
-                repeated));
+        Response actualResponse = filterResource.getHomeTimeline(Optional.of(tweets[tweets.length-1].getMessage().get()
+                + repeated));
 
         verify(service).getHomeTimeline(); // Verify we have actually made the call to getHomeTimeline()
         assertNotNull(actualResponse);

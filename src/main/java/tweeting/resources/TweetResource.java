@@ -2,6 +2,7 @@ package tweeting.resources;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tweeting.models.Tweet;
 import tweeting.services.TwitterService;
 import tweeting.services.TwitterServiceCallException;
 import tweeting.services.TwitterServiceResponseException;
@@ -36,16 +37,14 @@ public class TweetResource {
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public Response postTweet(@FormParam("message") Optional<String> message) {
         try {
-            final Response response = Response.status(Response.Status.CREATED)
-                    .type(MediaType.APPLICATION_JSON)
-                    .entity(service.postTweet(message))
-                    .build();
+            final Tweet returnedStatus = service.postTweet(message);
             logger.info("Successfully posted '{}' to Twitter. Sending 201 Created response.", message.get());
-            return response;
+            return Response.status(Response.Status.CREATED)
+                    .entity(returnedStatus)
+                    .build();
         } catch (TwitterServiceCallException e) {
             logger.debug("Sending 400 Bad Request error", e);
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity(e.getMessage())
+            return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage())
                     .build();
         } catch (TwitterServiceResponseException e) {
             logger.error("Sending 500 Internal Server error", e);

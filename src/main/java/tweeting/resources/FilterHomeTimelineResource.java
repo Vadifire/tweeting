@@ -3,6 +3,7 @@ package tweeting.resources;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tweeting.models.Tweet;
 import tweeting.services.TwitterService;
 import tweeting.services.TwitterServiceResponseException;
 
@@ -13,6 +14,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -45,14 +47,14 @@ public class FilterHomeTimelineResource {
     public Response getHomeTimeline(@QueryParam(FILTER_PARAM) Optional<String> keyword) {
         try {
             if (keyword.isPresent()) {
-                final Response response = Response.ok()
-                        .entity(service.getHomeTimeline()
-                        .stream()
-                        .filter(t -> StringUtils.containsIgnoreCase(t.getMessage(), keyword.get()))
-                        .collect(Collectors.toList()))
-                        .build();
+
+                List<Tweet> tweets = service.getHomeTimeline().stream()
+                        .filter(t -> StringUtils.containsIgnoreCase(t.getMessage().orElse(""),
+                                keyword.get()))
+                        .collect(Collectors.toList());
+
                 logger.info("Successfully retrieved home timeline from Twitter. Sending 200 OK response.");
-                return response;
+                return Response.ok(tweets, MediaType.APPLICATION_JSON_TYPE).build();
             } else {
                 logger.debug("\"" + FILTER_PARAM + "\" parameter required for filtering is missing. " +
                         "Sending 400 Bad Request error");
@@ -72,4 +74,5 @@ public class FilterHomeTimelineResource {
                     .build());
         }
     }
+
 }

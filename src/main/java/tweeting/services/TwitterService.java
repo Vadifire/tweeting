@@ -71,7 +71,7 @@ public class TwitterService {
     public Optional<List<Tweet>> getHomeTimeline() throws TwitterServiceResponseException {
         try {
             logger.info("Successfully retrieved home timeline from Twitter.");
-            if(timelineCache.canUse()) { // Avoid call to Twitter if valid cache
+            if(timelineCache.isValid()) { // Avoid call to Twitter if valid cache
                 return Optional.of(timelineCache.getTimeline());
             } else {
                 Optional<List<Tweet>> timeline = constructTweetList(api.getHomeTimeline());
@@ -93,8 +93,11 @@ public class TwitterService {
             }
             try {
                 logger.info("Successfully posted '{}' to Twitter.", message);
-                timelineCache.invalidate();
-                return constructTweet(api.updateStatus(message));
+                Optional<Tweet> tweet = constructTweet(api.updateStatus(message));
+                if (tweet.isPresent()) {
+                    timelineCache.pushTweet(tweet.get());
+                }
+                return tweet;
             } catch (TwitterException te) {
                 throw createServerException(te);
             }

@@ -23,6 +23,8 @@ public class TwitterService {
 
     private Twitter api;
 
+    private TimelineCache timelineCache;
+
     private static final Logger logger = LoggerFactory.getLogger(TwitterService.class);
 
     public static final int MAX_TWEET_LENGTH = CharacterUtil.MAX_TWEET_LENGTH; // To not expose Twitter4J
@@ -50,13 +52,16 @@ public class TwitterService {
                 .build())
                 .getInstance();
 
+        instance.timelineCache = new TimelineCache();
+
         return instance;
     }
 
     public static TwitterService getInstance() {
         if (instance == null) {
             instance = new TwitterService();
-            TwitterFactory.getSingleton();
+            instance.api = TwitterFactory.getSingleton();
+            instance.timelineCache = new TimelineCache();
             logger.warn("TwitterService has been instantiated with no Twitter credentials. Please call getInstance" +
                     "with TwitterOAuthCredentials parameter to set credentials to support calls to Twitter.");
         }
@@ -66,7 +71,15 @@ public class TwitterService {
     public Optional<List<Tweet>> getHomeTimeline() throws TwitterServiceResponseException {
         try {
             logger.info("Successfully retrieved home timeline from Twitter.");
-            return constructTweetList(api.getHomeTimeline());
+            if(timelineCache.canUse()) { // Avoid call to Twitter if valid cache
+                return Optional.of(timelineCache.getTimeline());
+            } else {
+                Optional<List<Tweet>> timeline = constructTweetList(api.getHomeTimeline());
+                if (timeline.isPresent()) { // Only cache non-null timelines
+                    timelineCache.cacheTimeline(timeline.get());
+                }
+                return timeline;
+            }
         } catch (TwitterException te) {
             throw createServerException(te);
         }

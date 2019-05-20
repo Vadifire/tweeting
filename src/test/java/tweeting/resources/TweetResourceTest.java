@@ -1,5 +1,6 @@
 package tweeting.resources;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import tweeting.models.Tweet;
@@ -8,6 +9,7 @@ import tweeting.services.TwitterServiceCallException;
 import tweeting.services.TwitterServiceResponseException;
 
 import javax.ws.rs.core.Response;
+import java.util.Optional;
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
@@ -36,15 +38,28 @@ public class TweetResourceTest {
         String message = "No Twitter Exception";
         Tweet tweet = new Tweet();
 
-        when(service.postTweet(any())).thenReturn(tweet);
+        when(service.postTweet(any())).thenReturn(Optional.of(tweet));
 
-        Response response = tweetResource.postTweet(message); // Simple valid message case
+        Response response = tweetResource.postTweet(message);
 
         verify(service).postTweet(message);
         assertNotNull(response);
         System.out.println(response.getStatus());
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
         assertEquals(tweet, response.getEntity());
+    }
+
+    @Test
+    public void testFilterEmptyOptional() throws TwitterServiceResponseException, TwitterServiceCallException {
+        String message = "dummy tweet";
+        when(service.postTweet(any())).thenReturn(Optional.empty());
+
+        Response actualResponse = tweetResource.postTweet(message);
+
+        verify(service).postTweet(message);
+        assertNotNull(actualResponse);
+        Assert.assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), actualResponse.getStatus());
+        Assert.assertEquals(TwitterService.SERVICE_UNAVAILABLE_MESSAGE, actualResponse.getEntity().toString());
     }
 
     @Test
@@ -91,7 +106,7 @@ public class TweetResourceTest {
 
         verify(service).postTweet(message);
         assertNotNull(actualResponse);
-        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), actualResponse.getStatus()); // Verify code
+        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), actualResponse.getStatus());
         assertEquals(TwitterService.SERVICE_UNAVAILABLE_MESSAGE, actualResponse.getEntity().toString());
     }
 

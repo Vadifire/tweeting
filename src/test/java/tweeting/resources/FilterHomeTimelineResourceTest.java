@@ -9,6 +9,7 @@ import tweeting.services.TwitterServiceResponseException;
 import javax.ws.rs.core.Response;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static junit.framework.TestCase.assertNotNull;
 import static junit.framework.TestCase.assertTrue;
@@ -58,7 +59,7 @@ public class FilterHomeTimelineResourceTest {
 
     @Test
     public void testFilterAllResults() throws TwitterServiceResponseException {
-        when(service.getHomeTimeline()).thenReturn(dummyList);
+        when(service.getHomeTimeline()).thenReturn(Optional.of(dummyList));
 
         Response actualResponse = filterResource.getHomeTimeline((tweets[0].getMessage().get()));
 
@@ -72,7 +73,7 @@ public class FilterHomeTimelineResourceTest {
 
     @Test
     public void testFilterOneResult() throws TwitterServiceResponseException {
-        when(service.getHomeTimeline()).thenReturn(dummyList);
+        when(service.getHomeTimeline()).thenReturn(Optional.of(dummyList));
 
         Response actualResponse = filterResource.getHomeTimeline((tweets[tweets.length-1].getMessage().get()));
 
@@ -86,7 +87,7 @@ public class FilterHomeTimelineResourceTest {
 
     @Test
     public void testFilterNoResults() throws TwitterServiceResponseException {
-        when(service.getHomeTimeline()).thenReturn(dummyList);
+        when(service.getHomeTimeline()).thenReturn(Optional.of(dummyList));
 
         Response actualResponse = filterResource.getHomeTimeline(tweets[tweets.length-1].getMessage().get()
                 + repeated);
@@ -96,6 +97,18 @@ public class FilterHomeTimelineResourceTest {
         assertEquals(Response.Status.OK.getStatusCode(), actualResponse.getStatus()); // Verify correct response code
         List<Tweet> filteredList = (List<Tweet>)actualResponse.getEntity();
         assertEquals(0, filteredList.size());
+    }
+
+    @Test
+    public void testFilterEmptyOptional() throws TwitterServiceResponseException {
+        when (service.getHomeTimeline()).thenReturn(Optional.empty());
+
+        Response actualResponse = filterResource.getHomeTimeline("some message");
+
+        verify(service).getHomeTimeline();
+        assertNotNull(actualResponse);
+        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), actualResponse.getStatus());
+        assertEquals(TwitterService.SERVICE_UNAVAILABLE_MESSAGE, actualResponse.getEntity().toString());
     }
 
     @Test

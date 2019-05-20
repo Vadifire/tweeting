@@ -89,7 +89,7 @@ public class TwitterServiceTest {
 
         when(api.getHomeTimeline()).thenReturn(dummyList);
 
-        List<Tweet> actualList = service.getHomeTimeline();
+        List<Tweet> actualList = service.getHomeTimeline().get();
 
         verify(api).getHomeTimeline();
         assertNotNull(actualList);
@@ -101,7 +101,16 @@ public class TwitterServiceTest {
         assertEquals(dummyScreenName, tweet.getUser().get().getTwitterHandle().get());
         assertEquals(dummyDate, tweet.getCreatedAt().get());
         assertEquals(dummyURL, tweet.getUser().get().getProfileImageUrl().get());
+    }
 
+    @Test
+    public void testGetTweetsNull() throws TwitterException, TwitterServiceResponseException {
+        when(api.getHomeTimeline()).thenReturn(null);
+
+        Optional<List<Tweet>> tweets = service.getHomeTimeline();
+
+        verify(api).getHomeTimeline();
+        assertEquals(Optional.empty(), tweets);
     }
 
     @Test(expected = TwitterServiceResponseException.class)
@@ -162,7 +171,7 @@ public class TwitterServiceTest {
             TwitterServiceCallException {
         when(api.updateStatus(anyString())).thenReturn(mockedStatus);
 
-        Tweet tweet = service.postTweet(dummyMessage);
+        Tweet tweet = service.postTweet(dummyMessage).get();
 
         verify(api).updateStatus(anyString());
         assertNotNull(tweet);
@@ -174,12 +183,23 @@ public class TwitterServiceTest {
     }
 
     @Test
+    public void testPostNullTweet() throws TwitterException, TwitterServiceResponseException,
+            TwitterServiceCallException {
+        when(api.updateStatus(anyString())).thenReturn(null);
+
+        Optional<Tweet> tweet = service.postTweet(dummyMessage);
+
+        verify(api).updateStatus(anyString());
+        assertEquals(Optional.empty(), tweet);
+    }
+
+    @Test
     public void testPostTweetNullUser() throws TwitterException, TwitterServiceResponseException,
             TwitterServiceCallException {
         when(api.updateStatus(anyString())).thenReturn(mockedStatus);
         when(mockedStatus.getUser()).thenReturn(null);
 
-        Tweet tweet = service.postTweet(dummyMessage);
+        Tweet tweet = service.postTweet(dummyMessage).get();
 
         verify(api).updateStatus(anyString());
         assertNotNull(tweet);

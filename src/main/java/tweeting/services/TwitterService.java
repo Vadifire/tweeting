@@ -14,6 +14,7 @@ import twitter4j.conf.ConfigurationBuilder;
 import twitter4j.util.CharacterUtil;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -41,14 +42,14 @@ public class TwitterService {
         }
 
         instance.api = new TwitterFactory(new ConfigurationBuilder()
-            .setDebugEnabled(true)
-            .setJSONStoreEnabled(true) // Need in order to use getRawJSON
-            .setOAuthConsumerKey(auth.getConsumerAPIKey())
-            .setOAuthConsumerSecret(auth.getConsumerAPISecretKey())
-            .setOAuthAccessToken(auth.getAccessToken())
-            .setOAuthAccessTokenSecret(auth.getAccessTokenSecret())
-            .build())
-            .getInstance();
+                .setDebugEnabled(true)
+                .setJSONStoreEnabled(true) // Need in order to use getRawJSON
+                .setOAuthConsumerKey(auth.getConsumerAPIKey())
+                .setOAuthConsumerSecret(auth.getConsumerAPISecretKey())
+                .setOAuthAccessToken(auth.getAccessToken())
+                .setOAuthAccessTokenSecret(auth.getAccessTokenSecret())
+                .build())
+                .getInstance();
 
         return instance;
     }
@@ -63,7 +64,7 @@ public class TwitterService {
         return instance;
     }
 
-    public List<Tweet> getHomeTimeline() throws TwitterServiceResponseException {
+    public Optional<List<Tweet>> getHomeTimeline() throws TwitterServiceResponseException {
         try {
             logger.info("Successfully retrieved home timeline from Twitter.");
             return constructTweetList(api.getHomeTimeline());
@@ -72,7 +73,7 @@ public class TwitterService {
         }
     }
 
-    public Tweet postTweet(String message) throws TwitterServiceResponseException,
+    public Optional<Tweet> postTweet(String message) throws TwitterServiceResponseException,
             TwitterServiceCallException {
         if (message != null ) {
             if (message.length() > MAX_TWEET_LENGTH || StringUtils.isBlank(message)) {
@@ -98,26 +99,37 @@ public class TwitterService {
         }
     }
 
-    private Tweet constructTweet(Status status) {
-        Tweet tweet = new Tweet();
-        tweet.setMessage(status.getText());
-        TwitterUser user = new TwitterUser();
-        if (status.getUser() != null) {
-            user.setTwitterHandle(status.getUser().getScreenName());
-            user.setName(status.getUser().getName());
-            user.setProfileImageUrl(status.getUser().getProfileImageURL());
-            tweet.setUser(user);
-        } else {
-            logger.warn("Tweet has no user.");
+    private Optional<Tweet> constructTweet(Status status) {
+        if (status == null){
+            return Optional.empty();
         }
-        tweet.setCreatedAt(status.getCreatedAt());
-        return tweet;
+        else {
+            Tweet tweet = new Tweet();
+            tweet.setMessage(status.getText());
+            if (status.getUser() == null){
+                logger.warn("Tweet has no user.");
+            } else {
+                TwitterUser user = new TwitterUser();
+                user.setTwitterHandle(status.getUser().getScreenName());
+                user.setName(status.getUser().getName());
+                user.setProfileImageUrl(status.getUser().getProfileImageURL());
+                tweet.setUser(user);
+            }
+            tweet.setCreatedAt(status.getCreatedAt());
+            return Optional.of(tweet);
+        }
     }
 
-    private List<Tweet> constructTweetList(List<Status> statuses) {
-        return statuses.stream()
-                .map(s -> constructTweet(s))
-                .collect(Collectors.toList());
+    private Optional<List<Tweet>> constructTweetList(List<Status> statuses) {
+        if (statuses == null){
+            return Optional.empty();
+        } else {
+            return Optional.of(statuses.stream()
+                    .map(s -> constructTweet(s))
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
+                    .collect(Collectors.toList()));
+        }
     }
 
     // Used for mocking purposes

@@ -67,8 +67,11 @@ public class TwitterService {
 
     public Optional<List<Tweet>> getHomeTimeline() throws TwitterServiceResponseException {
         try {
-            logger.info("Successfully retrieved home timeline from Twitter.");
-            return constructTweetList(api.getHomeTimeline());
+            final Optional<List<Tweet>>  tweets = constructTweetList(api.getHomeTimeline());
+            if (tweets.isPresent()) {
+                logger.info("Successfully retrieved home timeline from Twitter.");
+            }
+            return tweets;
         } catch (TwitterException te) {
             throw createServerException(te);
         }
@@ -80,7 +83,16 @@ public class TwitterService {
             throw new TwitterServiceCallException(NULL_KEYWORD_MESSAGE);
         } else {
             try {
-                return constructTweetList(api.getHomeTimeline());
+                final Optional<List<Tweet>>  tweets = constructTweetList(api.getHomeTimeline());
+                if (tweets.isPresent()) {
+                    logger.info("Successfully retrieved home timeline from Twitter.");
+                    return Optional.of(tweets.get()
+                            .stream()
+                            .filter(t -> StringUtils.containsIgnoreCase(t.getMessage(), keyword))
+                            .collect(Collectors.toList()));
+                } else {
+                    return tweets;
+                }
             } catch (TwitterException te) {
                 throw createServerException(te);
             }
@@ -94,8 +106,11 @@ public class TwitterService {
                 throw new TwitterServiceCallException(INVALID_TWEET_MESSAGE);
             }
             try {
-                logger.info("Successfully posted '{}' to Twitter.", message);
-                return constructTweet(api.updateStatus(message));
+                final Optional<Tweet> tweet = constructTweet(api.updateStatus(message));
+                if (tweet.isPresent()) {
+                    logger.info("Successfully posted '{}' to Twitter.", message);
+                }
+                return tweet;
             } catch (TwitterException te) {
                 throw createServerException(te);
             }
@@ -138,11 +153,13 @@ public class TwitterService {
         if (statuses == null) {
             return Optional.empty();
         } else {
-            return Optional.of(statuses.stream()
+            Optional<List<Tweet>> tweets;
+            tweets = Optional.of(statuses.stream()
                     .map(s -> constructTweet(s))
                     .filter(Optional::isPresent)
                     .map(Optional::get)
                     .collect(Collectors.toList()));
+            return tweets;
         }
     }
 

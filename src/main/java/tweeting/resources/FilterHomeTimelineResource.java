@@ -1,6 +1,5 @@
 package tweeting.resources;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tweeting.services.TwitterService;
@@ -14,7 +13,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.stream.Collectors;
 
 @Path("/api/1.0/tweet/filter")
 
@@ -40,10 +38,7 @@ public class FilterHomeTimelineResource {
     public Response getHomeTimeline(@QueryParam("keyword") String keyword) {
         try {
             return Response.ok(service.getFilteredTimeline(keyword)
-                    .orElseThrow(() -> new NullPointerException("Twitter failed to respond with home timeline."))
-                    .stream()
-                    .filter(t -> StringUtils.containsIgnoreCase(t.getMessage(), keyword))
-                    .collect(Collectors.toList()))
+                    .orElseThrow(() -> new NullPointerException("Twitter failed to respond with home timeline.")))
                     .build();
         } catch (TwitterServiceCallException e) {
             logger.debug("Sending 400 Bad Request error", e);

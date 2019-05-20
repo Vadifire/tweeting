@@ -45,7 +45,7 @@ public class FilterHomeTimelineResource {
         try {
             if (keyword != null) {
                 return Response.ok(service.getHomeTimeline()
-                        .orElseThrow(() -> new Exception("Twitter failed to respond with home timeline."))
+                        .orElseThrow(() -> new NullPointerException("Twitter failed to respond with home timeline."))
                         .stream()
                         .filter(t -> t.getMessage().isPresent())
                         .filter(t -> StringUtils.containsIgnoreCase(t.getMessage().get(), keyword))

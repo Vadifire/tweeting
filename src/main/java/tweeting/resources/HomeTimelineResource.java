@@ -12,8 +12,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 @Path("/api/1.0/twitter/timeline")
-@Produces(MediaType.APPLICATION_JSON)
-
 public class HomeTimelineResource {
 
     private static final Logger logger = LoggerFactory.getLogger(HomeTimelineResource.class);
@@ -31,6 +29,7 @@ public class HomeTimelineResource {
      * Replace HOST and PORT with configured values
      */
     @GET
+    @Produces(MediaType.APPLICATION_JSON)
     public Response getHomeTimeline() {
         try {
             return Response.ok(service.getHomeTimeline()

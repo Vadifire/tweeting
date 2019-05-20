@@ -100,7 +100,7 @@ public class TwitterService {
     }
 
     private Optional<Tweet> constructTweet(Status status) {
-        if (status == null){
+        if (status == null) {
             return Optional.empty();
         }
         else {
@@ -121,7 +121,7 @@ public class TwitterService {
     }
 
     private Optional<List<Tweet>> constructTweetList(List<Status> statuses) {
-        if (statuses == null){
+        if (statuses == null) {
             return Optional.empty();
         } else {
             return Optional.of(statuses.stream()

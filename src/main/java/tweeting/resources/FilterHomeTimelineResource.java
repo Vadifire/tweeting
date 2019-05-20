@@ -16,7 +16,6 @@ import javax.ws.rs.core.Response;
 import java.util.stream.Collectors;
 
 @Path("/api/1.0/tweet/filter")
-@Produces(MediaType.APPLICATION_JSON)
 
 public class FilterHomeTimelineResource {
 
@@ -41,6 +40,7 @@ public class FilterHomeTimelineResource {
      */
     @GET
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    @Produces(MediaType.APPLICATION_JSON)
     public Response getHomeTimeline(@QueryParam(FILTER_PARAM) String keyword) {
         try {
             if (keyword != null) {

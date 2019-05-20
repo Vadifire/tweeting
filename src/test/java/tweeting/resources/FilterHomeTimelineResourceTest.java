@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import tweeting.models.Tweet;
 import tweeting.services.TwitterService;
+import tweeting.services.TwitterServiceCallException;
 import tweeting.services.TwitterServiceResponseException;
 
 import javax.ws.rs.core.Response;
@@ -27,6 +28,7 @@ public class FilterHomeTimelineResourceTest {
     FilterHomeTimelineResource filterResource;
 
     // Dummy variables to test with
+    String dummyKeyword;
     String repeated;
     List<Tweet> dummyList;
     Tweet[] tweets = new Tweet[2]; // Tweet[i+i] has message of Tweet[i] + repeated String.
@@ -35,6 +37,7 @@ public class FilterHomeTimelineResourceTest {
     public void setUp() {
         service = mock(TwitterService.class);
         filterResource = new FilterHomeTimelineResource(service); // Mock service instead of Twitter4J impl.
+        dummyKeyword = "some keyword filter";
 
         repeated = "a";
 
@@ -54,16 +57,18 @@ public class FilterHomeTimelineResourceTest {
 
         assertNotNull(actualResponse);
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), actualResponse.getStatus());
-        assertEquals(FilterHomeTimelineResource.MISSING_FILTER_MESSAGE, actualResponse.getEntity());
+        assertEquals(TwitterService.NULL_KEYWORD_MESSAGE, actualResponse.getEntity());
     }
 
     @Test
-    public void testFilterAllResults() throws TwitterServiceResponseException {
-        when(service.getHomeTimeline()).thenReturn(Optional.of(dummyList));
+    public void testFilterAllResults() throws TwitterServiceResponseException,
+            TwitterServiceCallException {
+        dummyKeyword = tweets[0].getMessage();
+        when(service.getFilteredTimeline(dummyKeyword)).thenReturn(Optional.of(dummyList));
 
-        Response actualResponse = filterResource.getHomeTimeline((tweets[0].getMessage().get()));
+        Response actualResponse = filterResource.getHomeTimeline(dummyKeyword);
 
-        verify(service).getHomeTimeline(); // Verify we have actually made the call to getHomeTimeline()
+        verify(service).getFilteredTimeline(dummyKeyword);
         assertNotNull(actualResponse);
         assertEquals(Response.Status.OK.getStatusCode(), actualResponse.getStatus()); // Verify correct response code
         List<Tweet> filteredList = (List<Tweet>)actualResponse.getEntity();
@@ -72,12 +77,14 @@ public class FilterHomeTimelineResourceTest {
     }
 
     @Test
-    public void testFilterOneResult() throws TwitterServiceResponseException {
-        when(service.getHomeTimeline()).thenReturn(Optional.of(dummyList));
+    public void testFilterOneResult() throws TwitterServiceResponseException,
+            TwitterServiceCallException {
+        dummyKeyword = tweets[tweets.length-1].getMessage();
+        when(service.getFilteredTimeline(dummyKeyword)).thenReturn(Optional.of(dummyList));
 
-        Response actualResponse = filterResource.getHomeTimeline((tweets[tweets.length-1].getMessage().get()));
+        Response actualResponse = filterResource.getHomeTimeline(dummyKeyword);
 
-        verify(service).getHomeTimeline(); // Verify we have actually made the call to getHomeTimeline()
+        verify(service).getFilteredTimeline(dummyKeyword);
         assertNotNull(actualResponse);
         assertEquals(Response.Status.OK.getStatusCode(), actualResponse.getStatus()); // Verify correct response code
         List<Tweet> filteredList = (List<Tweet>)actualResponse.getEntity();
@@ -86,13 +93,14 @@ public class FilterHomeTimelineResourceTest {
     }
 
     @Test
-    public void testFilterNoResults() throws TwitterServiceResponseException {
-        when(service.getHomeTimeline()).thenReturn(Optional.of(dummyList));
+    public void testFilterNoResults() throws TwitterServiceResponseException,
+            TwitterServiceCallException {
+        dummyKeyword = tweets[tweets.length-1].getMessage() + repeated;
+        when(service.getFilteredTimeline(dummyKeyword)).thenReturn(Optional.of(dummyList));
 
-        Response actualResponse = filterResource.getHomeTimeline(tweets[tweets.length-1].getMessage().get()
-                + repeated);
+        Response actualResponse = filterResource.getHomeTimeline(dummyKeyword);
 
-        verify(service).getHomeTimeline(); // Verify we have actually made the call to getHomeTimeline()
+        verify(service).getFilteredTimeline(dummyKeyword);
         assertNotNull(actualResponse);
         assertEquals(Response.Status.OK.getStatusCode(), actualResponse.getStatus()); // Verify correct response code
         List<Tweet> filteredList = (List<Tweet>)actualResponse.getEntity();
@@ -100,42 +108,45 @@ public class FilterHomeTimelineResourceTest {
     }
 
     @Test
-    public void testFilterEmptyOptional() throws TwitterServiceResponseException {
-        when (service.getHomeTimeline()).thenReturn(Optional.empty());
+    public void testFilterEmptyOptional() throws TwitterServiceResponseException,
+            TwitterServiceCallException {
+        when (service.getFilteredTimeline(dummyKeyword)).thenReturn(Optional.empty());
 
-        Response actualResponse = filterResource.getHomeTimeline("some message");
+        Response actualResponse = filterResource.getHomeTimeline(dummyKeyword);
 
-        verify(service).getHomeTimeline();
+        verify(service).getFilteredTimeline(dummyKeyword);
         assertNotNull(actualResponse);
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), actualResponse.getStatus());
         assertEquals(TwitterService.SERVICE_UNAVAILABLE_MESSAGE, actualResponse.getEntity().toString());
     }
 
     @Test
-    public void testFilterServerException() throws TwitterServiceResponseException {
+    public void testFilterServerException() throws TwitterServiceResponseException,
+            TwitterServiceCallException {
         String dummyErrorMessage = "some message";
         TwitterServiceResponseException dummyException = new TwitterServiceResponseException(dummyErrorMessage,
                 null);
 
-        when(service.getHomeTimeline()).thenThrow(dummyException);
+        when(service.getFilteredTimeline(dummyKeyword)).thenThrow(dummyException);
 
-        Response actualResponse = filterResource.getHomeTimeline("some message");
+        Response actualResponse = filterResource.getHomeTimeline(dummyKeyword);
 
-        verify(service).getHomeTimeline();
+        verify(service).getFilteredTimeline(dummyKeyword);
         assertNotNull(actualResponse);
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), actualResponse.getStatus());
         assertEquals(dummyErrorMessage, actualResponse.getEntity().toString());
     }
 
     @Test
-    public void testFilterGeneralException() throws TwitterServiceResponseException {
+    public void testFilterGeneralException() throws TwitterServiceResponseException,
+            TwitterServiceCallException {
         RuntimeException dummyException = new RuntimeException();
 
-        when(service.getHomeTimeline()).thenThrow(dummyException);
+        when(service.getFilteredTimeline(dummyKeyword)).thenThrow(dummyException);
 
-        Response actualResponse = filterResource.getHomeTimeline("some message");
+        Response actualResponse = filterResource.getHomeTimeline(dummyKeyword);
 
-        verify(service).getHomeTimeline();
+        verify(service).getFilteredTimeline(dummyKeyword);
         assertNotNull(actualResponse);
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), actualResponse.getStatus()); // Verify code
         assertEquals(TwitterService.SERVICE_UNAVAILABLE_MESSAGE, actualResponse.getEntity().toString());

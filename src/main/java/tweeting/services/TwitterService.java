@@ -31,6 +31,8 @@ public class TwitterService {
     public static final String NULL_TWEET_MESSAGE = "Could not post tweet because message parameter is missing.";
     public static final String INVALID_TWEET_MESSAGE = "Could not post tweet because message was either blank or " +
             "longer than " + CharacterUtil.MAX_TWEET_LENGTH + " characters.";
+    public static final String NULL_KEYWORD_MESSAGE = "Could not retrieve filtered timeline because keyword parameter" +
+        " is missing.";
 
     private TwitterService() {
     }
@@ -69,6 +71,19 @@ public class TwitterService {
             return constructTweetList(api.getHomeTimeline());
         } catch (TwitterException te) {
             throw createServerException(te);
+        }
+    }
+
+    public Optional<List<Tweet>> getFilteredTimeline(String keyword) throws TwitterServiceResponseException,
+            TwitterServiceCallException {
+        if (keyword == null) {
+            throw new TwitterServiceCallException(NULL_KEYWORD_MESSAGE);
+        } else {
+            try {
+                return constructTweetList(api.getHomeTimeline());
+            } catch (TwitterException te) {
+                throw createServerException(te);
+            }
         }
     }
 

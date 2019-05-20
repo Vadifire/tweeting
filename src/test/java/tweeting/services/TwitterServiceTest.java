@@ -96,11 +96,11 @@ public class TwitterServiceTest {
         assertEquals(dummyList.size(), actualList.size());
         Tweet tweet = actualList.get(0); // Test tweet is correctly constructed
         assertNotNull(tweet);
-        assertEquals(dummyMessage, tweet.getMessage().get());
-        assertEquals(dummyName, tweet.getUser().get().getName().get());
-        assertEquals(dummyScreenName, tweet.getUser().get().getTwitterHandle().get());
-        assertEquals(dummyDate, tweet.getCreatedAt().get());
-        assertEquals(dummyURL, tweet.getUser().get().getProfileImageUrl().get());
+        assertEquals(dummyMessage, tweet.getMessage());
+        assertEquals(dummyName, tweet.getUser().getName());
+        assertEquals(dummyScreenName, tweet.getUser().getTwitterHandle());
+        assertEquals(dummyDate, tweet.getCreatedAt());
+        assertEquals(dummyURL, tweet.getUser().getProfileImageUrl());
     }
 
     @Test
@@ -175,11 +175,11 @@ public class TwitterServiceTest {
 
         verify(api).updateStatus(anyString());
         assertNotNull(tweet);
-        assertEquals(dummyMessage, tweet.getMessage().get());
-        assertEquals(dummyName, tweet.getUser().get().getName().get());
-        assertEquals(dummyScreenName, tweet.getUser().get().getTwitterHandle().get());
-        assertEquals(dummyDate, tweet.getCreatedAt().get());
-        assertEquals(dummyURL, tweet.getUser().get().getProfileImageUrl().get());
+        assertEquals(dummyMessage, tweet.getMessage());
+        assertEquals(dummyName, tweet.getUser().getName());
+        assertEquals(dummyScreenName, tweet.getUser().getTwitterHandle());
+        assertEquals(dummyDate, tweet.getCreatedAt());
+        assertEquals(dummyURL, tweet.getUser().getProfileImageUrl());
     }
 
     @Test
@@ -203,9 +203,9 @@ public class TwitterServiceTest {
 
         verify(api).updateStatus(anyString());
         assertNotNull(tweet);
-        assertEquals(dummyMessage, tweet.getMessage().get());
-        assertEquals(Optional.empty(), tweet.getUser());
-        assertEquals(dummyDate, tweet.getCreatedAt().get());
+        assertEquals(dummyMessage, tweet.getMessage());
+        assertEquals(null, tweet.getUser());
+        assertEquals(dummyDate, tweet.getCreatedAt());
     }
 
     @Test(expected = TwitterServiceCallException.class)

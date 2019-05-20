@@ -67,11 +67,17 @@ public class TwitterService {
 
     public Optional<List<Tweet>> getHomeTimeline() throws TwitterServiceResponseException {
         try {
-            final Optional<List<Tweet>> tweets = constructTweetList(api.getHomeTimeline());
-            if (tweets.isPresent()) {
+            final List<Status> statuses = api.getHomeTimeline();
+            if (statuses == null) {
+                return Optional.empty();
+            } else {
                 logger.info("Successfully retrieved home timeline from Twitter.");
+                return Optional.of(statuses.stream()
+                        .map(s -> constructTweet(s))
+                        .filter(Optional::isPresent)
+                        .map(Optional::get)
+                        .collect(Collectors.toList()));
             }
-            return tweets;
         } catch (TwitterException te) {
             throw createServerException(te);
         }
@@ -81,41 +87,34 @@ public class TwitterService {
             TwitterServiceCallException {
         if (keyword == null) {
             throw new TwitterServiceCallException(NULL_KEYWORD_MESSAGE);
+        }
+        final Optional<List<Tweet>> tweets = getHomeTimeline();
+        if (tweets.isPresent()) {
+            return Optional.of(tweets.get()
+                    .stream()
+                    .filter(t -> StringUtils.containsIgnoreCase(t.getMessage(), keyword))
+                    .collect(Collectors.toList()));
         } else {
-            try {
-                final Optional<List<Tweet>>  tweets = constructTweetList(api.getHomeTimeline());
-                if (tweets.isPresent()) {
-                    logger.info("Successfully retrieved home timeline from Twitter.");
-                    return Optional.of(tweets.get()
-                            .stream()
-                            .filter(t -> StringUtils.containsIgnoreCase(t.getMessage(), keyword))
-                            .collect(Collectors.toList()));
-                } else {
-                    return tweets;
-                }
-            } catch (TwitterException te) {
-                throw createServerException(te);
-            }
+            return tweets; // Just return the empty optional
         }
     }
 
     public Optional<Tweet> postTweet(String message) throws TwitterServiceResponseException,
             TwitterServiceCallException {
-        if (message != null ) {
-            if (message.length() > MAX_TWEET_LENGTH || StringUtils.isBlank(message)) {
-                throw new TwitterServiceCallException(INVALID_TWEET_MESSAGE);
-            }
-            try {
-                final Optional<Tweet> tweet = constructTweet(api.updateStatus(message));
-                if (tweet.isPresent()) {
-                    logger.info("Successfully posted '{}' to Twitter.", message);
-                }
-                return tweet;
-            } catch (TwitterException te) {
-                throw createServerException(te);
-            }
-        } else {
+        if (message == null) {
             throw new TwitterServiceCallException(NULL_TWEET_MESSAGE);
+        }
+        if (message.length() > MAX_TWEET_LENGTH || StringUtils.isBlank(message)) {
+            throw new TwitterServiceCallException(INVALID_TWEET_MESSAGE);
+        }
+        try {
+            final Optional<Tweet> tweet = constructTweet(api.updateStatus(message));
+            if (tweet.isPresent()) {
+                logger.info("Successfully posted '{}' to Twitter.", message);
+            }
+            return tweet;
+        } catch (TwitterException te) {
+            throw createServerException(te);
         }
     }
 
@@ -135,7 +134,7 @@ public class TwitterService {
         else {
             Tweet tweet = new Tweet();
             tweet.setMessage(status.getText());
-            if (status.getUser() == null){
+            if (status.getUser() == null) {
                 logger.warn("Tweet has no user.");
             } else {
                 TwitterUser user = new TwitterUser();
@@ -149,19 +148,7 @@ public class TwitterService {
         }
     }
 
-    private Optional<List<Tweet>> constructTweetList(List<Status> statuses) {
-        if (statuses == null) {
-            return Optional.empty();
-        } else {
-            Optional<List<Tweet>> tweets;
-            tweets = Optional.of(statuses.stream()
-                    .map(s -> constructTweet(s))
-                    .filter(Optional::isPresent)
-                    .map(Optional::get)
-                    .collect(Collectors.toList()));
-            return tweets;
-        }
-    }
+
 
     // Used for mocking purposes
     public void setAPI(Twitter api) {

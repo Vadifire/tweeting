@@ -39,15 +39,17 @@ public class TwitterService {
         if (instance == null) {
             instance = new TwitterService();
         }
-        ConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
-        configurationBuilder.setDebugEnabled(true);
-        configurationBuilder.setJSONStoreEnabled(true); // Need in order to use getRawJSON
-        configurationBuilder.setOAuthConsumerKey(auth.getConsumerAPIKey());
-        configurationBuilder.setOAuthConsumerSecret(auth.getConsumerAPISecretKey());
-        configurationBuilder.setOAuthAccessToken(auth.getAccessToken());
-        configurationBuilder.setOAuthAccessTokenSecret(auth.getAccessTokenSecret());
-        TwitterFactory twitterFactory = new TwitterFactory(configurationBuilder.build());
-        instance.api = twitterFactory.getInstance();
+
+        instance.api = new TwitterFactory(new ConfigurationBuilder()
+            .setDebugEnabled(true)
+            .setJSONStoreEnabled(true) // Need in order to use getRawJSON
+            .setOAuthConsumerKey(auth.getConsumerAPIKey())
+            .setOAuthConsumerSecret(auth.getConsumerAPISecretKey())
+            .setOAuthAccessToken(auth.getAccessToken())
+            .setOAuthAccessTokenSecret(auth.getAccessTokenSecret())
+            .build())
+            .getInstance();
+
         return instance;
     }
 

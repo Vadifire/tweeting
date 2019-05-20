@@ -76,7 +76,7 @@ public class TwitterService {
             } else {
                 Optional<List<Tweet>> timeline = constructTweetList(api.getHomeTimeline());
                 if (timeline.isPresent()) { // Only cache non-null timelines
-                    timelineCache.cacheTimeline(timeline.get());
+                    timelineCache.cache(timeline.get());
                 }
                 return timeline;
             }
@@ -93,6 +93,7 @@ public class TwitterService {
             }
             try {
                 logger.info("Successfully posted '{}' to Twitter.", message);
+                timelineCache.invalidate();
                 return constructTweet(api.updateStatus(message));
             } catch (TwitterException te) {
                 throw createServerException(te);

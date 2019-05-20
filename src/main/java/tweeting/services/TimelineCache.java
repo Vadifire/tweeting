@@ -8,8 +8,10 @@ import java.util.List;
 public class TimelineCache {
 
     List<Tweet> timeline;
+    boolean valid;
 
     public TimelineCache() {
+        this.valid = false;
         timeline = new ArrayList<>();
     }
 
@@ -17,12 +19,17 @@ public class TimelineCache {
         return timeline;
     }
 
-    public void cacheTimeline(List<Tweet> timeline) {
+    public void cache(List<Tweet> timeline) {
         this.timeline = timeline;
+        this.valid = true;
+    }
+
+    public void invalidate() {
+        this.valid = false;
     }
 
     public boolean canUse() {
-        return false;
+        return valid;
     }
 
 }

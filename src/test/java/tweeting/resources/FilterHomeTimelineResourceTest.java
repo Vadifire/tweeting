@@ -1,5 +1,6 @@
 package tweeting.resources;
 
+import junit.framework.TestCase;
 import org.junit.Before;
 import org.junit.Test;
 import tweeting.models.Tweet;
@@ -8,12 +9,10 @@ import tweeting.services.TwitterServiceCallException;
 import tweeting.services.TwitterServiceResponseException;
 
 import javax.ws.rs.core.Response;
-import java.util.Arrays;
-import java.util.List;
+import java.util.LinkedList;
 import java.util.Optional;
 
 import static junit.framework.TestCase.assertNotNull;
-import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -29,88 +28,36 @@ public class FilterHomeTimelineResourceTest {
 
     // Dummy variables to test with
     String dummyKeyword;
-    String repeated;
-    List<Tweet> dummyList;
-    Tweet[] tweets = new Tweet[2]; // Tweet[i+i] has message of Tweet[i] + repeated String.
 
     @Before
     public void setUp() {
         service = mock(TwitterService.class);
         filterResource = new FilterHomeTimelineResource(service); // Mock service instead of Twitter4J impl.
         dummyKeyword = "some keyword filter";
-
-        repeated = "a";
-
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < tweets.length; i++) {
-            sb.append("a");
-            Tweet tweet = new Tweet();
-            tweet.setMessage(sb.toString());
-            tweets[i] = tweet;
-        }
-        dummyList = Arrays.asList(tweets);
     }
 
     @Test
-    public void testMissingFilterParam() {
-        Response actualResponse = filterResource.getHomeTimeline(null);
-
-        assertNotNull(actualResponse);
-        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), actualResponse.getStatus());
-        assertEquals(TwitterService.NULL_KEYWORD_MESSAGE, actualResponse.getEntity());
-    }
-
-    @Test
-    public void testFilterAllResults() throws TwitterServiceResponseException,
+    public void testFilterSuccess() throws TwitterServiceResponseException,
             TwitterServiceCallException {
-        dummyKeyword = tweets[0].getMessage();
+        LinkedList<Tweet> dummyList = new LinkedList<>();
+        Tweet dummyTweet = new Tweet();
+        dummyList.add(dummyTweet);
+
         when(service.getFilteredTimeline(dummyKeyword)).thenReturn(Optional.of(dummyList));
 
-        Response actualResponse = filterResource.getHomeTimeline(dummyKeyword);
+        Response response = filterResource.getHomeTimeline(dummyKeyword);
 
         verify(service).getFilteredTimeline(dummyKeyword);
-        assertNotNull(actualResponse);
-        assertEquals(Response.Status.OK.getStatusCode(), actualResponse.getStatus()); // Verify correct response code
-        List<Tweet> filteredList = (List<Tweet>)actualResponse.getEntity();
-        assertEquals(tweets.length, filteredList.size());
-        assertTrue(filteredList.containsAll(dummyList));
-    }
 
-    @Test
-    public void testFilterOneResult() throws TwitterServiceResponseException,
-            TwitterServiceCallException {
-        dummyKeyword = tweets[tweets.length-1].getMessage();
-        when(service.getFilteredTimeline(dummyKeyword)).thenReturn(Optional.of(dummyList));
-
-        Response actualResponse = filterResource.getHomeTimeline(dummyKeyword);
-
-        verify(service).getFilteredTimeline(dummyKeyword);
-        assertNotNull(actualResponse);
-        assertEquals(Response.Status.OK.getStatusCode(), actualResponse.getStatus()); // Verify correct response code
-        List<Tweet> filteredList = (List<Tweet>)actualResponse.getEntity();
-        assertEquals(1, filteredList.size());
-        assertTrue(filteredList.contains(tweets[tweets.length-1]));
-    }
-
-    @Test
-    public void testFilterNoResults() throws TwitterServiceResponseException,
-            TwitterServiceCallException {
-        dummyKeyword = tweets[tweets.length-1].getMessage() + repeated;
-        when(service.getFilteredTimeline(dummyKeyword)).thenReturn(Optional.of(dummyList));
-
-        Response actualResponse = filterResource.getHomeTimeline(dummyKeyword);
-
-        verify(service).getFilteredTimeline(dummyKeyword);
-        assertNotNull(actualResponse);
-        assertEquals(Response.Status.OK.getStatusCode(), actualResponse.getStatus()); // Verify correct response code
-        List<Tweet> filteredList = (List<Tweet>)actualResponse.getEntity();
-        assertEquals(0, filteredList.size());
+        assertNotNull(response);
+        TestCase.assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        TestCase.assertEquals(dummyList, response.getEntity());
     }
 
     @Test
     public void testFilterEmptyOptional() throws TwitterServiceResponseException,
             TwitterServiceCallException {
-        when (service.getFilteredTimeline(dummyKeyword)).thenReturn(Optional.empty());
+        when(service.getFilteredTimeline(dummyKeyword)).thenReturn(Optional.empty());
 
         Response actualResponse = filterResource.getHomeTimeline(dummyKeyword);
 
@@ -121,7 +68,23 @@ public class FilterHomeTimelineResourceTest {
     }
 
     @Test
-    public void testFilterServerException() throws TwitterServiceResponseException,
+    public void testFilterCallException() throws TwitterServiceResponseException,
+            TwitterServiceCallException {
+        String dummyErrorMessage = "some message";
+        TwitterServiceCallException dummyException = new TwitterServiceCallException(dummyErrorMessage);
+
+        when(service.getFilteredTimeline(dummyKeyword)).thenThrow(dummyException);
+
+        Response actualResponse = filterResource.getHomeTimeline(dummyKeyword);
+
+        verify(service).getFilteredTimeline(dummyKeyword);
+        assertNotNull(actualResponse);
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), actualResponse.getStatus());
+        assertEquals(dummyErrorMessage, actualResponse.getEntity().toString());
+    }
+
+    @Test
+    public void testFilterResponseException() throws TwitterServiceResponseException,
             TwitterServiceCallException {
         String dummyErrorMessage = "some message";
         TwitterServiceResponseException dummyException = new TwitterServiceResponseException(dummyErrorMessage,

@@ -62,7 +62,7 @@ public class HomeTimelineResourceTest {
     }
 
     @Test
-    public void testTimelineServerException() throws TwitterServiceResponseException {
+    public void testTimelineResponseException() throws TwitterServiceResponseException {
         String dummyErrorMessage = "some message";
         TwitterServiceResponseException dummyException = new TwitterServiceResponseException(dummyErrorMessage,
                 null);
@@ -78,7 +78,7 @@ public class HomeTimelineResourceTest {
     }
 
     @Test
-    public void testTimelineGeneralException() throws TwitterServiceResponseException {
+    public void testTimelineCallException() throws TwitterServiceResponseException {
         RuntimeException dummyException = new RuntimeException();
 
         when(service.getHomeTimeline()).thenThrow(dummyException);

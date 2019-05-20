@@ -34,6 +34,8 @@ public class TwitterServiceTest {
     String dummyURL;
     String dummyMessage;
     Date dummyDate;
+    String repeated;
+    ResponseListImpl<Status> dummyStatusList;
 
     // Class under test
     TwitterService service;
@@ -59,6 +61,17 @@ public class TwitterServiceTest {
         service = TwitterService.getInstance();
         api = mock(Twitter.class);
         service.setAPI(api);
+
+        dummyStatusList = new ResponseListImpl<>();
+        /* For Filtered Timeline Tests */
+        repeated = "a";
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < 2; i++) {
+            sb.append("a");
+            Status status = mock(Status.class);
+            when(status.getText()).thenReturn(sb.toString());
+            dummyStatusList.add(status);
+        }
     }
 
     @Test
@@ -104,7 +117,7 @@ public class TwitterServiceTest {
     }
 
     @Test
-    public void testGetTweetsNull() throws TwitterException, TwitterServiceResponseException {
+    public void testGetTweetsNullTimeline() throws TwitterException, TwitterServiceResponseException {
         when(api.getHomeTimeline()).thenReturn(null);
 
         Optional<List<Tweet>> tweets = service.getHomeTimeline();
@@ -209,7 +222,7 @@ public class TwitterServiceTest {
     }
 
     @Test(expected = TwitterServiceCallException.class)
-    public void testPostTweetNull() throws TwitterServiceResponseException, TwitterServiceCallException {
+    public void testPostTweetNullMessage() throws TwitterServiceResponseException, TwitterServiceCallException {
         try {
             service.postTweet(null);
         } catch (TwitterServiceCallException e) {
@@ -255,6 +268,87 @@ public class TwitterServiceTest {
             assertEquals(errorMessage, e.getMessage());
             throw e;
         }
+    }
+
+    @Test
+    public void testFilterAllResults() throws TwitterException, TwitterServiceResponseException,
+            TwitterServiceCallException {
+        String dummyKeyword = dummyStatusList.get(0).getText();
+        when(api.getHomeTimeline()).thenReturn(dummyStatusList);
+
+        List<Tweet> tweetList = service.getFilteredTimeline(dummyKeyword).get();
+
+        verify(api).getHomeTimeline();
+
+        assertEquals(dummyStatusList.size(), tweetList.size());
+        for (int i = 0; i < dummyStatusList.size(); i++) {
+            assertEquals(dummyStatusList.get(i).getText(), tweetList.get(i).getMessage());
+        }
+    }
+
+    @Test
+    public void testFilterOneResult() throws TwitterException, TwitterServiceResponseException,
+            TwitterServiceCallException {
+        String dummyKeyword = dummyStatusList.get(dummyStatusList.size() - 1).getText();
+
+        when(api.getHomeTimeline()).thenReturn(dummyStatusList);
+
+        List<Tweet> tweetList = service.getFilteredTimeline(dummyKeyword).get();
+
+        verify(api).getHomeTimeline();
+
+        assertEquals(1, tweetList.size());
+        assertEquals(dummyStatusList.get(dummyStatusList.size() - 1).getText(), tweetList.get(0).getMessage());
+    }
+
+    @Test
+    public void testFilterNoResults() throws TwitterException, TwitterServiceResponseException,
+            TwitterServiceCallException {
+        String dummyKeyword = dummyStatusList.get(dummyStatusList.size() - 1).getText() + repeated;
+
+        when(api.getHomeTimeline()).thenReturn(dummyStatusList);
+
+        List<Tweet> tweetList = service.getFilteredTimeline(dummyKeyword).get();
+
+        verify(api).getHomeTimeline();
+
+        assertEquals(0, tweetList.size());
+    }
+
+    @Test(expected = TwitterServiceCallException.class)
+    public void testFilterMissingKeyword() throws TwitterServiceResponseException, TwitterServiceCallException {
+        try {
+            service.getFilteredTimeline(null);
+        } catch (TwitterServiceCallException e) {
+            assertEquals(TwitterService.NULL_KEYWORD_MESSAGE, e.getMessage());
+            throw e;
+        }
+    }
+
+    @Test(expected = TwitterServiceResponseException.class)
+    public void testFilterServerException() throws TwitterException, TwitterServiceResponseException,
+            TwitterServiceCallException {
+        String errorMessage = "some error message";
+        TwitterException te = mock(TwitterException.class);
+        when(api.getHomeTimeline()).thenThrow(te);
+        when(te.getErrorMessage()).thenReturn(errorMessage);
+        try {
+            service.getFilteredTimeline("some keyword");
+        } catch (TwitterServiceResponseException e) {
+            assertEquals(errorMessage, e.getMessage());
+            throw e;
+        }
+    }
+
+    @Test
+    public void testFilterNullTimeline() throws TwitterException, TwitterServiceResponseException,
+            TwitterServiceCallException {
+        when(api.getHomeTimeline()).thenReturn(null);
+
+        Optional<List<Tweet>> tweets = service.getFilteredTimeline("some keyword");
+
+        verify(api).getHomeTimeline();
+        assertEquals(Optional.empty(), tweets);
     }
 
 }

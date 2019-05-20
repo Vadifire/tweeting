@@ -67,7 +67,7 @@ public class TwitterService {
 
     public Optional<List<Tweet>> getHomeTimeline() throws TwitterServiceResponseException {
         try {
-            final Optional<List<Tweet>>  tweets = constructTweetList(api.getHomeTimeline());
+            final Optional<List<Tweet>> tweets = constructTweetList(api.getHomeTimeline());
             if (tweets.isPresent()) {
                 logger.info("Successfully retrieved home timeline from Twitter.");
             }

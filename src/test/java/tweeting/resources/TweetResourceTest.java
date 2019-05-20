@@ -63,7 +63,7 @@ public class TweetResourceTest {
     }
 
     @Test
-    public void testTweetClientException() throws TwitterServiceResponseException, TwitterServiceCallException {
+    public void testTweetCallException() throws TwitterServiceResponseException, TwitterServiceCallException {
         String dummyMessage = "some message";
         String dummyErrorMessage = "some error message";
         TwitterServiceCallException dummyException = new TwitterServiceCallException(dummyErrorMessage);
@@ -79,7 +79,7 @@ public class TweetResourceTest {
     }
 
     @Test
-    public void testTweetServerException() throws TwitterServiceResponseException, TwitterServiceCallException {
+    public void testTweetResponseException() throws TwitterServiceResponseException, TwitterServiceCallException {
         String dummyMessage = "some message";
         String dummyErrorMessage = "some error message";
         TwitterServiceResponseException dummyException = new TwitterServiceResponseException(dummyErrorMessage,

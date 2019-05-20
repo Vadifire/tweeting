@@ -47,11 +47,13 @@ public class FilterHomeTimelineResource {
         try {
             if (keyword != null) {
                 List<Tweet> tweets = service.getHomeTimeline().stream()
-                        .filter(t -> StringUtils.containsIgnoreCase(t.getMessage().orElse(""), keyword))
+                        .filter(t -> t.getMessage().isPresent())
+                        .filter(t -> StringUtils.containsIgnoreCase(t.getMessage().get(), keyword))
                         .collect(Collectors.toList());
 
                 logger.info("Successfully retrieved home timeline from Twitter. Sending 200 OK response.");
-                return Response.ok(tweets, MediaType.APPLICATION_JSON_TYPE).build();
+                return Response.ok(tweets)
+                        .build();
             } else {
                 logger.debug("\"" + FILTER_PARAM + "\" parameter required for filtering is missing. " +
                         "Sending 400 Bad Request error");

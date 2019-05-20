@@ -63,6 +63,7 @@ public class TwitterService {
 
     public List<Tweet> getHomeTimeline() throws TwitterServiceResponseException {
         try {
+            logger.info("Successfully retrieved home timeline from Twitter.");
             return constructTweetList(api.getHomeTimeline());
         } catch (TwitterException te) {
             throw createServerException(te);
@@ -76,6 +77,7 @@ public class TwitterService {
                 throw new TwitterServiceCallException(INVALID_TWEET_MESSAGE);
             }
             try {
+                logger.info("Successfully posted '{}' to Twitter.", message);
                 return constructTweet(api.updateStatus(message));
             } catch (TwitterException te) {
                 throw createServerException(te);

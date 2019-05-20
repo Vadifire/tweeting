@@ -3,7 +3,6 @@ package tweeting.resources;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import tweeting.models.Tweet;
 import tweeting.services.TwitterService;
 import tweeting.services.TwitterServiceResponseException;
 
@@ -14,7 +13,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.List;
 import java.util.stream.Collectors;
 
 @Path("/api/1.0/tweet/filter")
@@ -46,13 +44,10 @@ public class FilterHomeTimelineResource {
     public Response getHomeTimeline(@QueryParam(FILTER_PARAM) String keyword) {
         try {
             if (keyword != null) {
-                List<Tweet> tweets = service.getHomeTimeline().stream()
+                return Response.ok(service.getHomeTimeline().stream()
                         .filter(t -> t.getMessage().isPresent())
                         .filter(t -> StringUtils.containsIgnoreCase(t.getMessage().get(), keyword))
-                        .collect(Collectors.toList());
-
-                logger.info("Successfully retrieved home timeline from Twitter. Sending 200 OK response.");
-                return Response.ok(tweets)
+                        .collect(Collectors.toList()))
                         .build();
             } else {
                 logger.debug("\"" + FILTER_PARAM + "\" parameter required for filtering is missing. " +

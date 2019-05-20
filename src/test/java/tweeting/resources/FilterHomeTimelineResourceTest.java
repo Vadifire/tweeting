@@ -50,7 +50,7 @@ public class FilterHomeTimelineResourceTest {
 
     @Test
     public void testMissingFilterParam() {
-        Response actualResponse = filterResource.getHomeTimeline(Optional.ofNullable(null));
+        Response actualResponse = filterResource.getHomeTimeline(null);
 
         assertNotNull(actualResponse);
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), actualResponse.getStatus());
@@ -59,9 +59,9 @@ public class FilterHomeTimelineResourceTest {
 
     @Test
     public void testFilterAllResults() throws TwitterServiceResponseException {
-        when(service.getHomeTimeline()).thenReturn(dummyList);
+        when(service.getHomeTimeline()).thenReturn(Optional.of(dummyList));
 
-        Response actualResponse = filterResource.getHomeTimeline(Optional.of(tweets[0].getMessage()));
+        Response actualResponse = filterResource.getHomeTimeline((tweets[0].getMessage().get()));
 
         verify(service).getHomeTimeline(); // Verify we have actually made the call to getHomeTimeline()
         assertNotNull(actualResponse);
@@ -73,9 +73,9 @@ public class FilterHomeTimelineResourceTest {
 
     @Test
     public void testFilterOneResult() throws TwitterServiceResponseException {
-        when(service.getHomeTimeline()).thenReturn(dummyList);
+        when(service.getHomeTimeline()).thenReturn(Optional.of(dummyList));
 
-        Response actualResponse = filterResource.getHomeTimeline(Optional.of(tweets[tweets.length-1].getMessage()));
+        Response actualResponse = filterResource.getHomeTimeline((tweets[tweets.length-1].getMessage().get()));
 
         verify(service).getHomeTimeline(); // Verify we have actually made the call to getHomeTimeline()
         assertNotNull(actualResponse);
@@ -87,16 +87,28 @@ public class FilterHomeTimelineResourceTest {
 
     @Test
     public void testFilterNoResults() throws TwitterServiceResponseException {
-        when(service.getHomeTimeline()).thenReturn(dummyList);
+        when(service.getHomeTimeline()).thenReturn(Optional.of(dummyList));
 
-        Response actualResponse = filterResource.getHomeTimeline(Optional.of(tweets[tweets.length-1].getMessage() +
-                repeated));
+        Response actualResponse = filterResource.getHomeTimeline(tweets[tweets.length-1].getMessage().get()
+                + repeated);
 
         verify(service).getHomeTimeline(); // Verify we have actually made the call to getHomeTimeline()
         assertNotNull(actualResponse);
         assertEquals(Response.Status.OK.getStatusCode(), actualResponse.getStatus()); // Verify correct response code
         List<Tweet> filteredList = (List<Tweet>)actualResponse.getEntity();
         assertEquals(0, filteredList.size());
+    }
+
+    @Test
+    public void testFilterEmptyOptional() throws TwitterServiceResponseException {
+        when (service.getHomeTimeline()).thenReturn(Optional.empty());
+
+        Response actualResponse = filterResource.getHomeTimeline("some message");
+
+        verify(service).getHomeTimeline();
+        assertNotNull(actualResponse);
+        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), actualResponse.getStatus());
+        assertEquals(TwitterService.SERVICE_UNAVAILABLE_MESSAGE, actualResponse.getEntity().toString());
     }
 
     @Test
@@ -107,7 +119,7 @@ public class FilterHomeTimelineResourceTest {
 
         when(service.getHomeTimeline()).thenThrow(dummyException);
 
-        Response actualResponse = filterResource.getHomeTimeline(Optional.of("some message"));
+        Response actualResponse = filterResource.getHomeTimeline("some message");
 
         verify(service).getHomeTimeline();
         assertNotNull(actualResponse);
@@ -121,7 +133,7 @@ public class FilterHomeTimelineResourceTest {
 
         when(service.getHomeTimeline()).thenThrow(dummyException);
 
-        Response actualResponse = filterResource.getHomeTimeline(Optional.of("some message"));
+        Response actualResponse = filterResource.getHomeTimeline("some message");
 
         verify(service).getHomeTimeline();
         assertNotNull(actualResponse);

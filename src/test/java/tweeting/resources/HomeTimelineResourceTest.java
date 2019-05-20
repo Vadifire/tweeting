@@ -1,5 +1,6 @@
 package tweeting.resources;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import tweeting.models.Tweet;
@@ -8,6 +9,7 @@ import tweeting.services.TwitterServiceResponseException;
 
 import javax.ws.rs.core.Response;
 import java.util.LinkedList;
+import java.util.Optional;
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
@@ -36,7 +38,7 @@ public class HomeTimelineResourceTest {
         Tweet dummyTweet = new Tweet();
         dummyList.add(dummyTweet);
 
-        when(service.getHomeTimeline()).thenReturn(dummyList);
+        when(service.getHomeTimeline()).thenReturn(Optional.of(dummyList));
 
         Response response = timelineResource.getHomeTimeline();
 
@@ -45,6 +47,18 @@ public class HomeTimelineResourceTest {
         assertNotNull(response);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus()); // Verify correct response code
         assertEquals(dummyList, response.getEntity()); // Verify correct content
+    }
+
+    @Test
+    public void testFilterEmptyOptional() throws TwitterServiceResponseException {
+        when (service.getHomeTimeline()).thenReturn(Optional.empty());
+
+        Response actualResponse = timelineResource.getHomeTimeline();
+
+        verify(service).getHomeTimeline();
+        assertNotNull(actualResponse);
+        Assert.assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), actualResponse.getStatus());
+        Assert.assertEquals(TwitterService.SERVICE_UNAVAILABLE_MESSAGE, actualResponse.getEntity().toString());
     }
 
     @Test
@@ -73,7 +87,7 @@ public class HomeTimelineResourceTest {
 
         verify(service).getHomeTimeline();
         assertNotNull(actualResponse);
-        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), actualResponse.getStatus()); // Verify code
+        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), actualResponse.getStatus());
         assertEquals(TwitterService.SERVICE_UNAVAILABLE_MESSAGE, actualResponse.getEntity().toString());
     }
 

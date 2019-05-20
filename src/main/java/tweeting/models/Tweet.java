@@ -1,6 +1,7 @@
 package tweeting.models;
 
 import java.util.Date;
+import java.util.Optional;
 
 public class Tweet {
 
@@ -8,24 +9,24 @@ public class Tweet {
     private TwitterUser user;
     private Date createdAt;
 
-    public String getMessage() {
-        return message;
+    public Optional<String> getMessage() {
+        return Optional.ofNullable(message);
     }
 
     public void setMessage(String message) {
         this.message = message;
     }
 
-    public TwitterUser getUser() {
-        return user;
+    public Optional<TwitterUser> getUser() {
+        return Optional.ofNullable(user);
     }
 
     public void setUser(TwitterUser user) {
         this.user = user;
     }
 
-    public Date getCreatedAt() {
-        return createdAt;
+    public Optional<Date> getCreatedAt() {
+        return Optional.ofNullable(createdAt);
     }
 
     public void setCreatedAt(Date createdAt) {

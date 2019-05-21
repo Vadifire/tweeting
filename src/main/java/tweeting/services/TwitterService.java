@@ -75,11 +75,12 @@ public class TwitterService {
             throw new TwitterServiceCallException(TOO_LONG_TWEET_MESSAGE);
         }
         try {
-            final Optional<Tweet> postedTweet = Optional.ofNullable(api.updateStatus(message))
-                    .map(this::constructTweet)
+            return Optional.ofNullable(api.updateStatus(message))
+                    .map(status -> {
+                        logger.info("Successfully posted '{}' to Twitter.", message);
+                        return constructTweet(status);
+                    })
                     .orElse(Optional.empty());
-            postedTweet.ifPresent(t -> logger.info("Successfully posted '{}' to Twitter.", message));
-            return postedTweet;
         } catch (TwitterException te) {
             throw createServerException(te);
         }
@@ -87,11 +88,12 @@ public class TwitterService {
 
     public Optional<List<Tweet>> getHomeTimeline() throws TwitterServiceResponseException {
         try {
-            final Optional<List<Tweet>> tweets = Optional.ofNullable(api.getHomeTimeline())
-                    .map(this::constructTweetList)
+            return Optional.ofNullable(api.getHomeTimeline())
+                    .map(statuses -> {
+                        logger.info("Successfully retrieved home timeline.");
+                        return constructTweetList(statuses);
+                    })
                     .orElse(Optional.empty());
-            tweets.ifPresent(t -> logger.info("Successfully retrieved home timeline."));
-            return tweets;
         } catch (TwitterException te) {
             throw createServerException(te);
         }

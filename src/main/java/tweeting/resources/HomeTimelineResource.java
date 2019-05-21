@@ -33,7 +33,7 @@ public class HomeTimelineResource {
     public Response getHomeTimeline() {
         try {
             return Response.ok(service.getHomeTimeline()
-                    .orElseThrow(() -> new NullPointerException("Twitter failed to respond with home timeline.")))
+                        .orElseThrow(() -> new NullPointerException("Twitter failed to respond with home timeline.")))
                     .build();
         } catch (TwitterServiceResponseException e) {
             logger.error("Sending 500 Internal Server error", e);

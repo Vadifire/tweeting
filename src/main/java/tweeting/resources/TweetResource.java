@@ -39,7 +39,7 @@ public class TweetResource {
         try {
             return Response.status(Response.Status.CREATED)
                     .entity(service.postTweet(message)
-                            .orElseThrow(() -> new NullPointerException("Twitter failed to respond posted tweet.")))
+                        .orElseThrow(() -> new NullPointerException("Twitter failed to respond with posted tweet.")))
                     .build();
         } catch (TwitterServiceCallException e) {
             logger.debug("Sending 400 Bad Request error", e);

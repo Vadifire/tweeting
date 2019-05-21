@@ -102,8 +102,8 @@ public class TwitterService {
             throw new TwitterServiceCallException(NULL_KEYWORD_MESSAGE);
         }
         return getHomeTimeline().map(tweets -> tweets.stream()
-                    .filter(t -> StringUtils.containsIgnoreCase(t.getMessage(), keyword))
-                    .collect(Collectors.toList())
+                .filter(t -> StringUtils.containsIgnoreCase(t.getMessage(), keyword))
+                .collect(Collectors.toList())
         );
     }
 

@@ -351,4 +351,21 @@ public class TwitterServiceTest {
         assertEquals(Optional.empty(), tweets);
     }
 
+    @Test
+    public void testFilterAllResultsExceptFirstNullMessage() throws TwitterException, TwitterServiceResponseException,
+            TwitterServiceCallException {
+        String dummyKeyword = dummyStatusList.get(0).getText();
+        when(api.getHomeTimeline()).thenReturn(dummyStatusList);
+        when(dummyStatusList.get(0).getText()).thenReturn(null); // Uh oh!
+
+        List<Tweet> tweetList = service.getFilteredTimeline(dummyKeyword).get();
+
+        verify(api).getHomeTimeline();
+
+        assertEquals(dummyStatusList.size() - 1, tweetList.size());
+        for (int i = 0; i < dummyStatusList.size() - 1; i++) {
+            assertEquals(dummyStatusList.get(i + 1).getText(), tweetList.get(i).getMessage());
+        }
+    }
+
 }

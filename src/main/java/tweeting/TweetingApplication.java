@@ -71,7 +71,7 @@ public class TweetingApplication extends Application<TweetingConfiguration> {
         }
     }
 
-    public static String getConfigFileName() {
+    private static String getConfigFileName() {
         return configFileName;
     }
 }

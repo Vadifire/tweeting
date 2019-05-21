@@ -45,7 +45,7 @@ public class TwitterResource {
                     .map(timeline -> Response.status(Response.Status.CREATED)
                             .entity(timeline)
                             .build())
-                    .orElseGet(() -> missingOptionalResponse("Twitter failed to respond with posted tweet."));
+                    .orElseGet(() -> emptyOptionalResponse("Twitter failed to respond with posted tweet."));
         } catch (TwitterServiceCallException e) {
             logger.debug("Sending 400 Bad Request error", e);
             return Response.status(Response.Status.BAD_REQUEST)
@@ -78,7 +78,7 @@ public class TwitterResource {
             return service.getHomeTimeline()
                     .map(timeline -> Response.ok(timeline)
                             .build())
-                    .orElseGet(() -> missingOptionalResponse("Twitter failed to respond with home timeline."));
+                    .orElseGet(() -> emptyOptionalResponse("Twitter failed to respond with home timeline."));
         } catch (TwitterServiceResponseException e) {
             logger.error("Sending 500 Internal Server error", e);
             return (Response.status(Response.Status.INTERNAL_SERVER_ERROR)
@@ -107,7 +107,7 @@ public class TwitterResource {
             return service.getFilteredTimeline(keyword)
                     .map(timeline -> Response.ok(timeline)
                             .build())
-                    .orElseGet(() -> missingOptionalResponse("Twitter failed to respond with home timeline."));
+                    .orElseGet(() -> emptyOptionalResponse("Twitter failed to respond with home timeline."));
         } catch (TwitterServiceCallException e) {
             logger.debug("Sending 400 Bad Request error", e);
             return Response.status(Response.Status.BAD_REQUEST)
@@ -126,7 +126,7 @@ public class TwitterResource {
         }
     }
 
-    private Response missingOptionalResponse(String message) {
+    private Response emptyOptionalResponse(String message) {
         logger.error(message, currentThread().getStackTrace());
         return (Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                 .entity(TwitterService.SERVICE_UNAVAILABLE_MESSAGE)

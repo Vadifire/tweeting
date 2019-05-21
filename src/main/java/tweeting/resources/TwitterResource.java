@@ -16,8 +16,6 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import static java.lang.Thread.currentThread;
-
 @Path("/api/1.0/twitter/")
 public class TwitterResource {
 
@@ -127,7 +125,7 @@ public class TwitterResource {
     }
 
     private Response emptyOptionalResponse(String message) {
-        logger.error(message, currentThread().getStackTrace());
+        logger.error(message, new Throwable(message, new Throwable().fillInStackTrace()));
         return (Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                 .entity(TwitterService.SERVICE_UNAVAILABLE_MESSAGE)
                 .build());

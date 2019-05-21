@@ -118,7 +118,7 @@ public class TwitterService {
     }
 
     private Optional<Tweet> constructTweet(Status status) {
-        if (status == null){
+        if (status == null) {
             return Optional.empty();
         }
         Tweet tweet = new Tweet();

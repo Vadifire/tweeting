@@ -30,9 +30,11 @@ public class TwitterService {
     public static final int MAX_TWEET_LENGTH = CharacterUtil.MAX_TWEET_LENGTH; // To not expose Twitter4J
 
     public static final String SERVICE_UNAVAILABLE_MESSAGE = "Service is temporarily unavailable.";
-    public static final String NULL_TWEET_MESSAGE = "Could not post tweet because message parameter is missing.";
-    public static final String INVALID_TWEET_MESSAGE = "Could not post tweet because message was either blank or " +
+    public static final String MISSING_TWEET_MESSAGE = "Could not post tweet because message parameter is missing.";
+    public static final String TOO_LONG_TWEET_MESSAGE = "Could not post tweet because message is " +
             "longer than " + CharacterUtil.MAX_TWEET_LENGTH + " characters.";
+    public static final String MISSING_KEYWORD_MESSAGE = "Could not retrieve filtered timeline because keyword " +
+            "parameter is missing.";
 
     private TwitterService() {
     }
@@ -68,42 +70,46 @@ public class TwitterService {
         return instance;
     }
 
-    public Optional<List<Tweet>> getHomeTimeline() throws TwitterServiceResponseException {
+    public Optional<Tweet> postTweet(String message) throws TwitterServiceResponseException,
+            TwitterServiceCallException {
+        if (StringUtils.isBlank(message)) {
+            throw new TwitterServiceCallException(MISSING_TWEET_MESSAGE);
+        }
+        if (message.length() > MAX_TWEET_LENGTH) {
+            throw new TwitterServiceCallException(TOO_LONG_TWEET_MESSAGE);
+        }
         try {
-            logger.info("Successfully retrieved home timeline from Twitter.");
-            if(timelineCache.isValid()) { // Avoid call to Twitter if valid cache
-                return Optional.of(timelineCache.getTimeline());
-            } else {
-                Optional<List<Tweet>> timeline = constructTweetList(api.getHomeTimeline());
-                if (timeline.isPresent()) { // Only cache non-null timelines
-                    timelineCache.cache(timeline.get());
-                }
-                return timeline;
-            }
+            return Optional.ofNullable(api.updateStatus(message))
+                    .map(status -> {
+                        logger.info("Successfully posted '{}' to Twitter.", message);
+                        return constructTweet(status);
+                    });
         } catch (TwitterException te) {
             throw createServerException(te);
         }
     }
 
-    public Optional<Tweet> postTweet(String message) throws TwitterServiceResponseException,
-            TwitterServiceCallException {
-        if (message != null ) {
-            if (message.length() > MAX_TWEET_LENGTH || StringUtils.isBlank(message)) {
-                throw new TwitterServiceCallException(INVALID_TWEET_MESSAGE);
-            }
-            try {
-                logger.info("Successfully posted '{}' to Twitter.", message);
-                Optional<Tweet> tweet = constructTweet(api.updateStatus(message));
-                if (tweet.isPresent()) {
-                    timelineCache.pushTweet(tweet.get());
-                }
-                return tweet;
-            } catch (TwitterException te) {
-                throw createServerException(te);
-            }
-        } else {
-            throw new TwitterServiceCallException(NULL_TWEET_MESSAGE);
+    public Optional<List<Tweet>> getHomeTimeline() throws TwitterServiceResponseException {
+        try {
+            return Optional.ofNullable(api.getHomeTimeline())
+                    .map(statuses -> {
+                        logger.info("Successfully retrieved home timeline.");
+                        return constructTweetList(statuses);
+                    });
+        } catch (TwitterException te) {
+            throw createServerException(te);
         }
+    }
+
+    public Optional<List<Tweet>> getFilteredTimeline(String keyword) throws TwitterServiceResponseException,
+            TwitterServiceCallException {
+        if (StringUtils.isBlank(keyword)) {
+            throw new TwitterServiceCallException(MISSING_KEYWORD_MESSAGE);
+        }
+        return getHomeTimeline().map(tweets -> tweets.stream()
+                .filter(t -> StringUtils.containsIgnoreCase(t.getMessage(), keyword))
+                .collect(Collectors.toList())
+        );
     }
 
     private TwitterServiceResponseException createServerException(TwitterException te) {
@@ -115,37 +121,30 @@ public class TwitterService {
         }
     }
 
-    private Optional<Tweet> constructTweet(Status status) {
+    private Tweet constructTweet(Status status) {
         if (status == null) {
-            return Optional.empty();
+            return null;
         }
-        else {
-            Tweet tweet = new Tweet();
-            tweet.setMessage(status.getText());
-            if (status.getUser() == null){
-                logger.warn("Tweet has no user.");
-            } else {
-                TwitterUser user = new TwitterUser();
-                user.setTwitterHandle(status.getUser().getScreenName());
-                user.setName(status.getUser().getName());
-                user.setProfileImageUrl(status.getUser().getProfileImageURL());
-                tweet.setUser(user);
-            }
-            tweet.setCreatedAt(status.getCreatedAt());
-            return Optional.of(tweet);
+        Tweet tweet = new Tweet();
+        tweet.setMessage(status.getText());
+        if (status.getUser() == null) {
+            logger.warn("Tweet has no user.");
+        } else {
+            TwitterUser user = new TwitterUser();
+            user.setTwitterHandle(status.getUser().getScreenName());
+            user.setName(status.getUser().getName());
+            user.setProfileImageUrl(status.getUser().getProfileImageURL());
+            tweet.setUser(user);
         }
+        tweet.setCreatedAt(status.getCreatedAt());
+        return tweet;
     }
 
-    private Optional<List<Tweet>> constructTweetList(List<Status> statuses) {
-        if (statuses == null) {
-            return Optional.empty();
-        } else {
-            return Optional.of(statuses.stream()
-                    .map(s -> constructTweet(s))
-                    .filter(Optional::isPresent)
-                    .map(Optional::get)
-                    .collect(Collectors.toList()));
-        }
+    private List<Tweet> constructTweetList(List<Status> statuses) {
+        return statuses.stream()
+                .map(status -> constructTweet(status))
+                .filter(tweet -> tweet != null)
+                .collect(Collectors.toList());
     }
 
     // Used for mocking purposes

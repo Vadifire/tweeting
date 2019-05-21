@@ -3,9 +3,7 @@ package tweeting;
 import tweeting.conf.TwitterOAuthCredentials;
 import tweeting.conf.TweetingConfiguration;
 import tweeting.health.AliveHealthCheck;
-import tweeting.resources.FilterHomeTimelineResource;
-import tweeting.resources.HomeTimelineResource;
-import tweeting.resources.TweetResource;
+import tweeting.resources.TwitterResource;
 
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
@@ -63,16 +61,10 @@ public class TweetingApplication extends Application<TweetingConfiguration> {
             env.healthChecks().register(healthCheckName, healthCheck);
             logger.debug("Health check has been registered: {}", healthCheck.getClass().getName());
 
-            logger.debug("Registering resources");
-            final HomeTimelineResource homeTimelineResource = new HomeTimelineResource(service);
-            env.jersey().register(homeTimelineResource);
-            logger.debug("Registered resource: {}", homeTimelineResource.getClass().getName());
-            final TweetResource tweetResource = new TweetResource(service);
-            env.jersey().register(tweetResource);
-            logger.debug("Registered resource: {}", tweetResource.getClass().getName());
-            final FilterHomeTimelineResource filterTimelineResource = new FilterHomeTimelineResource(service);
-            env.jersey().register(filterTimelineResource);
-            logger.debug("Registered resource: {}", filterTimelineResource.getClass().getName());
+            logger.debug("Registering Resource");
+            final TwitterResource twitterResource = new TwitterResource(service);
+            env.jersey().register(twitterResource);
+            logger.debug("Registered resource: {}", twitterResource.getClass().getName());
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             System.exit(1);

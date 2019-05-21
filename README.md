@@ -35,9 +35,10 @@ Alternatively, you can simply access ```http://localhost:8080/api/1.0/twitter/ti
 ##### Filtering Home Timeline
 
 To retrieve a filtered version of the home timeline, run the following command, replacing ```world``` with your desired 
-keyword:  ```curl -i -G http://localhost:8080/api/1.0/tweet/filter --data-urlencode "keyword=world"```
- 
-Alternatively, you can simply access ```http://localhost:8080/api/1.0/tweet/filter?keyword=world``` in browser.
+keyword:  ```curl -i -G http://localhost:8080/api/1.0/twitter/timeline/filter --data-urlencode "keyword=world"```
+
+Alternatively, you can simply access ```http://localhost:8080/api/1.0/twitter/timeline/filter?keyword=world``` 
+in browser.
 
 ## How To Check Code Coverage
 

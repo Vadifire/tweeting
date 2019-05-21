@@ -74,7 +74,7 @@ public class TwitterService {
             } else {
                 logger.info("Successfully retrieved home timeline from Twitter.");
                 return Optional.of(statuses.stream()
-                        .map(constructTweet)
+                        .map(constructTweetFunction)
                         .filter(Optional::isPresent)
                         .map(Optional::get)
                         .collect(Collectors.toList()));
@@ -109,8 +109,8 @@ public class TwitterService {
             throw new TwitterServiceCallException(INVALID_TWEET_MESSAGE);
         }
         try {
-            //final Optional<Tweet> postedTweet = constructTweet.apply(api.updateStatus(message));
-            Function<Status, Optional<Tweet>> f = this::constructTweetOld;
+            //final Optional<Tweet> postedTweet = constructTweetFunction.apply(api.updateStatus(message));
+            final Function<Status, Optional<Tweet>> f = this::constructTweetMethod;
             final Optional<Tweet> postedTweet = f.apply(api.updateStatus(message));
 
             if (postedTweet.isPresent()) {
@@ -131,7 +131,7 @@ public class TwitterService {
         }
     }
 
-    public Optional<Tweet> constructTweetOld(Status status) {
+    public Optional<Tweet> constructTweetMethod(Status status) {
         if (status == null) {
             return Optional.empty();
         }
@@ -152,7 +152,7 @@ public class TwitterService {
         }
     }
 
-    Function<Status, Optional<Tweet>> constructTweet = status -> {
+    Function<Status, Optional<Tweet>> constructTweetFunction = status -> {
         if (status == null) {
             return Optional.empty();
         }

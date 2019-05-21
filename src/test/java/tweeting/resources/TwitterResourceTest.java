@@ -29,10 +29,12 @@ public class TwitterResourceTest {
     TwitterResource resource;
 
     // Dummy variables to test with
-    String dummyKeyword;
+    String dummyMessage, dummyErrorMessage, dummyKeyword;
 
     @Before
     public void setUp() {
+        dummyMessage = "some message";
+        dummyErrorMessage = "some error message";
         dummyKeyword = "keyword";
         service = mock(TwitterService.class);
         resource = new TwitterResource(service); // Use the Mocked service instead of Twitter4J impl.
@@ -55,9 +57,20 @@ public class TwitterResourceTest {
     }
 
     @Test
+    public void testTweetEmptyOptional() throws TwitterServiceResponseException,
+            TwitterServiceCallException {
+        when(service.postTweet(dummyMessage)).thenReturn(Optional.empty());
+
+        Response actualResponse = resource.postTweet(dummyMessage);
+
+        verify(service).postTweet(dummyMessage);
+        assertNotNull(actualResponse);
+        Assert.assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), actualResponse.getStatus());
+        Assert.assertEquals(TwitterService.SERVICE_UNAVAILABLE_MESSAGE, actualResponse.getEntity().toString());
+    }
+
+    @Test
     public void testTweetCallException() throws TwitterServiceResponseException, TwitterServiceCallException {
-        String dummyMessage = "some message";
-        String dummyErrorMessage = "some error message";
         TwitterServiceCallException dummyException = new TwitterServiceCallException(dummyErrorMessage);
 
         when(service.postTweet(any())).thenThrow(dummyException);
@@ -72,8 +85,6 @@ public class TwitterResourceTest {
 
     @Test
     public void testTweetResponseException() throws TwitterServiceResponseException, TwitterServiceCallException {
-        String dummyMessage = "some message";
-        String dummyErrorMessage = "some error message";
         TwitterServiceResponseException dummyException = new TwitterServiceResponseException(dummyErrorMessage,
                 null);
 
@@ -117,6 +128,18 @@ public class TwitterResourceTest {
         assertNotNull(response);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus()); // Verify correct response code
         assertEquals(dummyList, response.getEntity()); // Verify correct content
+    }
+
+    @Test
+    public void testTimelineEmptyOptional() throws TwitterServiceResponseException {
+        when(service.getHomeTimeline()).thenReturn(Optional.empty());
+
+        Response actualResponse = resource.getHomeTimeline();
+
+        verify(service).getHomeTimeline();
+        assertNotNull(actualResponse);
+        Assert.assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), actualResponse.getStatus());
+        Assert.assertEquals(TwitterService.SERVICE_UNAVAILABLE_MESSAGE, actualResponse.getEntity().toString());
     }
 
     @Test

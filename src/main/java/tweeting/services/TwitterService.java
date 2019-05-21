@@ -133,9 +133,9 @@ public class TwitterService {
     }
 
     private Optional<List<Tweet>> constructTweetList(List<Status> statuses) {
-        //statuses.set(0, null);
         return Optional.of(statuses.stream()
                 .map(this::constructTweet)
+                .filter(Optional::isPresent)
                 .map(Optional::get)
                 .collect(Collectors.toList()));
     }

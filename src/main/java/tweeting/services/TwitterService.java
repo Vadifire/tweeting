@@ -28,11 +28,11 @@ public class TwitterService {
     public static final int MAX_TWEET_LENGTH = CharacterUtil.MAX_TWEET_LENGTH; // To not expose Twitter4J
 
     public static final String SERVICE_UNAVAILABLE_MESSAGE = "Service is temporarily unavailable.";
-    public static final String NULL_TWEET_MESSAGE = "Could not post tweet because message parameter is missing.";
-    public static final String INVALID_TWEET_MESSAGE = "Could not post tweet because message was either blank or " +
+    public static final String MISSING_TWEET_MESSAGE = "Could not post tweet because message parameter is missing.";
+    public static final String TOO_LONG_TWEET_MESSAGE = "Could not post tweet because message is " +
             "longer than " + CharacterUtil.MAX_TWEET_LENGTH + " characters.";
-    public static final String NULL_KEYWORD_MESSAGE = "Could not retrieve filtered timeline because keyword parameter" +
-        " is missing.";
+    public static final String MISSING_KEYWORD_MESSAGE = "Could not retrieve filtered timeline because keyword " +
+            "parameter is missing.";
 
     private TwitterService() {
     }
@@ -67,11 +67,11 @@ public class TwitterService {
 
     public Optional<Tweet> postTweet(String message) throws TwitterServiceResponseException,
             TwitterServiceCallException {
-        if (message == null) {
-            throw new TwitterServiceCallException(NULL_TWEET_MESSAGE);
+        if (StringUtils.isBlank(message)) {
+            throw new TwitterServiceCallException(MISSING_TWEET_MESSAGE);
         }
-        if (message.length() > MAX_TWEET_LENGTH || StringUtils.isBlank(message)) {
-            throw new TwitterServiceCallException(INVALID_TWEET_MESSAGE);
+        if (message.length() > MAX_TWEET_LENGTH) {
+            throw new TwitterServiceCallException(TOO_LONG_TWEET_MESSAGE);
         }
         try {
             final Optional<Tweet> postedTweet = Optional.ofNullable(api.updateStatus(message))
@@ -98,8 +98,8 @@ public class TwitterService {
 
     public Optional<List<Tweet>> getFilteredTimeline(String keyword) throws TwitterServiceResponseException,
             TwitterServiceCallException {
-        if (keyword == null) {
-            throw new TwitterServiceCallException(NULL_KEYWORD_MESSAGE);
+        if (StringUtils.isBlank(keyword)) {
+            throw new TwitterServiceCallException(MISSING_KEYWORD_MESSAGE);
         }
         return getHomeTimeline().map(tweets -> tweets.stream()
                 .filter(t -> StringUtils.containsIgnoreCase(t.getMessage(), keyword))
@@ -133,9 +133,9 @@ public class TwitterService {
     }
 
     private Optional<List<Tweet>> constructTweetList(List<Status> statuses) {
+        //statuses.set(0, null);
         return Optional.of(statuses.stream()
                 .map(this::constructTweet)
-                .filter(Optional::isPresent)
                 .map(Optional::get)
                 .collect(Collectors.toList()));
     }

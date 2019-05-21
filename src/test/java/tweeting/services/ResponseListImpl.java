@@ -5,7 +5,7 @@ import twitter4j.ResponseList;
 
 import java.util.ArrayList;
 
-// Need some class to implement ResponseList to stub getHomeTimeline()
+// Need some class to implement ResponseList to stub getFilteredHomeTimeline()
 public class ResponseListImpl<T> extends ArrayList<T> implements ResponseList<T> {
 
     @Override

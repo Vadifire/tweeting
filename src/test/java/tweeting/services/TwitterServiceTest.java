@@ -234,7 +234,7 @@ public class TwitterServiceTest {
         try {
             service.postTweet(null);
         } catch (TwitterServiceCallException e) {
-            assertEquals(TwitterService.NULL_TWEET_MESSAGE, e.getMessage());
+            assertEquals(TwitterService.MISSING_TWEET_MESSAGE, e.getMessage());
             throw e;
         }
     }
@@ -244,7 +244,7 @@ public class TwitterServiceTest {
         try {
             service.postTweet("");
         } catch (TwitterServiceCallException e) {
-            assertEquals(TwitterService.INVALID_TWEET_MESSAGE, e.getMessage());
+            assertEquals(TwitterService.MISSING_TWEET_MESSAGE, e.getMessage());
             throw e;
         }
     }
@@ -258,7 +258,7 @@ public class TwitterServiceTest {
                     .forEach(a -> sb.append(a));
             service.postTweet(sb.toString());
         } catch (TwitterServiceCallException e) {
-            assertEquals(TwitterService.INVALID_TWEET_MESSAGE, e.getMessage());
+            assertEquals(TwitterService.TOO_LONG_TWEET_MESSAGE, e.getMessage());
             throw e;
         }
     }
@@ -327,7 +327,7 @@ public class TwitterServiceTest {
         try {
             service.getFilteredTimeline(null);
         } catch (TwitterServiceCallException e) {
-            assertEquals(TwitterService.NULL_KEYWORD_MESSAGE, e.getMessage());
+            assertEquals(TwitterService.MISSING_KEYWORD_MESSAGE, e.getMessage());
             throw e;
         }
     }

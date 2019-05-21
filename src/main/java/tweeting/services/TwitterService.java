@@ -109,8 +109,10 @@ public class TwitterService {
             throw new TwitterServiceCallException(INVALID_TWEET_MESSAGE);
         }
         try {
+            //final Optional<Tweet> postedTweet = constructTweet.apply(api.updateStatus(message));
+            Function<Status, Optional<Tweet>> f = this::constructTweetOld;
+            final Optional<Tweet> postedTweet = f.apply(api.updateStatus(message));
 
-            final Optional<Tweet> postedTweet = constructTweet.apply(api.updateStatus(message));
             if (postedTweet.isPresent()) {
                 logger.info("Successfully posted '{}' to Twitter.", message);
             }
@@ -126,6 +128,27 @@ public class TwitterService {
             return new TwitterServiceResponseException(SERVICE_UNAVAILABLE_MESSAGE, te);
         } else {
             return new TwitterServiceResponseException(te);
+        }
+    }
+
+    public Optional<Tweet> constructTweetOld(Status status) {
+        if (status == null) {
+            return Optional.empty();
+        }
+        else {
+            Tweet tweet = new Tweet();
+            tweet.setMessage(status.getText());
+            if (status.getUser() == null) {
+                logger.warn("Tweet has no user.");
+            } else {
+                TwitterUser user = new TwitterUser();
+                user.setTwitterHandle(status.getUser().getScreenName());
+                user.setName(status.getUser().getName());
+                user.setProfileImageUrl(status.getUser().getProfileImageURL());
+                tweet.setUser(user);
+            }
+            tweet.setCreatedAt(status.getCreatedAt());
+            return Optional.of(tweet);
         }
     }
 

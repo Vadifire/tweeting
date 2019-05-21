@@ -13,9 +13,13 @@ import twitter4j.util.CharacterUtil;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
+import static junit.framework.TestCase.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -34,23 +38,24 @@ public class TwitterServiceTest {
     String dummyURL;
     String dummyMessage;
     Date dummyDate;
-    String repeated;
+    // Status List must conform to [a, aa, aaa...] pattern where a is some repeated base String.
     ResponseListImpl<Status> dummyStatusList;
+    String repeated; // Must have length > 0
 
     // Class under test
     TwitterService service;
 
     @Before
     public void setUp() {
-        mockedStatus = mock(Status.class);
-        mockedUser = mock(User.class);
+        mockedStatus = mock(Status.class); // Avoids having to define Status impl
+        mockedUser = mock(User.class); // Avoids having to define User impl
         dummyMessage = "some message";
-
         dummyDate = new Date();
         dummyName = "name";
         dummyScreenName = "screen name";
         dummyURL = "url";
 
+        /* Avoids Mock Exceptions*/
         when(mockedStatus.getText()).thenReturn(dummyMessage);
         when(mockedStatus.getCreatedAt()).thenReturn(dummyDate);
         when(mockedStatus.getUser()).thenReturn(mockedUser);
@@ -58,20 +63,23 @@ public class TwitterServiceTest {
         when(mockedUser.getScreenName()).thenReturn(dummyScreenName);
         when(mockedUser.getProfileImageURL()).thenReturn(dummyURL);
 
+        /* For Filtered Timeline Tests */
+        dummyStatusList = new ResponseListImpl<>();
+        repeated = "a";
+        assertTrue(repeated.length() > 0); // Test cases rely on this to be true
+        StringBuilder sb = new StringBuilder();
+        Stream.generate(() -> "a")
+                .limit(3) // 3 is used so that filter test cases (filter 0, 1, all) have unique results.
+                .forEach(a -> {
+                    sb.append(a);
+                    Status status = mock(Status.class);
+                    when(status.getText()).thenReturn(sb.toString());
+                    dummyStatusList.add(status);
+                });
+
         service = TwitterService.getInstance();
         api = mock(Twitter.class);
         service.setAPI(api);
-
-        dummyStatusList = new ResponseListImpl<>();
-        /* For Filtered Timeline Tests */
-        repeated = "a";
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < 2; i++) {
-            sb.append("a");
-            Status status = mock(Status.class);
-            when(status.getText()).thenReturn(sb.toString());
-            dummyStatusList.add(status);
-        }
     }
 
     @Test
@@ -245,9 +253,9 @@ public class TwitterServiceTest {
     public void testPostTweetTooLong() throws TwitterServiceResponseException, TwitterServiceCallException {
         try {
             StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < CharacterUtil.MAX_TWEET_LENGTH + 1; i++) {
-                sb.append("a"); // single character
-            }
+            Stream.generate(() -> "a")
+                    .limit(CharacterUtil.MAX_TWEET_LENGTH + 1)
+                    .forEach(a -> sb.append(a));
             service.postTweet(sb.toString());
         } catch (TwitterServiceCallException e) {
             assertEquals(TwitterService.INVALID_TWEET_MESSAGE, e.getMessage());
@@ -273,30 +281,31 @@ public class TwitterServiceTest {
     @Test
     public void testFilterAllResults() throws TwitterException, TwitterServiceResponseException,
             TwitterServiceCallException {
-        String dummyKeyword = dummyStatusList.get(0).getText();
         when(api.getHomeTimeline()).thenReturn(dummyStatusList);
 
-        List<Tweet> tweetList = service.getFilteredTimeline(dummyKeyword).get();
+        List<Tweet> tweetList = service.getFilteredTimeline(repeated).get();
 
+        assertTrue(dummyStatusList.stream() // Extra validation that all statuses contain repeated base String
+                .allMatch(status -> status.getText().contains(repeated)));
         verify(api).getHomeTimeline();
-
         assertEquals(dummyStatusList.size(), tweetList.size());
-        for (int i = 0; i < dummyStatusList.size(); i++) {
-            assertEquals(dummyStatusList.get(i).getText(), tweetList.get(i).getMessage());
-        }
+        Set<String> statusSet = dummyStatusList.stream()
+                .map(status -> status.getText())
+                .collect(Collectors.toSet());
+        assertTrue(tweetList.stream()
+                .allMatch(tweet -> statusSet.contains(tweet.getMessage())));
     }
 
     @Test
     public void testFilterOneResult() throws TwitterException, TwitterServiceResponseException,
             TwitterServiceCallException {
         String dummyKeyword = dummyStatusList.get(dummyStatusList.size() - 1).getText();
-
+        // The dummy keyword should guarantee excluding all but the last tweet
         when(api.getHomeTimeline()).thenReturn(dummyStatusList);
 
         List<Tweet> tweetList = service.getFilteredTimeline(dummyKeyword).get();
 
         verify(api).getHomeTimeline();
-
         assertEquals(1, tweetList.size());
         assertEquals(dummyStatusList.get(dummyStatusList.size() - 1).getText(), tweetList.get(0).getMessage());
     }
@@ -304,14 +313,12 @@ public class TwitterServiceTest {
     @Test
     public void testFilterNoResults() throws TwitterException, TwitterServiceResponseException,
             TwitterServiceCallException {
-        String dummyKeyword = dummyStatusList.get(dummyStatusList.size() - 1).getText() + repeated;
-
+        String dummyKeyword = dummyStatusList.get(dummyStatusList.size() - 1).getText() + repeated; // filters all
         when(api.getHomeTimeline()).thenReturn(dummyStatusList);
 
         List<Tweet> tweetList = service.getFilteredTimeline(dummyKeyword).get();
 
         verify(api).getHomeTimeline();
-
         assertEquals(0, tweetList.size());
     }
 
@@ -356,16 +363,18 @@ public class TwitterServiceTest {
             TwitterServiceCallException {
         String dummyKeyword = dummyStatusList.get(0).getText();
         when(api.getHomeTimeline()).thenReturn(dummyStatusList);
-        when(dummyStatusList.get(0).getText()).thenReturn(null); // Uh oh!
+        when(dummyStatusList.get(0).getText()).thenReturn(null); // Make a Status have null message
 
         List<Tweet> tweetList = service.getFilteredTimeline(dummyKeyword).get();
 
         verify(api).getHomeTimeline();
-
         assertEquals(dummyStatusList.size() - 1, tweetList.size());
-        for (int i = 0; i < dummyStatusList.size() - 1; i++) {
-            assertEquals(dummyStatusList.get(i + 1).getText(), tweetList.get(i).getMessage());
-        }
+        Set<String> statusSet = dummyStatusList.stream()
+                .filter(tweet -> tweet.getText() != null) // Ignore any null messages
+                .map(status -> status.getText())
+                .collect(Collectors.toSet());
+        assertTrue(tweetList.stream()
+                .allMatch(tweet -> statusSet.contains(tweet.getMessage())));
     }
 
 }

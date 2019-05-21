@@ -125,6 +125,20 @@ public class TwitterServiceTest {
     }
 
     @Test
+    public void testGetTweetsWithANullTweet() throws TwitterException, TwitterServiceResponseException {
+        ResponseListImpl<Status> dummyList = new ResponseListImpl<>();
+        dummyList.add(null);
+
+        when(api.getHomeTimeline()).thenReturn(dummyList);
+
+        List<Tweet> actualList = service.getHomeTimeline().get();
+
+        verify(api).getHomeTimeline();
+        assertNotNull(actualList);
+        assertEquals(0, actualList.size());
+    }
+
+    @Test
     public void testGetTweetsNullTimeline() throws TwitterException, TwitterServiceResponseException {
         when(api.getHomeTimeline()).thenReturn(null);
 

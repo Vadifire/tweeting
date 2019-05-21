@@ -118,6 +118,9 @@ public class TwitterService {
     }
 
     private Optional<Tweet> constructTweet(Status status) {
+        if (status == null){
+            return Optional.empty();
+        }
         Tweet tweet = new Tweet();
         tweet.setMessage(status.getText());
         if (status.getUser() == null) {

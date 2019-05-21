@@ -15,6 +15,7 @@ import twitter4j.util.CharacterUtil;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class TwitterService {
@@ -73,7 +74,7 @@ public class TwitterService {
             } else {
                 logger.info("Successfully retrieved home timeline from Twitter.");
                 return Optional.of(statuses.stream()
-                        .map(s -> constructTweet(s))
+                        .map(constructTweet)
                         .filter(Optional::isPresent)
                         .map(Optional::get)
                         .collect(Collectors.toList()));
@@ -108,11 +109,12 @@ public class TwitterService {
             throw new TwitterServiceCallException(INVALID_TWEET_MESSAGE);
         }
         try {
-            final Optional<Tweet> tweet = constructTweet(api.updateStatus(message));
-            if (tweet.isPresent()) {
+
+            final Optional<Tweet> postedTweet = constructTweet.apply(api.updateStatus(message));
+            if (postedTweet.isPresent()) {
                 logger.info("Successfully posted '{}' to Twitter.", message);
             }
-            return tweet;
+            return postedTweet;
         } catch (TwitterException te) {
             throw createServerException(te);
         }
@@ -127,7 +129,7 @@ public class TwitterService {
         }
     }
 
-    private Optional<Tweet> constructTweet(Status status) {
+    Function<Status, Optional<Tweet>> constructTweet = status -> {
         if (status == null) {
             return Optional.empty();
         }
@@ -146,9 +148,7 @@ public class TwitterService {
             tweet.setCreatedAt(status.getCreatedAt());
             return Optional.of(tweet);
         }
-    }
-
-
+    };
 
     // Used for mocking purposes
     public void setAPI(Twitter api) {

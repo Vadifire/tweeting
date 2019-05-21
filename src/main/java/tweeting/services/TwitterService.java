@@ -16,7 +16,6 @@ import twitter4j.util.CharacterUtil;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class TwitterService {
 
@@ -79,8 +78,7 @@ public class TwitterService {
                     .map(status -> {
                         logger.info("Successfully posted '{}' to Twitter.", message);
                         return constructTweet(status);
-                    })
-                    .orElse(Optional.empty());
+                    });
         } catch (TwitterException te) {
             throw createServerException(te);
         }
@@ -92,8 +90,7 @@ public class TwitterService {
                     .map(statuses -> {
                         logger.info("Successfully retrieved home timeline.");
                         return constructTweetList(statuses);
-                    })
-                    .orElse(Optional.empty());
+                    });
         } catch (TwitterException te) {
             throw createServerException(te);
         }
@@ -119,9 +116,9 @@ public class TwitterService {
         }
     }
 
-    private Optional<Tweet> constructTweet(Status status) {
+    private Tweet constructTweet(Status status) {
         if (status == null) {
-            return Optional.empty();
+            return null;
         }
         Tweet tweet = new Tweet();
         tweet.setMessage(status.getText());
@@ -135,14 +132,14 @@ public class TwitterService {
             tweet.setUser(user);
         }
         tweet.setCreatedAt(status.getCreatedAt());
-        return Optional.of(tweet);
+        return tweet;
     }
 
-    private Optional<List<Tweet>> constructTweetList(List<Status> statuses) {
-        return Optional.of(statuses.stream()
+    private List<Tweet> constructTweetList(List<Status> statuses) {
+        return statuses.stream()
                 .map(status -> constructTweet(status))
-                .flatMap(o -> o.map(Stream::of).orElseGet(Stream::empty)) //Java 9: .flatMap(Optional::stream)
-                .collect(Collectors.toList()));
+                .filter(tweet -> tweet != null)
+                .collect(Collectors.toList());
     }
 
     // Used for mocking purposes

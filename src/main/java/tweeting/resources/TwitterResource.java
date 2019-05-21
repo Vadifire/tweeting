@@ -16,7 +16,9 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-@Path("/api/1.0/")
+import static java.lang.Thread.currentThread;
+
+@Path("/api/1.0/twitter/")
 public class TwitterResource {
 
     private static final Logger logger = LoggerFactory.getLogger(TwitterResource.class);
@@ -33,7 +35,7 @@ public class TwitterResource {
      *
      * Replace 'Hello World' with desired message, replace HOST and PORT with configured values
      */
-    @Path("twitter/tweet/")
+    @Path("tweet/")
     @POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
@@ -43,7 +45,7 @@ public class TwitterResource {
                     .map(timeline -> Response.status(Response.Status.CREATED)
                             .entity(timeline)
                             .build())
-                    .orElseThrow(() -> new NullPointerException("Twitter failed to respond with home timeline."));
+                    .orElseGet(() -> missingOptionalResponse("Twitter failed to respond with posted tweet."));
         } catch (TwitterServiceCallException e) {
             logger.debug("Sending 400 Bad Request error", e);
             return Response.status(Response.Status.BAD_REQUEST)
@@ -68,7 +70,7 @@ public class TwitterResource {
      *
      * Replace HOST and PORT with configured values
      */
-    @Path("twitter/timeline")
+    @Path("timeline")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getHomeTimeline() {
@@ -76,7 +78,7 @@ public class TwitterResource {
             return service.getHomeTimeline()
                     .map(timeline -> Response.ok(timeline)
                             .build())
-                    .orElseThrow(() -> new NullPointerException("Twitter failed to respond with home timeline."));
+                    .orElseGet(() -> missingOptionalResponse("Twitter failed to respond with home timeline."));
         } catch (TwitterServiceResponseException e) {
             logger.error("Sending 500 Internal Server error", e);
             return (Response.status(Response.Status.INTERNAL_SERVER_ERROR)
@@ -92,11 +94,11 @@ public class TwitterResource {
 
     /*
      * How to use:
-     * curl -i -X GET http://HOST:PORT/api/1.0/tweet/filter?keyword=KEYWORD
+     * curl -i -X GET http://HOST:PORT/api/1.0/twitter/timeline/filter?keyword=KEYWORD
      *
      * Replace 'KEYWORD' with desired keyword to filter by. Replace HOST and PORT with configured values
      */
-    @Path("tweet/filter")
+    @Path("timeline/filter")
     @GET
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
@@ -105,7 +107,7 @@ public class TwitterResource {
             return service.getFilteredTimeline(keyword)
                     .map(timeline -> Response.ok(timeline)
                             .build())
-                    .orElseThrow(() -> new NullPointerException("Twitter failed to respond with home timeline."));
+                    .orElseGet(() -> missingOptionalResponse("Twitter failed to respond with home timeline."));
         } catch (TwitterServiceCallException e) {
             logger.debug("Sending 400 Bad Request error", e);
             return Response.status(Response.Status.BAD_REQUEST)
@@ -122,6 +124,13 @@ public class TwitterResource {
                     .entity(TwitterService.SERVICE_UNAVAILABLE_MESSAGE)
                     .build());
         }
+    }
+
+    private Response missingOptionalResponse(String message) {
+        logger.error(message, currentThread().getStackTrace());
+        return (Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                .entity(TwitterService.SERVICE_UNAVAILABLE_MESSAGE)
+                .build());
     }
 
 }

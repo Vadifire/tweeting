@@ -37,9 +37,10 @@ public class FilterHomeTimelineResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getHomeTimeline(@QueryParam("keyword") String keyword) {
         try {
-            return Response.ok(service.getFilteredTimeline(keyword)
-                        .orElseThrow(() -> new NullPointerException("Twitter failed to respond with home timeline.")))
-                    .build();
+            return service.getFilteredTimeline(keyword)
+                    .map(timeline -> Response.ok(timeline)
+                            .build())
+                    .orElseThrow(() -> new NullPointerException("Twitter failed to respond with home timeline."));
         } catch (TwitterServiceCallException e) {
             logger.debug("Sending 400 Bad Request error", e);
             return Response.status(Response.Status.BAD_REQUEST)

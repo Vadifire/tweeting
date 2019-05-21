@@ -37,10 +37,11 @@ public class TweetResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response postTweet(@FormParam("message") String message) {
         try {
-            return Response.status(Response.Status.CREATED)
-                    .entity(service.postTweet(message)
-                        .orElseThrow(() -> new NullPointerException("Twitter failed to respond with posted tweet.")))
-                    .build();
+            return service.postTweet(message)
+                    .map(timeline -> Response.status(Response.Status.CREATED)
+                            .entity(timeline)
+                            .build())
+                    .orElseThrow(() -> new NullPointerException("Twitter failed to respond with home timeline."));
         } catch (TwitterServiceCallException e) {
             logger.debug("Sending 400 Bad Request error", e);
             return Response.status(Response.Status.BAD_REQUEST)

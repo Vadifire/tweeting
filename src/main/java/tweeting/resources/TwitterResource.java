@@ -43,7 +43,7 @@ public class TwitterResource {
                     .map(timeline -> Response.status(Response.Status.CREATED)
                             .entity(timeline)
                             .build())
-                    .orElseGet(() -> emptyOptionalResponse("Twitter failed to respond with posted tweet."));
+                    .get();
         } catch (TwitterServiceCallException e) {
             logger.debug("Sending 400 Bad Request error", e);
             return Response.status(Response.Status.BAD_REQUEST)
@@ -76,7 +76,7 @@ public class TwitterResource {
             return service.getHomeTimeline()
                     .map(timeline -> Response.ok(timeline)
                             .build())
-                    .orElseGet(() -> emptyOptionalResponse("Twitter failed to respond with home timeline."));
+                    .get();
         } catch (TwitterServiceResponseException e) {
             logger.error("Sending 500 Internal Server error", e);
             return (Response.status(Response.Status.INTERNAL_SERVER_ERROR)
@@ -105,7 +105,7 @@ public class TwitterResource {
             return service.getFilteredTimeline(keyword)
                     .map(timeline -> Response.ok(timeline)
                             .build())
-                    .orElseGet(() -> emptyOptionalResponse("Twitter failed to respond with home timeline."));
+                    .get();
         } catch (TwitterServiceCallException e) {
             logger.debug("Sending 400 Bad Request error", e);
             return Response.status(Response.Status.BAD_REQUEST)
@@ -122,13 +122,6 @@ public class TwitterResource {
                     .entity(TwitterService.SERVICE_UNAVAILABLE_MESSAGE)
                     .build());
         }
-    }
-
-    private Response emptyOptionalResponse(String message) {
-        logger.error(message, new Throwable(message, new Throwable().fillInStackTrace()));
-        return (Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                .entity(TwitterService.SERVICE_UNAVAILABLE_MESSAGE)
-                .build());
     }
 
 }

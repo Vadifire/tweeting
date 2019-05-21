@@ -14,6 +14,7 @@ import twitter4j.conf.ConfigurationBuilder;
 import twitter4j.util.CharacterUtil;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -64,6 +65,7 @@ public class TwitterService {
             instance = new TwitterService();
             instance.api = TwitterFactory.getSingleton();
             instance.timelineCache = new TimelineCache();
+
             logger.warn("TwitterService has been instantiated with no Twitter credentials. Please call getInstance" +
                     "with TwitterOAuthCredentials parameter to set credentials to support calls to Twitter.");
         }
@@ -142,8 +144,8 @@ public class TwitterService {
 
     private List<Tweet> constructTweetList(List<Status> statuses) {
         return statuses.stream()
-                .map(status -> constructTweet(status))
-                .filter(tweet -> tweet != null)
+                .map(this::constructTweet)
+                .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
 

@@ -125,7 +125,7 @@ public class TwitterResource {
     }
 
     private Response emptyOptionalResponse(String message) {
-        logger.error(message, new Throwable(message, new Throwable().fillInStackTrace()));
+        logger.error(message, new NullPointerException(message).fillInStackTrace());
         return (Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                 .entity(TwitterService.SERVICE_UNAVAILABLE_MESSAGE)
                 .build());

@@ -16,6 +16,7 @@ import twitter4j.util.CharacterUtil;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class TwitterService {
 
@@ -134,9 +135,8 @@ public class TwitterService {
 
     private Optional<List<Tweet>> constructTweetList(List<Status> statuses) {
         return Optional.of(statuses.stream()
-                .map(this::constructTweet)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
+                .map(status -> constructTweet(status))
+                .flatMap(o -> o.map(Stream::of).orElseGet(Stream::empty)) //Java 9: .flatMap(Optional::stream)
                 .collect(Collectors.toList()));
     }
 

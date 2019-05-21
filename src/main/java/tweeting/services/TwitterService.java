@@ -86,7 +86,7 @@ public class TwitterService {
     }
 
     public Optional<List<Tweet>> getHomeTimeline() throws TwitterServiceResponseException {
-        /*try {
+        try {
             return Optional.ofNullable(api.getHomeTimeline())
                     .map(statuses -> {
                         logger.info("Successfully retrieved home timeline.");
@@ -94,8 +94,7 @@ public class TwitterService {
                     });
         } catch (TwitterException te) {
             throw createServerException(te);
-        }*/
-        return Optional.empty();
+        }
     }
 
     public Optional<List<Tweet>> getFilteredTimeline(String keyword) throws TwitterServiceResponseException,

@@ -2,7 +2,6 @@ package tweeting.services;
 
 import org.junit.Before;
 import org.junit.Test;
-import tweeting.conf.TwitterOAuthCredentials;
 import tweeting.models.Tweet;
 import twitter4j.Status;
 import twitter4j.Twitter;
@@ -55,7 +54,7 @@ public class TwitterServiceTest {
         dummyScreenName = "screen name";
         dummyURL = "url";
 
-        /* Avoids Mock Exceptions*/
+        /* Avoids Mock Exceptions */
         when(mockedStatus.getText()).thenReturn(dummyMessage);
         when(mockedStatus.getCreatedAt()).thenReturn(dummyDate);
         when(mockedStatus.getUser()).thenReturn(mockedUser);
@@ -77,30 +76,8 @@ public class TwitterServiceTest {
                     dummyStatusList.add(status);
                 });
 
-        service = TwitterService.getInstance();
         api = mock(Twitter.class);
-        service.setAPI(api);
-    }
-
-    @Test
-    public void testGetInstanceWithConfig() {
-        String consumerKey = "consumer key";
-        String consumerSecret = "consumer secret";
-        String token = "token";
-        String tokenSecret = "token secret";
-        TwitterOAuthCredentials auth = new TwitterOAuthCredentials();
-        auth.setConsumerAPIKey(consumerKey);
-        auth.setConsumerAPISecretKey(consumerSecret);
-        auth.setAccessToken(token);
-        auth.setAccessTokenSecret(tokenSecret);
-        service = TwitterService.getInstance(auth);
-
-        Twitter apiCreated = service.getAPI();
-
-        assertEquals(consumerKey, apiCreated.getConfiguration().getOAuthConsumerKey());
-        assertEquals(consumerSecret, apiCreated.getConfiguration().getOAuthConsumerSecret());
-        assertEquals(token, apiCreated.getConfiguration().getOAuthAccessToken());
-        assertEquals(tokenSecret, apiCreated.getConfiguration().getOAuthAccessTokenSecret());
+        service = new Twitter4JService(api); // Fine for single-class unit tests (https://dagger.dev/testing.html)
     }
 
     @Test

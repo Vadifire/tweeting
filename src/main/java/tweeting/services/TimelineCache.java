@@ -4,10 +4,11 @@ import tweeting.models.Tweet;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 public class TimelineCache {
 
-    public static int TIMELINE_SIZE = 20;
+    public static int TIMELINE_SIZE = 20; // TODO: consider where this belongs
 
     List<Tweet> timeline;
 
@@ -15,22 +16,21 @@ public class TimelineCache {
         timeline = new LinkedList<>();
     }
 
-    public List<Tweet> getTimeline() {
-        return timeline;
+    // Optional because want to force Service to retrieve timeline again if not cached
+    public Optional<List<Tweet>> getTimeline() {
+        return Optional.of(timeline)
+                .filter(t -> t.size() == TIMELINE_SIZE);
     }
 
+    // 'Don't worry about external updates' - So tweeting is only thing that can dirty cache
     public void pushTweet(Tweet tweet) {
         ((LinkedList) timeline).addFirst(tweet);
-        if (timeline.size() > 20)
+        if (timeline.size() > TIMELINE_SIZE)
             ((LinkedList) timeline).removeLast();
     }
 
     public void cache(List<Tweet> timeline) {
         this.timeline = timeline;
-    }
-
-    public boolean isValid() {
-        return timeline.size() == TIMELINE_SIZE;
     }
 
 }

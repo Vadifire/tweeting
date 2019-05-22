@@ -11,6 +11,7 @@ import twitter4j.TwitterException;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -23,9 +24,12 @@ public class Twitter4JService implements TwitterService {
 
     private static final Logger logger = LoggerFactory.getLogger(Twitter4JService.class);
 
+    private TimelineCache timelineCache;
+
     @Inject
     public Twitter4JService(Twitter api) {
         this.api = api;
+        this.timelineCache = new TimelineCache(); //TODO: dep inject
     }
 
     @Override
@@ -41,7 +45,9 @@ public class Twitter4JService implements TwitterService {
             return Optional.ofNullable(api.updateStatus(message))
                     .map(status -> {
                         logger.info("Successfully posted '{}' to Twitter.", message);
-                        return constructTweet(status);
+                        final Tweet tweet = constructTweet(status);
+                        timelineCache.pushTweet(tweet); // Update cache
+                        return tweet;
                     });
         } catch (TwitterException te) {
             throw createServerException(te);
@@ -51,10 +57,19 @@ public class Twitter4JService implements TwitterService {
     @Override
     public Optional<List<Tweet>> getHomeTimeline() throws TwitterServiceResponseException {
         try {
-            return Optional.ofNullable(api.getHomeTimeline())
+
+            Optional<List<Tweet>> cachedTweets = timelineCache.getTimeline();
+
+            if (cachedTweets.isPresent()) { //TODO make this observe better optional syntax
+                logger.info("Successfully retrieved home timeline from cache.");
+                return cachedTweets;
+            }
+           return Optional.ofNullable(api.getHomeTimeline())
                     .map(statuses -> {
-                        logger.info("Successfully retrieved home timeline.");
-                        return constructTweetList(statuses);
+                        logger.info("Successfully retrieved home timeline from Twitter.");
+                        List<Tweet> tweets = constructTweetList(statuses);
+                        timelineCache.cache(tweets);
+                        return tweets;
                     });
         } catch (TwitterException te) {
             throw createServerException(te);
@@ -105,6 +120,6 @@ public class Twitter4JService implements TwitterService {
         return statuses.stream()
                 .map(this::constructTweet)
                 .filter(Objects::nonNull)
-                .collect(Collectors.toList());
+                .collect(Collectors.toCollection(LinkedList::new));
     }
 }

@@ -2,7 +2,6 @@ package tweeting.services;
 
 import org.junit.Before;
 import org.junit.Test;
-import tweeting.conf.TwitterOAuthCredentials;
 import tweeting.models.Tweet;
 import twitter4j.Status;
 import twitter4j.Twitter;
@@ -55,7 +54,7 @@ public class TwitterServiceTest {
         dummyScreenName = "screen name";
         dummyURL = "url";
 
-        /* Avoids Mock Exceptions*/
+        /* Avoids Mock Exceptions */
         when(mockedStatus.getText()).thenReturn(dummyMessage);
         when(mockedStatus.getCreatedAt()).thenReturn(dummyDate);
         when(mockedStatus.getUser()).thenReturn(mockedUser);
@@ -77,21 +76,9 @@ public class TwitterServiceTest {
                     dummyStatusList.add(status);
                 });
 
-        /* Build Auth (necessary for DI), but not used */ //TODO resolve?
-        String consumerKey = "consumer key";
-        String consumerSecret = "consumer secret";
-        String token = "token";
-        String tokenSecret = "token secret";
-        TwitterOAuthCredentials auth = new TwitterOAuthCredentials();
-        auth.setConsumerAPIKey(consumerKey);
-        auth.setConsumerAPISecretKey(consumerSecret);
-        auth.setAccessToken(token);
-        auth.setAccessTokenSecret(tokenSecret);
+        api = mock(Twitter.class);
 
-        service = DaggerTwitterServiceComponent.builder()
-                .credentials(auth)
-                .build()
-                .buildService();
+        service = new Twitter4JService(api);
     }
 
     @Test

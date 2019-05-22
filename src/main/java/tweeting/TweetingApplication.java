@@ -1,16 +1,18 @@
 package tweeting;
 
+import com.codahale.metrics.health.HealthCheck;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tweeting.conf.TweetingConfiguration;
-import tweeting.health.AliveHealthCheck;
+import tweeting.injection.components.DaggerTweetingComponent;
+import tweeting.injection.components.TweetingComponent;
 import tweeting.resources.TwitterResource;
-import tweeting.services.DaggerTwitterComponent;
 import tweeting.util.LogFilter;
 
+import javax.inject.Inject;
 import javax.servlet.DispatcherType;
 import java.util.EnumSet;
 
@@ -32,22 +34,29 @@ public class TweetingApplication extends Application<TweetingConfiguration> {
     public void initialize(Bootstrap<TweetingConfiguration> bootstrap) {
     }
 
+    @Inject
+    LogFilter logFilter;
+
+    @Inject
+    HealthCheck healthCheck;
+
     @Override
     public void run(TweetingConfiguration config, Environment env) {
         try {
             logger.debug("Configuring Tweeting application");
-            final TwitterResource twitterResource = DaggerTwitterComponent.builder()
+
+            /* INJECTION */
+            final TweetingComponent comp = DaggerTweetingComponent.builder()
                     .credentials(config.getAuthorization())
-                    .build()
-                    .buildResource();
+                    .build();
+            TwitterResource twitterResource = comp.buildResource();
+            logFilter = comp.buildLogFilter();
+            healthCheck = comp.buildHealthCheck();
 
             logger.info("Twitter credentials have been configured using the {} configuration file.",
                     getConfigFileName());
 
-            // Use Default API Impl (Twitter4J)
-
             logger.debug("Adding log filter");
-            LogFilter logFilter = new LogFilter();
             env.servlets().addFilter("Log Filter", logFilter)
                     .addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/*");
             env.admin().addFilter("AdminFilter", new LogFilter()).addMappingForUrlPatterns(
@@ -55,7 +64,6 @@ public class TweetingApplication extends Application<TweetingConfiguration> {
             logger.debug("Log Filter has been set to: {}", logFilter.getClass().getName());
 
             logger.debug("Registering health check");
-            AliveHealthCheck healthCheck = new AliveHealthCheck();
             String healthCheckName = "Alive Health Check";
             env.healthChecks().register(healthCheckName, healthCheck);
             logger.debug("Health check has been registered: {}", healthCheck.getClass().getName());

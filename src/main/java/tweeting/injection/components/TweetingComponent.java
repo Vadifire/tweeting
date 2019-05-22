@@ -1,12 +1,12 @@
 package tweeting.injection.components;
 
+import com.codahale.metrics.health.HealthCheck;
 import dagger.BindsInstance;
 import dagger.Component;
 import tweeting.conf.TwitterOAuthCredentials;
+import tweeting.injection.modules.TweetingModule;
 import tweeting.resources.TwitterResource;
-import tweeting.injection.modules.TwitterResourceModule;
-import tweeting.injection.modules.TwitterAPIModule;
-import tweeting.injection.modules.TwitterServiceModule;
+import tweeting.util.LogFilter;
 
 import javax.inject.Singleton;
 
@@ -16,9 +16,7 @@ import javax.inject.Singleton;
  */
 @Singleton
 @Component(modules = {
-        TwitterAPIModule.class,
-        TwitterServiceModule.class,
-        TwitterResourceModule.class
+        TweetingModule.class
 })
 public interface TweetingComponent {
 
@@ -31,4 +29,6 @@ public interface TweetingComponent {
     }
 
     TwitterResource buildResource();
+    LogFilter buildLogFilter();
+    HealthCheck buildHealthCheck();
 }

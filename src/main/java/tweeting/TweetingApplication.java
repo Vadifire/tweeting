@@ -11,7 +11,6 @@ import tweeting.health.AliveHealthCheck;
 import tweeting.resources.TwitterResource;
 import tweeting.services.DaggerTwitterServiceComponent;
 import tweeting.services.TwitterService;
-import tweeting.services.TwitterServiceComponent;
 import tweeting.util.LogFilter;
 
 import javax.servlet.DispatcherType;
@@ -40,9 +39,10 @@ public class TweetingApplication extends Application<TweetingConfiguration> {
         try {
             logger.debug("Configuring Tweeting application");
             TwitterOAuthCredentials auth = config.getAuthorization();
-            TwitterServiceComponent component = DaggerTwitterServiceComponent.create();
-            TwitterService service = component.buildService();
-            service.setCredentials(auth);
+            TwitterService service = DaggerTwitterServiceComponent.builder()
+                    .credentials(auth)
+                    .build()
+                    .buildService();
 
             logger.info("Twitter credentials have been configured using the {} configuration file.",
                     getConfigFileName());

@@ -3,57 +3,29 @@ package tweeting.services;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import tweeting.conf.TwitterOAuthCredentials;
 import tweeting.models.Tweet;
 import tweeting.models.TwitterUser;
 import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
-import twitter4j.TwitterFactory;
-import twitter4j.conf.ConfigurationBuilder;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Singleton
 public class Twitter4JService implements TwitterService {
 
-    private static Twitter4JService instance;
-
     private Twitter api;
-    private TwitterOAuthCredentials auth;
 
     private static final Logger logger = LoggerFactory.getLogger(Twitter4JService.class);
 
-
-    private Twitter4JService() {
-    }
-
-    public static Twitter4JService getInstance() {
-        if (instance == null) {
-            instance = new Twitter4JService();
-            instance.api = TwitterFactory.getSingleton(); // By default no credentials configured
-        }
-        return instance;
-    }
-
-    @Override
-    public void setCredentials(TwitterOAuthCredentials auth) { // TODO: Might want to use dagger2 here
-        api = new TwitterFactory(new ConfigurationBuilder()
-                .setDebugEnabled(true)
-                .setJSONStoreEnabled(true) // Need in order to use getRawJSON
-                .setOAuthConsumerKey(auth.getConsumerAPIKey())
-                .setOAuthConsumerSecret(auth.getConsumerAPISecretKey())
-                .setOAuthAccessToken(auth.getAccessToken())
-                .setOAuthAccessTokenSecret(auth.getAccessTokenSecret())
-                .build())
-                .getInstance();
-        this.auth = auth;
-    }
-
-    public TwitterOAuthCredentials getCredentials() { // TODO: make this less stupid
-        return auth;
+    @Inject
+    public Twitter4JService(Twitter api) {
+        this.api = api;
     }
 
     @Override

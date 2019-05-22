@@ -77,12 +77,7 @@ public class TwitterServiceTest {
                     dummyStatusList.add(status);
                 });
 
-        TwitterServiceComponent component = DaggerTwitterServiceComponent.create();
-        service = component.buildService();
-    }
-
-    @Test
-    public void testGetInstanceWithConfig() {
+        /* Build Auth (necessary for DI), but not used */ //TODO resolve?
         String consumerKey = "consumer key";
         String consumerSecret = "consumer secret";
         String token = "token";
@@ -93,9 +88,10 @@ public class TwitterServiceTest {
         auth.setAccessToken(token);
         auth.setAccessTokenSecret(tokenSecret);
 
-        service.setCredentials(auth);
-
-        assertEquals(auth, service.getCredentials()); // TODO: this will change
+        service = DaggerTwitterServiceComponent.builder()
+                .credentials(auth)
+                .build()
+                .buildService();
     }
 
     @Test

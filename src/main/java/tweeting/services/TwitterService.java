@@ -1,6 +1,5 @@
 package tweeting.services;
 
-import tweeting.conf.TwitterOAuthCredentials;
 import tweeting.models.Tweet;
 
 import java.util.List;
@@ -16,10 +15,6 @@ public interface TwitterService {
             "longer than " + MAX_TWEET_LENGTH + " characters.";
     String MISSING_KEYWORD_MESSAGE = "Could not retrieve filtered timeline because keyword " +
             "parameter is missing.";
-
-    void setCredentials(TwitterOAuthCredentials auth);
-
-    TwitterOAuthCredentials getCredentials();
 
     Optional<Tweet> postTweet(String message) throws TwitterServiceResponseException, TwitterServiceCallException;
 

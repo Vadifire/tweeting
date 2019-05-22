@@ -2,6 +2,7 @@ package tweeting.services;
 
 import dagger.Module;
 import dagger.Provides;
+import twitter4j.Twitter;
 
 import javax.inject.Singleton;
 
@@ -10,7 +11,7 @@ public class TwitterServiceModule {
 
     @Provides
     @Singleton
-    static TwitterService provideTwitterService() {
-        return Twitter4JService.getInstance();
+    static TwitterService provideTwitterService(Twitter api) {
+        return new Twitter4JService(api);
     }
 }

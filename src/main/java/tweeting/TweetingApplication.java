@@ -8,8 +8,7 @@ import org.slf4j.LoggerFactory;
 import tweeting.conf.TweetingConfiguration;
 import tweeting.health.AliveHealthCheck;
 import tweeting.resources.TwitterResource;
-import tweeting.services.DaggerTwitterServiceComponent;
-import tweeting.services.TwitterService;
+import tweeting.services.DaggerTwitterComponent;
 import tweeting.util.LogFilter;
 
 import javax.servlet.DispatcherType;
@@ -37,10 +36,10 @@ public class TweetingApplication extends Application<TweetingConfiguration> {
     public void run(TweetingConfiguration config, Environment env) {
         try {
             logger.debug("Configuring Tweeting application");
-            TwitterService service = DaggerTwitterServiceComponent.builder()
+            final TwitterResource twitterResource = DaggerTwitterComponent.builder()
                     .credentials(config.getAuthorization())
                     .build()
-                    .buildService();
+                    .buildResource();
 
             logger.info("Twitter credentials have been configured using the {} configuration file.",
                     getConfigFileName());
@@ -62,7 +61,6 @@ public class TweetingApplication extends Application<TweetingConfiguration> {
             logger.debug("Health check has been registered: {}", healthCheck.getClass().getName());
 
             logger.debug("Registering Resource");
-            final TwitterResource twitterResource = new TwitterResource(service);
             env.jersey().register(twitterResource);
             logger.debug("Registered resource: {}", twitterResource.getClass().getName());
         } catch (Exception e) {

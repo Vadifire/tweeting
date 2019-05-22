@@ -6,6 +6,7 @@ import tweeting.services.TwitterService;
 import tweeting.services.TwitterServiceCallException;
 import tweeting.services.TwitterServiceResponseException;
 
+import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -23,6 +24,7 @@ public class TwitterResource {
 
     private TwitterService service;
 
+    @Inject
     public TwitterResource(TwitterService service) {
         this.service = service;
     }

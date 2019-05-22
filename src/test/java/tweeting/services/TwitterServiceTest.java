@@ -77,9 +77,8 @@ public class TwitterServiceTest {
                     dummyStatusList.add(status);
                 });
 
-        service = TwitterService.getInstance();
-        api = mock(Twitter.class);
-        service.setAPI(api);
+        TwitterServiceComponent component = DaggerTwitterServiceComponent.create();
+        service = component.buildService();
     }
 
     @Test
@@ -93,14 +92,10 @@ public class TwitterServiceTest {
         auth.setConsumerAPISecretKey(consumerSecret);
         auth.setAccessToken(token);
         auth.setAccessTokenSecret(tokenSecret);
-        service = TwitterService.getInstance(auth);
 
-        Twitter apiCreated = service.getAPI();
+        service.setCredentials(auth);
 
-        assertEquals(consumerKey, apiCreated.getConfiguration().getOAuthConsumerKey());
-        assertEquals(consumerSecret, apiCreated.getConfiguration().getOAuthConsumerSecret());
-        assertEquals(token, apiCreated.getConfiguration().getOAuthAccessToken());
-        assertEquals(tokenSecret, apiCreated.getConfiguration().getOAuthAccessTokenSecret());
+        assertEquals(auth, service.getCredentials()); // TODO: this will change
     }
 
     @Test

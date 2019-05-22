@@ -1,18 +1,18 @@
 package tweeting;
 
-import tweeting.conf.TwitterOAuthCredentials;
-import tweeting.conf.TweetingConfiguration;
-import tweeting.health.AliveHealthCheck;
-import tweeting.resources.TwitterResource;
-
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import tweeting.services.TwitterService;
-import tweeting.util.LogFilter;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tweeting.conf.TweetingConfiguration;
+import tweeting.conf.TwitterOAuthCredentials;
+import tweeting.health.AliveHealthCheck;
+import tweeting.resources.TwitterResource;
+import tweeting.services.DaggerTwitterServiceComponent;
+import tweeting.services.TwitterService;
+import tweeting.services.TwitterServiceComponent;
+import tweeting.util.LogFilter;
 
 import javax.servlet.DispatcherType;
 import java.util.EnumSet;
@@ -40,7 +40,9 @@ public class TweetingApplication extends Application<TweetingConfiguration> {
         try {
             logger.debug("Configuring Tweeting application");
             TwitterOAuthCredentials auth = config.getAuthorization();
-            final TwitterService service = TwitterService.getInstance(auth);
+            TwitterServiceComponent component = DaggerTwitterServiceComponent.create();
+            TwitterService service = component.buildService();
+            service.setCredentials(auth);
 
             logger.info("Twitter credentials have been configured using the {} configuration file.",
                     getConfigFileName());

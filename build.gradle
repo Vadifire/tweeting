@@ -15,13 +15,15 @@ plugins {
      * A jar task that packages the compiled classes and into a single JAR named <project>-<version>.jar
      * A javadoc task that generates Javadoc for the main classes
      */
-    id 'java'
-
     // Apply the application plugin to add support for building an application
     id 'application'
 
     // Apply Jacoco for code coverage
     id 'jacoco'
+
+    id 'java'
+
+    id "net.ltgt.apt-idea" version "0.18"
 }
 
 repositories {
@@ -36,6 +38,9 @@ dependencies {
             'ch.qos.logback:logback-classic:1.3.0-alpha4',
             'ch.qos.logback:logback-access:1.3.0-alpha4',
             'org.slf4j:slf4j-api:1.8.0-beta4'
+
+    compile 'com.google.dagger:dagger:2.16'
+    annotationProcessor 'com.google.dagger:dagger-compiler:2.16'
 
     // JUnit for unit testing
     testImplementation 'junit:junit:4.12'

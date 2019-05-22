@@ -1,14 +1,13 @@
-package tweeting.services;
+package tweeting.injection.modules;
 
 import dagger.Module;
 import dagger.Provides;
+import tweeting.services.Twitter4JService;
+import tweeting.services.TwitterService;
 import twitter4j.Twitter;
 
 import javax.inject.Singleton;
 
-/*
- * This class is used provide the TwitterService dependency to any Clients (i.e. TwitterResource)
- */
 @Module
 public class TwitterServiceModule {
 

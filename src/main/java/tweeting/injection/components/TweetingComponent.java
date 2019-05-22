@@ -1,10 +1,12 @@
-package tweeting.services;
+package tweeting.injection.components;
 
 import dagger.BindsInstance;
 import dagger.Component;
 import tweeting.conf.TwitterOAuthCredentials;
 import tweeting.resources.TwitterResource;
-import tweeting.resources.TwitterResourceModule;
+import tweeting.injection.modules.TwitterResourceModule;
+import tweeting.injection.modules.TwitterAPIModule;
+import tweeting.injection.modules.TwitterServiceModule;
 
 import javax.inject.Singleton;
 
@@ -18,14 +20,14 @@ import javax.inject.Singleton;
         TwitterServiceModule.class,
         TwitterResourceModule.class
 })
-public interface TwitterComponent {
+public interface TweetingComponent {
 
     // Allows end-user (i.e. TweetingApplication) to configure/build Service by simply passing auth
     @Component.Builder
     interface Builder {
         @BindsInstance // https://dagger.dev/users-guide#binding-instances
-        TwitterComponent.Builder credentials(TwitterOAuthCredentials auth);
-        TwitterComponent build();
+        TweetingComponent.Builder credentials(TwitterOAuthCredentials auth);
+        TweetingComponent build();
     }
 
     TwitterResource buildResource();

@@ -37,7 +37,7 @@ public class TwitterResourceTest {
         dummyErrorMessage = "some error message";
         dummyKeyword = "keyword";
         service = mock(TwitterService.class);
-        resource = new TwitterResource(service); // Use the Mocked service instead of Twitter4J impl.
+        resource = new TwitterResource(service); // Fine for single-class unit tests (https://dagger.dev/testing.html)
     }
 
     @Test

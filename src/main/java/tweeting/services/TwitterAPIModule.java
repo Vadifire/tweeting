@@ -7,14 +7,18 @@ import twitter4j.Twitter;
 import twitter4j.TwitterFactory;
 import twitter4j.conf.ConfigurationBuilder;
 
-import javax.inject.Named;
 import javax.inject.Singleton;
+
+/*
+ * This class is used to provide the Twitter dependency to the Twitter4JService without exposing Twitter4J to any
+ *  Clients (such as TweetingApplication)
+ */
 
 @Module
 class TwitterAPIModule {
     @Provides
     @Singleton
-    static Twitter provideTwitterAPI(@Named TwitterOAuthCredentials auth) {
+    static Twitter provideTwitterAPI(TwitterOAuthCredentials auth) {
         return new TwitterFactory(new ConfigurationBuilder()
                 .setDebugEnabled(true)
                 .setJSONStoreEnabled(true) // Need in order to use getRawJSON

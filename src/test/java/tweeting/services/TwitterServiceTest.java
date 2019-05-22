@@ -77,8 +77,7 @@ public class TwitterServiceTest {
                 });
 
         api = mock(Twitter.class);
-
-        service = new Twitter4JService(api);
+        service = new Twitter4JService(api); // Fine for single-class unit tests (https://dagger.dev/testing.html)
     }
 
     @Test

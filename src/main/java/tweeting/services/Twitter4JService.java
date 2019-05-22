@@ -107,13 +107,4 @@ public class Twitter4JService implements TwitterService {
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
-/*
-    // Used for mocking purposes
-    public void setAPI(Twitter api) {
-        this.api = api;
-    }
-
-    public Twitter getAPI() {
-        return api;
-    }*/
 }

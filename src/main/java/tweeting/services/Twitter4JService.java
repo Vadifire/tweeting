@@ -29,8 +29,8 @@ public class Twitter4JService implements TwitterService {
     }
 
     @Override
-    public Optional<Tweet> postTweet(String message) throws TwitterServiceResponseException,
-            TwitterServiceCallException {
+    public Optional<Tweet> postTweet(String message)
+            throws TwitterServiceResponseException, TwitterServiceCallException {
         if (StringUtils.isBlank(message)) {
             throw new TwitterServiceCallException(MISSING_TWEET_MESSAGE);
         }
@@ -62,8 +62,8 @@ public class Twitter4JService implements TwitterService {
     }
 
     @Override
-    public Optional<List<Tweet>> getFilteredTimeline(String keyword) throws TwitterServiceResponseException,
-            TwitterServiceCallException {
+    public Optional<List<Tweet>> getFilteredTimeline(String keyword)
+            throws TwitterServiceResponseException, TwitterServiceCallException {
         if (StringUtils.isBlank(keyword)) {
             throw new TwitterServiceCallException(MISSING_KEYWORD_MESSAGE);
         }
@@ -86,12 +86,12 @@ public class Twitter4JService implements TwitterService {
         if (status == null) {
             return null;
         }
-        Tweet tweet = new Tweet();
+        final Tweet tweet = new Tweet();
         tweet.setMessage(status.getText());
         if (status.getUser() == null) {
             logger.warn("Tweet has no user.");
         } else {
-            TwitterUser user = new TwitterUser();
+            final TwitterUser user = new TwitterUser();
             user.setTwitterHandle(status.getUser().getScreenName());
             user.setName(status.getUser().getName());
             user.setProfileImageUrl(status.getUser().getProfileImageURL());

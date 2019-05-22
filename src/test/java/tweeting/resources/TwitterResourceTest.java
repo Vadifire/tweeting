@@ -24,13 +24,13 @@ import static org.mockito.Mockito.when;
 public class TwitterResourceTest {
 
     // Mocked service
-    TwitterService service;
+    private TwitterService service;
 
     // Resource under test
-    TwitterResource resource;
+    private TwitterResource resource;
 
     // Dummy variables to test with
-    String dummyMessage, dummyErrorMessage, dummyKeyword;
+    private String dummyMessage, dummyErrorMessage, dummyKeyword;
 
     @Before
     public void setUp() {

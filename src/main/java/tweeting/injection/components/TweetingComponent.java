@@ -12,7 +12,7 @@ import javax.inject.Singleton;
 
 /*
  * This interface is used to generate the Injector.
- * The Injector is setup to inject Twitter API -> Service -> Resource.
+ * The Injector is setup to inject the necessary services to the TweetingApplication.
  */
 @Singleton
 @Component(modules = {
@@ -28,7 +28,7 @@ public interface TweetingComponent {
         TweetingComponent build();
     }
 
-    TwitterResource buildResource();
+    TwitterResource buildTwitterResource();
     LogFilter buildLogFilter();
     HealthCheck buildHealthCheck();
 }

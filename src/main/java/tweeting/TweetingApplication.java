@@ -49,7 +49,7 @@ public class TweetingApplication extends Application<TweetingConfiguration> {
             final TweetingComponent comp = DaggerTweetingComponent.builder()
                     .credentials(config.getAuthorization())
                     .build();
-            TwitterResource twitterResource = comp.buildResource();
+            TwitterResource twitterResource = comp.buildTwitterResource();
             logFilter = comp.buildLogFilter();
             healthCheck = comp.buildHealthCheck();
 

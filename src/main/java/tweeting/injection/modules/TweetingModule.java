@@ -11,10 +11,10 @@ import tweeting.util.LogFilter;
 import javax.inject.Singleton;
 
 /*
- * Provide services for TweetingApplication. Use Twitter4J for resources
+ * Provide services for TweetingApplication.
  */
 
-@Module(includes = Twitter4JModule.class)
+@Module(includes = Twitter4JModule.class) // Uses Twitter4J for providing TwitterService to TwitterResource
 public class TweetingModule {
 
     @Provides
@@ -25,13 +25,13 @@ public class TweetingModule {
 
     @Provides
     @Singleton
-    static HealthCheck provideHealthCheck() {
+    static HealthCheck provideAliveHealthCheck() {
         return new AliveHealthCheck();
     }
 
     @Provides
     @Singleton
-    static LogFilter provideLogger() {
+    static LogFilter provideLogFilter() {
         return new LogFilter();
     }
 }

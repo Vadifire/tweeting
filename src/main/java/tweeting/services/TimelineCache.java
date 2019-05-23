@@ -1,10 +1,11 @@
 package tweeting.services;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import tweeting.models.Tweet;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 
 public class TimelineCache {
 
@@ -13,6 +14,8 @@ public class TimelineCache {
 
     private List<Tweet> timeline;
 
+    private static final Logger logger = LoggerFactory.getLogger(Twitter4JService.class);
+
     public TimelineCache(int cacheSize) {
         this.cacheSize = cacheSize;
         fresh = false;
@@ -20,9 +23,15 @@ public class TimelineCache {
     }
 
     // Return empty optional if stale timeline
-    public Optional<List<Tweet>> getTimeline() {
-        return Optional.of(timeline)
-                .filter(timeline -> fresh);
+    public List<Tweet> getTimeline() {
+        if (!isFresh()) {
+            logger.warn("Stale timeline cache was retrieved.");
+        }
+        return timeline;
+    }
+
+    public boolean isFresh() {
+        return fresh;
     }
 
     // 'Don't worry about external updates' - So tweeting is only thing that can dirty cache

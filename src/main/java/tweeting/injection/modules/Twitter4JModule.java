@@ -25,6 +25,7 @@ public class Twitter4JModule {
 
     private static final Logger logger = LoggerFactory.getLogger(Twitter4JModule.class);
 
+    @Singleton
     @Provides
     Twitter provideTwitterAPI(TweetingConfiguration conf) {
         if (conf.getTwitterAuthorization() == null) {

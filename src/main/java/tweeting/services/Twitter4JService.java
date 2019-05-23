@@ -24,12 +24,12 @@ public class Twitter4JService implements TwitterService {
 
     private static final Logger logger = LoggerFactory.getLogger(Twitter4JService.class);
 
-    private TimelineCache timelineCache;
+    private TimelineCache homeTimelineCache;
 
     @Inject
-    public Twitter4JService(Twitter api) {
+    public Twitter4JService(Twitter api, TimelineCache homeTimelineCache) {
         this.api = api;
-        this.timelineCache = new TimelineCache(); //TODO: dep inject
+        this.homeTimelineCache = homeTimelineCache;
     }
 
     @Override
@@ -46,7 +46,7 @@ public class Twitter4JService implements TwitterService {
                     .map(status -> {
                         logger.info("Successfully posted '{}' to Twitter.", message);
                         final Tweet tweet = constructTweet(status);
-                        timelineCache.pushTweet(tweet); // Update cache
+                        homeTimelineCache.pushTweet(tweet); // Update cache
                         return tweet;
                     });
         } catch (TwitterException te) {
@@ -57,18 +57,15 @@ public class Twitter4JService implements TwitterService {
     @Override
     public Optional<List<Tweet>> getHomeTimeline() throws TwitterServiceResponseException {
         try {
-
-            Optional<List<Tweet>> cachedTweets = timelineCache.getTimeline();
-
-            if (cachedTweets.isPresent()) { //TODO make this observe better optional syntax
+            if (homeTimelineCache.isFresh()) {
                 logger.info("Successfully retrieved home timeline from cache.");
-                return cachedTweets;
+                return Optional.of(homeTimelineCache.getTimeline());
             }
-           return Optional.ofNullable(api.getHomeTimeline())
+            return Optional.ofNullable(api.getHomeTimeline())
                     .map(statuses -> {
                         logger.info("Successfully retrieved home timeline from Twitter.");
                         List<Tweet> tweets = constructTweetList(statuses);
-                        timelineCache.cache(tweets);
+                        homeTimelineCache.cache(tweets);
                         return tweets;
                     });
         } catch (TwitterException te) {

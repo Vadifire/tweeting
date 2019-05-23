@@ -1,36 +1,53 @@
 package tweeting.services;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import tweeting.models.Tweet;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 
 public class TimelineCache {
 
-    public static int TIMELINE_SIZE = 20; // TODO: consider where this belongs
+    private static final Logger logger = LoggerFactory.getLogger(TimelineCache.class);
 
-    List<Tweet> timeline;
+    private boolean fresh;
+    private int cacheSize;
 
-    public TimelineCache() {
+    private LinkedList<Tweet> timeline;
+
+    public TimelineCache(int cacheSize) {
+        this.cacheSize = cacheSize;
+        fresh = false;
         timeline = new LinkedList<>();
     }
 
-    // Optional because want to force Service to retrieve timeline again if not cached
-    public Optional<List<Tweet>> getTimeline() {
-        return Optional.of(timeline)
-                .filter(t -> t.size() == TIMELINE_SIZE);
+    public LinkedList<Tweet> getTimeline() {
+        if (!isFresh()) {
+            logger.warn("Retrieved a dirty cache.");
+        }
+        return timeline;
+    }
+
+    public boolean isFresh() { // TODO: how can this be better designed for users?
+        return fresh;
     }
 
     // 'Don't worry about external updates' - So tweeting is only thing that can dirty cache
     public void pushTweet(Tweet tweet) {
-        ((LinkedList) timeline).addFirst(tweet);
-        if (timeline.size() > TIMELINE_SIZE)
-            ((LinkedList) timeline).removeLast();
+        timeline.addFirst(tweet);
+        if (timeline.size() == cacheSize) {
+            fresh = true;
+        }
+        if (timeline.size() > cacheSize) {
+            timeline.removeLast();
+
+        }
     }
 
     public void cache(List<Tweet> timeline) {
-        this.timeline = timeline;
+        this.timeline = new LinkedList(timeline);
+        fresh = true;
     }
 
 }

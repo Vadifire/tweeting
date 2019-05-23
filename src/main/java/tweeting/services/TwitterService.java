@@ -11,6 +11,7 @@ import java.util.Optional;
 public interface TwitterService {
 
     int MAX_TWEET_LENGTH = 280; // Already available in twitter4j.util.CharacterUtil, but want to decouple
+    int TIMELINE_SIZE = 20; // Number of tweets retrieved when getting a timeline
 
     String SERVICE_UNAVAILABLE_MESSAGE = "Service is temporarily unavailable.";
     String MISSING_TWEET_MESSAGE = "Could not post tweet because message parameter is missing.";

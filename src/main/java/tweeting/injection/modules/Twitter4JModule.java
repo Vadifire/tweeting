@@ -3,6 +3,7 @@ package tweeting.injection.modules;
 import dagger.Module;
 import dagger.Provides;
 import tweeting.conf.TwitterOAuthCredentials;
+import tweeting.services.TimelineCache;
 import tweeting.services.Twitter4JService;
 import tweeting.services.TwitterService;
 import twitter4j.Twitter;
@@ -22,8 +23,14 @@ public class Twitter4JModule {
 
     @Provides
     @Singleton
-    static TwitterService provideTwitterService(Twitter api) {
-        return new Twitter4JService(api);
+    static TwitterService provideTwitterService(Twitter api, TimelineCache cache) {
+        return new Twitter4JService(api, cache);
+    }
+
+    @Provides
+    @Singleton
+    static TimelineCache provideTimelineCache() {
+        return new TimelineCache(TwitterService.TIMELINE_SIZE); // TODO: consider interface
     }
 
     @Provides

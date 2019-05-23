@@ -28,6 +28,7 @@ public class TwitterServiceTest {
 
     // Mocked classes
     private Twitter api;
+    private TimelineCache cache;
     private Status mockedStatus;
 
     // Dummy vars
@@ -76,7 +77,8 @@ public class TwitterServiceTest {
                 });
 
         api = mock(Twitter.class);
-        service = new Twitter4JService(api); // Fine for single-class unit tests (https://dagger.dev/testing.html)
+        cache = mock(TimelineCache.class);
+        service = new Twitter4JService(api, cache); // Fine for single-class unit tests (https://dagger.dev/testing.html)
     }
 
     @Test

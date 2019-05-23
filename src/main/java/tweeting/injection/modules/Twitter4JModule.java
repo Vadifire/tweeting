@@ -1,8 +1,10 @@
-package tweeting.services;
+package tweeting.injection.modules;
 
 import dagger.Module;
 import dagger.Provides;
 import tweeting.conf.TwitterOAuthCredentials;
+import tweeting.services.Twitter4JService;
+import tweeting.services.TwitterService;
 import twitter4j.Twitter;
 import twitter4j.TwitterFactory;
 import twitter4j.conf.ConfigurationBuilder;
@@ -10,12 +12,20 @@ import twitter4j.conf.ConfigurationBuilder;
 import javax.inject.Singleton;
 
 /*
- * This class is used to provide the Twitter dependency to the Twitter4JService without exposing Twitter4J to any
- *  Clients (such as TweetingApplication)
+ * Provides a Twitter4J service for whatever client wants to use it
+ *
+ * Note: TwitterOAuthCredentials are required for configuring the API the service relies on.
  */
 
 @Module
-class TwitterAPIModule {
+public class Twitter4JModule {
+
+    @Provides
+    @Singleton
+    static TwitterService provideTwitterService(Twitter api) {
+        return new Twitter4JService(api);
+    }
+
     @Provides
     @Singleton
     static Twitter provideTwitterAPI(TwitterOAuthCredentials auth) {

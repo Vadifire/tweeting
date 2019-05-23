@@ -5,6 +5,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import tweeting.models.Tweet;
+import tweeting.services.Twitter4JService;
 import tweeting.services.TwitterService;
 import tweeting.services.TwitterServiceCallException;
 import tweeting.services.TwitterServiceResponseException;
@@ -22,21 +23,23 @@ import static org.mockito.Mockito.when;
 
 public class TwitterResourceTest {
 
-    // Mocked classes
-    TwitterService service;
+    // Mocked service
+    private TwitterService service;
 
     // Resource under test
-    TwitterResource resource;
+    private TwitterResource resource;
 
     // Dummy variables to test with
-    String dummyMessage, dummyErrorMessage, dummyKeyword;
+    private String dummyMessage, dummyErrorMessage, dummyKeyword;
 
     @Before
     public void setUp() {
+
         dummyMessage = "some message";
         dummyErrorMessage = "some error message";
         dummyKeyword = "keyword";
-        service = mock(TwitterService.class);
+
+        service = mock(Twitter4JService.class);
         resource = new TwitterResource(service); // Fine for single-class unit tests (https://dagger.dev/testing.html)
     }
 

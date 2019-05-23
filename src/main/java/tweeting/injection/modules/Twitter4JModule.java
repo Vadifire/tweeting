@@ -2,6 +2,8 @@ package tweeting.injection.modules;
 
 import dagger.Module;
 import dagger.Provides;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import tweeting.conf.TweetingConfiguration;
 import tweeting.conf.TwitterOAuthCredentials;
 import tweeting.services.Twitter4JService;
@@ -20,9 +22,16 @@ import javax.inject.Singleton;
 @Module
 public class Twitter4JModule {
 
+    private static final Logger logger = LoggerFactory.getLogger(Twitter4JModule.class);
+
     @Provides
     @Singleton
-    static TwitterService provideTwitterService(TweetingConfiguration conf) {
+    TwitterService provideTwitterService(TweetingConfiguration conf) {
+        if (conf.getTwitterAuthorization() == null) {
+            logger.warn("TwitterService was built without valid " +
+                    "Twitter Credentials. Twitter Credentials were null.", new NullPointerException());
+            return new Twitter4JService(TwitterFactory.getSingleton());
+        }
         final TwitterOAuthCredentials auth = conf.getTwitterAuthorization();
         return new Twitter4JService(
                 new TwitterFactory(

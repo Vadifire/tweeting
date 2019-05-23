@@ -4,8 +4,6 @@ import com.codahale.metrics.health.HealthCheck;
 import dagger.Module;
 import dagger.Provides;
 import tweeting.health.AliveHealthCheck;
-import tweeting.resources.TwitterResource;
-import tweeting.services.TwitterService;
 import tweeting.util.LogFilter;
 
 import javax.inject.Singleton;
@@ -16,12 +14,6 @@ import javax.inject.Singleton;
 
 @Module(includes = Twitter4JModule.class) // Uses Twitter4J for providing TwitterService to TwitterResource
 public class TweetingModule {
-
-    @Provides
-    @Singleton
-    TwitterResource provideTwitterResource(TwitterService service) {
-        return new TwitterResource(service);
-    }
 
     @Provides
     @Singleton

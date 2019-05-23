@@ -9,6 +9,7 @@ import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.List;
 import java.util.Objects;
@@ -22,6 +23,7 @@ public class Twitter4JService implements TwitterService {
 
     private static final Logger logger = LoggerFactory.getLogger(Twitter4JService.class);
 
+    @Inject
     public Twitter4JService(Twitter api) {
         this.api = api;
     }

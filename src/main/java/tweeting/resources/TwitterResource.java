@@ -7,6 +7,7 @@ import tweeting.services.TwitterServiceCallException;
 import tweeting.services.TwitterServiceResponseException;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -18,6 +19,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 @Path("/api/1.0/twitter/")
+@Singleton
 public class TwitterResource {
 
     private static final Logger logger = LoggerFactory.getLogger(TwitterResource.class);

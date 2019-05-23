@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 @Singleton
 public class Twitter4JService implements TwitterService {
 
-    private Twitter api;
+    private final Twitter api;
 
     private static final Logger logger = LoggerFactory.getLogger(Twitter4JService.class);
 

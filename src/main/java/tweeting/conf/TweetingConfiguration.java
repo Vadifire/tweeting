@@ -13,11 +13,11 @@ public class TweetingConfiguration extends Configuration {
 	@Valid
 	private TwitterOAuthCredentials twitterOAuthCredentials;
 
-	public void setAuthorization (TwitterOAuthCredentials authorization) {
+	public void setTwitterAuthorization(TwitterOAuthCredentials authorization) {
 		this.twitterOAuthCredentials = authorization;
 	}
 
-	public TwitterOAuthCredentials getAuthorization() {
+	public TwitterOAuthCredentials getTwitterAuthorization() {
 		return twitterOAuthCredentials;
 	}
 

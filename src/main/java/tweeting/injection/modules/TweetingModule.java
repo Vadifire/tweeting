@@ -3,6 +3,8 @@ package tweeting.injection.modules;
 import com.codahale.metrics.health.HealthCheck;
 import dagger.Module;
 import dagger.Provides;
+import tweeting.conf.TweetingConfiguration;
+import tweeting.conf.TwitterOAuthCredentials;
 import tweeting.health.AliveHealthCheck;
 import tweeting.resources.TwitterResource;
 import tweeting.services.TwitterService;
@@ -33,5 +35,11 @@ public class TweetingModule {
     @Singleton
     static LogFilter provideLogFilter() {
         return new LogFilter();
+    }
+
+    @Provides
+    @Singleton
+    static TwitterOAuthCredentials provideTwitterAuthentication(TweetingConfiguration conf) {
+        return conf.getTwitterAuthorization();
     }
 }

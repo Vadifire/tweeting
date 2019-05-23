@@ -3,7 +3,7 @@ package tweeting.injection.components;
 import com.codahale.metrics.health.HealthCheck;
 import dagger.BindsInstance;
 import dagger.Component;
-import tweeting.conf.TwitterOAuthCredentials;
+import tweeting.conf.TweetingConfiguration;
 import tweeting.injection.modules.TweetingModule;
 import tweeting.resources.TwitterResource;
 import tweeting.util.LogFilter;
@@ -24,7 +24,7 @@ public interface TweetingComponent {
     @Component.Builder
     interface Builder {
         @BindsInstance // https://dagger.dev/users-guide#binding-instances
-        TweetingComponent.Builder credentials(TwitterOAuthCredentials auth);
+        TweetingComponent.Builder configuration(TweetingConfiguration conf);
         TweetingComponent build();
     }
 

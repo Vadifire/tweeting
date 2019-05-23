@@ -24,7 +24,7 @@ public class TweetingApplication extends Application<TweetingConfiguration> {
     public static void main(String[] args) throws Exception {
         if (args == null || args.length < 2) {
             logger.error("Invalid arguments. First argument should be 'server' and second argument should point to " +
-                    "config file.");
+                    "configuration file.");
         }
         configFileName = args[1]; // Store to log which configuration file was used
         new TweetingApplication().run(args);
@@ -47,7 +47,7 @@ public class TweetingApplication extends Application<TweetingConfiguration> {
 
             /* INJECTION */
             final TweetingComponent comp = DaggerTweetingComponent.builder()
-                    .credentials(config.getAuthorization())
+                    .configuration(config)
                     .build();
             TwitterResource twitterResource = comp.buildTwitterResource();
             logFilter = comp.buildLogFilter();

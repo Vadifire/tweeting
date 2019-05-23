@@ -16,7 +16,7 @@ import javax.inject.Singleton;
 /*
  * Provides a Twitter4J service for whatever client wants to use it
  *
- * Note: TwitterOAuthCredentials are required for configuring the API the service relies on.
+ * Note: TweetingConfiguration is required for configuring the API the Twitter4JService relies on.
  */
 
 @Module

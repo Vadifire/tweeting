@@ -12,7 +12,7 @@ import javax.inject.Singleton;
  * Provide services for TweetingApplication.
  */
 
-@Module(includes = Twitter4JModule.class) // Uses Twitter4J for providing TwitterService to TwitterResource
+@Module(includes = Twitter4JModule.class)
 public class TweetingModule {
 
     @Provides

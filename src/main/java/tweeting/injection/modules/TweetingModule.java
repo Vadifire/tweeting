@@ -19,19 +19,19 @@ public class TweetingModule {
 
     @Provides
     @Singleton
-    static TwitterResource provideTwitterResource(TwitterService service) {
+    TwitterResource provideTwitterResource(TwitterService service) {
         return new TwitterResource(service);
     }
 
     @Provides
     @Singleton
-    static HealthCheck provideAliveHealthCheck() {
+    HealthCheck provideAliveHealthCheck() {
         return new AliveHealthCheck();
     }
 
     @Provides
     @Singleton
-    static LogFilter provideLogFilter() {
+    LogFilter provideLogFilter() {
         return new LogFilter();
     }
 }

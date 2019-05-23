@@ -46,9 +46,6 @@ public class TweetingApplication extends Application<TweetingConfiguration> {
             logger.debug("Configuring Tweeting application");
 
             /* INJECTION */
-
-            config.setTwitterAuthorization(null);
-
             final TweetingComponent comp = DaggerTweetingComponent.builder()
                     .configuration(config)
                     .build();

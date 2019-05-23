@@ -28,7 +28,7 @@ public class Twitter4JModule {
     @Singleton
     TwitterService provideTwitterService(TweetingConfiguration conf) {
         if (conf.getTwitterAuthorization() == null) {
-            logger.warn("TwitterService was built without valid " +
+            logger.error("TwitterService was built without valid " +
                     "Twitter Credentials. Twitter Credentials were null.", new NullPointerException());
             return new Twitter4JService(TwitterFactory.getSingleton());
         }

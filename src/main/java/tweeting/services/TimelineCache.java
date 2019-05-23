@@ -6,6 +6,7 @@ import tweeting.models.Tweet;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 public class TimelineCache {
 
@@ -14,33 +15,28 @@ public class TimelineCache {
     private boolean fresh;
     private int cacheSize;
 
-    private LinkedList<Tweet> timeline;
+    private List<Tweet> timeline;
 
     public TimelineCache(int cacheSize) {
         this.cacheSize = cacheSize;
         fresh = false;
-        timeline = new LinkedList<>();
+        timeline = new LinkedList<>(); // Must be a LinkedList
     }
 
-    public LinkedList<Tweet> getTimeline() {
-        if (!isFresh()) {
-            logger.warn("Retrieved a dirty cache.");
-        }
-        return timeline;
-    }
-
-    public boolean isFresh() { // TODO: how can this be better designed for users?
-        return fresh;
+    // Return empty optional if stale timeline
+    public Optional<List<Tweet>> getTimeline() {
+        return Optional.of(timeline)
+                .filter(timeline -> fresh);
     }
 
     // 'Don't worry about external updates' - So tweeting is only thing that can dirty cache
     public void pushTweet(Tweet tweet) {
-        timeline.addFirst(tweet);
+        ((LinkedList)timeline).addFirst(tweet);
         if (timeline.size() == cacheSize) {
             fresh = true;
         }
         if (timeline.size() > cacheSize) {
-            timeline.removeLast();
+            ((LinkedList)timeline).removeLast();
 
         }
     }

@@ -57,14 +57,18 @@ public class Twitter4JService implements TwitterService {
     @Override
     public Optional<List<Tweet>> getHomeTimeline() throws TwitterServiceResponseException {
         try {
-            if (homeTimelineCache.isFresh()) {
+
+            Optional<List<Tweet>> tweets = homeTimelineCache.getTimeline();
+
+            if (tweets.isPresent()) {
                 logger.info("Successfully retrieved home timeline from cache.");
-                return Optional.of(homeTimelineCache.getTimeline());
+                return tweets;
             }
+
             return Optional.ofNullable(api.getHomeTimeline())
                     .map(statuses -> {
                         logger.info("Successfully retrieved home timeline from Twitter.");
-                        List<Tweet> tweets = constructTweetList(statuses);
+                        tweets =  constructTweetList(statuses);
                         homeTimelineCache.cache(tweets);
                         return tweets;
                     });

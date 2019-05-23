@@ -24,7 +24,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class TwitterServiceTest {
+public class Twitter4JServiceTest {
 
     // Mocked classes
     private Twitter api;

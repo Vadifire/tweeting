@@ -22,7 +22,6 @@ public class TimelineCache {
         timeline = new LinkedList<>(); // Must be a LinkedList
     }
 
-    // Return empty optional if stale timeline
     public List<Tweet> getTimeline() {
         if (!isFresh()) {
             logger.warn("Stale timeline cacheTimeline was retrieved.");

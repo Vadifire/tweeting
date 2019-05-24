@@ -9,7 +9,6 @@ import java.util.List;
 
 public class TimelineCache {
 
-    private boolean fresh;
     final private int cacheSize;
 
     private List<Tweet> timeline;
@@ -18,27 +17,28 @@ public class TimelineCache {
 
     public TimelineCache(int cacheSize) {
         this.cacheSize = cacheSize;
-        fresh = false;
         timeline = new LinkedList<>(); // Must be a LinkedList
     }
 
     public List<Tweet> getTimeline() {
         if (!isFresh()) {
-            logger.warn("Stale timeline was retrieved.");
+            if (timeline.size() == 0) {
+                logger.warn("Empty timeline was retrieved from cache.");
+            } else {
+                logger.warn("Incomplete timeline was retrieved.");
+            }
         }
         return timeline;
     }
 
+    // As long as timeline is full, consider it fresh (no external Twitter updates).
     public boolean isFresh() {
-        return fresh;
+        return timeline.size() == cacheSize;
     }
 
-    // 'Don't worry about external updates' - So no need to dirty cache. Just populate it with pushed Tweets.
+    // Push latest Tweets to cache
     public void pushTweet(Tweet tweet) {
         ((LinkedList<Tweet>)timeline).addFirst(tweet);
-        if (timeline.size() == cacheSize) {
-            fresh = true;
-        }
         if (timeline.size() > cacheSize) {
             ((LinkedList<Tweet>)timeline).removeLast();
         }
@@ -46,7 +46,6 @@ public class TimelineCache {
 
     public void cacheTimeline(List<Tweet> timeline) {
         this.timeline = new LinkedList<>(timeline);
-        fresh = true;
     }
 
 }

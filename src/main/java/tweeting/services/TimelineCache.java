@@ -10,7 +10,7 @@ import java.util.List;
 public class TimelineCache {
 
     private boolean fresh;
-    private int cacheSize;
+    final private int cacheSize;
 
     private List<Tweet> timeline;
 
@@ -24,7 +24,7 @@ public class TimelineCache {
 
     public List<Tweet> getTimeline() {
         if (!isFresh()) {
-            logger.warn("Stale timeline cacheTimeline was retrieved.");
+            logger.warn("Stale timeline was retrieved.");
         }
         return timeline;
     }
@@ -41,7 +41,6 @@ public class TimelineCache {
         }
         if (timeline.size() > cacheSize) {
             ((LinkedList<Tweet>)timeline).removeLast();
-
         }
     }
 

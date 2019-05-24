@@ -34,7 +34,6 @@ public class LogFilterTest {
     HttpServletResponse response;
     FilterChain chain;
 
-
     // Dummy vars
     Map<String, String[]> parameterMap;
     String dummyParamKey;

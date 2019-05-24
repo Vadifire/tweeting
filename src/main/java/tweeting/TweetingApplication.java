@@ -7,8 +7,6 @@ import io.dropwizard.setup.Environment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tweeting.conf.TweetingConfiguration;
-import tweeting.injection.components.DaggerTweetingComponent;
-import tweeting.injection.components.TweetingComponent;
 import tweeting.resources.TwitterResource;
 import tweeting.util.LogFilter;
 

@@ -22,6 +22,14 @@ public class LogFilter implements Filter {
 
     private static final Logger logger = LoggerFactory.getLogger(LogFilter.class);
 
+    /* MDC Keys */
+    public static final String TRANS_ID_KEY = "transID";
+    public static final String REMOTE_IP_KEY = "remoteIP";
+    public static final String METHOD_TYPE_KEY = "methodType";
+    public static final String REQUEST_URI_KEY = "requestURI";
+    public static final String PROTOCOL_KEY = "protocol";
+    public static final String PARAMS_KEY = "params";
+
     @Inject
     public LogFilter() {
 
@@ -45,13 +53,13 @@ public class LogFilter implements Filter {
 
             String transactionId = UUID.randomUUID().toString();
 
-            MDC.put("transID", transactionId);
-            MDC.put("remoteIP", httpRequest.getRemoteAddr());
-            MDC.put("methodType", httpRequest.getMethod());
-            MDC.put("requestURI", httpRequest.getRequestURI());
-            MDC.put("protocol", httpRequest.getProtocol());
+            MDC.put(TRANS_ID_KEY, transactionId);
+            MDC.put(REMOTE_IP_KEY, httpRequest.getRemoteAddr());
+            MDC.put(METHOD_TYPE_KEY, httpRequest.getMethod());
+            MDC.put(REQUEST_URI_KEY, httpRequest.getRequestURI());
+            MDC.put(PROTOCOL_KEY, httpRequest.getProtocol());
             if (!httpRequest.getParameterMap().isEmpty()) {
-                MDC.put("params", httpRequest.getParameterMap().toString() + " ");
+                MDC.put(PARAMS_KEY, httpRequest.getParameterMap().toString() + " ");
             }
             chain.doFilter(request, response);
         } catch (Exception e) {
@@ -59,6 +67,5 @@ public class LogFilter implements Filter {
         } finally {
             MDC.clear();
         }
-
     }
 }

@@ -1,4 +1,4 @@
-package tweeting.injection.modules;
+package tweeting;
 
 import dagger.Module;
 import dagger.Provides;

@@ -20,7 +20,7 @@ import javax.inject.Singleton;
 })
 public interface TweetingComponent {
 
-    // Allows end-user (i.e. TweetingApplication) to configure/build services by simply passing auth
+    // Allows end-user (i.e. TweetingApplication) to configure/build services by simply passing TweetingConfiguration
     @Component.Builder
     interface Builder {
         @BindsInstance // https://dagger.dev/users-guide#binding-instances

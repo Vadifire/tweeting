@@ -12,6 +12,11 @@ import twitter4j.conf.ConfigurationBuilder;
 
 import javax.inject.Singleton;
 
+/*
+ * Provides Twitter API
+ * Note: TweetingConfiguration is required as a dependency.
+ */
+
 @Module
 public class TwitterAPIModule {
 

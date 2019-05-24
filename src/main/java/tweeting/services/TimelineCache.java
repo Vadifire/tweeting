@@ -25,7 +25,7 @@ public class TimelineCache {
     // Return empty optional if stale timeline
     public List<Tweet> getTimeline() {
         if (!isFresh()) {
-            logger.warn("Stale timeline cache was retrieved.");
+            logger.warn("Stale timeline cacheTimeline was retrieved.");
         }
         return timeline;
     }
@@ -34,7 +34,7 @@ public class TimelineCache {
         return fresh;
     }
 
-    // 'Don't worry about external updates' - So tweeting is only thing that can dirty cache
+    // 'Don't worry about external updates' - So no need to dirty cache. Just populate it with pushed Tweets.
     public void pushTweet(Tweet tweet) {
         ((LinkedList<Tweet>)timeline).addFirst(tweet);
         if (timeline.size() == cacheSize) {
@@ -46,7 +46,7 @@ public class TimelineCache {
         }
     }
 
-    public void cache(List<Tweet> timeline) {
+    public void cacheTimeline(List<Tweet> timeline) {
         this.timeline = new LinkedList<>(timeline);
         fresh = true;
     }

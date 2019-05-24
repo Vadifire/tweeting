@@ -44,7 +44,7 @@ public class Twitter4JService implements TwitterService {
                     .map(status -> {
                         logger.info("Successfully posted '{}' to Twitter.", message);
                         final Tweet tweet = constructTweet(status);
-                        homeTimelineCache.pushTweet(tweet); // Update cache
+                        homeTimelineCache.pushTweet(tweet); // Update cacheTimeline
                         return tweet;
                     });
         } catch (TwitterException te) {
@@ -63,7 +63,7 @@ public class Twitter4JService implements TwitterService {
             return Optional.ofNullable(api.getHomeTimeline())
                     .map(statuses -> {
                         final List<Tweet> tweets = constructTweetList(statuses);
-                        homeTimelineCache.cache(tweets);
+                        homeTimelineCache.cacheTimeline(tweets);
                         logger.info("Successfully retrieved home timeline from Twitter.");
                         return tweets;
                     });

@@ -10,6 +10,7 @@ import twitter4j.User;
 import twitter4j.util.CharacterUtil;
 
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -100,6 +101,17 @@ public class Twitter4JServiceTest {
         assertEquals(dummyScreenName, tweet.getUser().getTwitterHandle());
         assertEquals(dummyDate, tweet.getCreatedAt());
         assertEquals(dummyURL, tweet.getUser().getProfileImageUrl());
+    }
+
+    @Test
+    public void testGetCachedTweets() throws TwitterServiceResponseException {
+        List<Tweet> cachedTweets = new LinkedList();
+        when(cache.isFresh()).thenReturn(true);
+        when(cache.getTimeline()).thenReturn(cachedTweets);
+
+        List<Tweet> actualList = service.getHomeTimeline().get();
+
+        assertEquals(cachedTweets, actualList);
     }
 
     @Test

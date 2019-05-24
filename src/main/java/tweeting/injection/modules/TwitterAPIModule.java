@@ -13,7 +13,7 @@ import twitter4j.conf.ConfigurationBuilder;
 import javax.inject.Singleton;
 
 @Module
-public class TwitterModule {
+public class TwitterAPIModule {
 
     private static final Logger logger = LoggerFactory.getLogger(Twitter4JModule.class);
 

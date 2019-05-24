@@ -51,7 +51,7 @@ public class TweetingApplication extends Application<TweetingConfiguration> {
                     .build();
             TwitterResource twitterResource = comp.buildTwitterResource();
             logFilter = comp.buildLogFilter();
-            healthCheck = comp.buildHealthCheck();
+            healthCheck = comp.buildAliveHealthCheck();
 
             logger.info("Twitter credentials have been configured using the {} configuration file.",
                     getConfigFileName());

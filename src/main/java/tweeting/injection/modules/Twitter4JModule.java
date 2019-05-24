@@ -14,7 +14,7 @@ import javax.inject.Singleton;
  * Note: TweetingConfiguration is required for configuring the API the Twitter4JService relies on.
  */
 
-@Module(includes = TwitterModule.class)
+@Module(includes = TwitterAPIModule.class)
 public class Twitter4JModule {
 
     @Provides

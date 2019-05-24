@@ -9,7 +9,6 @@ import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 
-import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.LinkedList;
 import java.util.List;
@@ -26,7 +25,6 @@ public class Twitter4JService implements TwitterService {
 
     private TimelineCache homeTimelineCache;
 
-    @Inject
     public Twitter4JService(Twitter api, TimelineCache homeTimelineCache) {
         this.api = api;
         this.homeTimelineCache = homeTimelineCache;

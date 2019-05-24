@@ -4,6 +4,8 @@ import com.codahale.metrics.health.HealthCheck;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
+
 /*
  * Used to report that the Server is still alive.
  *
@@ -14,6 +16,11 @@ import org.slf4j.LoggerFactory;
 public class AliveHealthCheck extends HealthCheck {
 
     private static final Logger logger = LoggerFactory.getLogger(HealthCheck.class);
+
+    @Inject
+    public AliveHealthCheck() {
+
+    }
 
     @Override
     public Result check() {

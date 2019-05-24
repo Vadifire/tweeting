@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
+import javax.inject.Inject;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -20,6 +21,11 @@ import java.util.UUID;
 public class LogFilter implements Filter {
 
     private static final Logger logger = LoggerFactory.getLogger(LogFilter.class);
+
+    @Inject
+    public LogFilter() {
+
+    }
 
     public void init(FilterConfig config) {
 

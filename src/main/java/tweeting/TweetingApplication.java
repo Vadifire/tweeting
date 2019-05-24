@@ -49,10 +49,9 @@ public class TweetingApplication extends Application<TweetingConfiguration> {
             final TweetingComponent comp = DaggerTweetingComponent.builder()
                     .configuration(config)
                     .build();
-
             TwitterResource twitterResource = comp.buildTwitterResource();
             logFilter = comp.buildLogFilter();
-            healthCheck = comp.buildHealthCheck();
+            healthCheck = comp.buildAliveHealthCheck();
 
             logger.info("Twitter credentials have been configured using the {} configuration file.",
                     getConfigFileName());

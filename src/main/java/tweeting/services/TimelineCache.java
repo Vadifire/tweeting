@@ -25,7 +25,7 @@ public class TimelineCache {
             if (timeline.size() == 0) {
                 logger.warn("Empty timeline was retrieved from cache.");
             } else {
-                logger.warn("Incomplete timeline was retrieved.");
+                logger.warn("Incomplete timeline was retrieved from cache.");
             }
         }
         return timeline;

@@ -41,7 +41,7 @@ public class Twitter4JServiceTest {
     private String repeated; // Must have length > 0
 
     // Class under test
-    private TwitterService service;
+    private Twitter4JService service;
 
     @Before
     public void setUp() {

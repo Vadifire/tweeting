@@ -19,6 +19,7 @@ public class Twitter4JModule {
     @Provides
     @Singleton
     TwitterService provideTwitterService(Twitter api) {
-        return new Twitter4JService(api, new TimelineCache(TwitterService.TIMELINE_SIZE)); // TODO: Inject timeline?
+        return new Twitter4JService(api, new TimelineCache(TwitterService.TIMELINE_SIZE));
     }
+
 }

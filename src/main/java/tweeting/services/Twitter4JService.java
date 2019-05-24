@@ -54,13 +54,11 @@ public class Twitter4JService implements TwitterService {
 
     @Override
     public Optional<List<Tweet>> getHomeTimeline() throws TwitterServiceResponseException {
+        if (homeTimelineCache.isFresh()) {
+            logger.info("Successfully retrieved home timeline from cache.");
+            return Optional.of(homeTimelineCache.getCachedTimeline());
+        }
         try {
-
-            if (homeTimelineCache.isFresh()) {
-                logger.info("Successfully retrieved home timeline from cache.");
-                return Optional.of(homeTimelineCache.getCachedTimeline());
-            }
-
             return Optional.ofNullable(api.getHomeTimeline())
                     .map(statuses -> {
                         final List<Tweet> tweets = constructTweetList(statuses);
@@ -80,10 +78,18 @@ public class Twitter4JService implements TwitterService {
         if (StringUtils.isBlank(keyword)) {
             throw new TwitterServiceCallException(MISSING_KEYWORD_MESSAGE);
         }
-        return getHomeTimeline().map(tweets -> tweets.stream()
-                .filter(t -> StringUtils.containsIgnoreCase(t.getMessage(), keyword))
-                .collect(Collectors.toList())
-        );
+        if (homeTimelineCache.isFresh()) {
+            logger.info("Successfully retrieved home timeline from cache.");
+            return Optional.of(homeTimelineCache.getCachedTimeline());
+        }
+        try {
+            return Optional.of(api.getHomeTimeline().stream()
+                    .filter(status -> StringUtils.containsIgnoreCase(status.getText(), keyword))
+                    .map(this::constructTweet)
+                    .collect(Collectors.toList()));
+        } catch (TwitterException te) {
+            throw createServerException(te);
+        }
     }
 
     private TwitterServiceResponseException createServerException(TwitterException te) {

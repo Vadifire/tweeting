@@ -1,10 +1,9 @@
-package tweeting.injection.components;
+package tweeting;
 
 import dagger.BindsInstance;
 import dagger.Component;
 import tweeting.conf.TweetingConfiguration;
 import tweeting.health.AliveHealthCheck;
-import tweeting.injection.modules.Twitter4JModule;
 import tweeting.resources.TwitterResource;
 import tweeting.util.LogFilter;
 

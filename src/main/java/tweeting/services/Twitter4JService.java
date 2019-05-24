@@ -57,7 +57,7 @@ public class Twitter4JService implements TwitterService {
         try {
 
             if (homeTimelineCache.isFresh()) {
-                return Optional.of(homeTimelineCache.getTimeline());
+                return Optional.of(homeTimelineCache.getCachedTimeline());
             }
 
             return Optional.ofNullable(api.getHomeTimeline())

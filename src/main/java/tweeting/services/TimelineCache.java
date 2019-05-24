@@ -20,7 +20,7 @@ public class TimelineCache {
         timeline = new LinkedList<>(); // Must be a LinkedList
     }
 
-    public List<Tweet> getTimeline() {
+    public List<Tweet> getCachedTimeline() {
         if (!isFresh()) {
             if (timeline.size() == 0) {
                 logger.warn("Empty timeline was retrieved from cache.");

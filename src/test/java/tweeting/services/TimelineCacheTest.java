@@ -38,7 +38,7 @@ public class TimelineCacheTest {
     public void testCacheTimeline() {
         timelineCache.cacheTimeline(dummyTweets);
 
-        List<Tweet> cachedTweets = timelineCache.getTimeline();
+        List<Tweet> cachedTweets = timelineCache.getCachedTimeline();
 
         assertTrue(timelineCache.isFresh());
 
@@ -69,7 +69,7 @@ public class TimelineCacheTest {
 
         timelineCache.cacheTimeline(dummyTweets);
         timelineCache.pushTweet(extraDummyTweet);
-        List<Tweet> cachedTweets = timelineCache.getTimeline();
+        List<Tweet> cachedTweets = timelineCache.getCachedTimeline();
 
         assertFalse(cachedTweets.contains(dummyTweets.getLast()));
         assertTrue(cachedTweets.contains(extraDummyTweet));

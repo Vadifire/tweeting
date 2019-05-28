@@ -63,7 +63,7 @@ public class TimelineCache {
     public List<Tweet> getCachedFilteredTimeline(String keyword) {
         if (!canGetFilteredTimeline(keyword)) {
             final NullPointerException e = new NullPointerException();
-            logger.error("Null cache retrieved for keyword: " + keyword);
+            logger.error("Null cache retrieved for keyword: " + keyword, e);
             throw e;
         }
         return filteredCache.get(keyword);

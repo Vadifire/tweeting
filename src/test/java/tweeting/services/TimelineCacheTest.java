@@ -100,11 +100,16 @@ public class TimelineCacheTest {
         final String keyword = dummyTweets.get(0).getMessage();
         final List<Tweet> filteredList = new LinkedList<>();
         filteredList.add(dummyTweets.get(0));
-        timelineCache.cacheFilteredTimeline(keyword, filteredList);
 
+        timelineCache.cacheFilteredTimeline(keyword, filteredList);
         final List<Tweet> actualTweets = timelineCache.getCachedFilteredTimeline(keyword);
 
         assertTrue(timelineCache.canGetFilteredTimeline(keyword));
         assertEquals(keyword, actualTweets.get(0).getMessage());
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testGetNullFilteredCache() {
+        timelineCache.getCachedFilteredTimeline("not in map");
     }
 }

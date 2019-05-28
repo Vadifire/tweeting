@@ -391,7 +391,7 @@ public class Twitter4JServiceTest {
         final List<Tweet> dummyTweetList = new LinkedList<>();
         final Tweet dummyTweet = new Tweet();
         dummyTweetList.add(dummyTweet);
-        when(cache.canGetFilteredTimeline(dummyKeyword)).thenReturn(true);
+        when(cache.filterCacheContainsKeyword(dummyKeyword)).thenReturn(true);
         when(cache.getCachedFilteredTimeline(dummyKeyword)).thenReturn(dummyTweetList);
 
         Optional<List<Tweet>> actualList = service.getFilteredTimeline(dummyKeyword);

@@ -104,7 +104,7 @@ public class TimelineCacheTest {
         timelineCache.cacheFilteredTimeline(keyword, filteredList);
         final List<Tweet> actualTweets = timelineCache.getCachedFilteredTimeline(keyword);
 
-        assertTrue(timelineCache.canGetFilteredTimeline(keyword));
+        assertTrue(timelineCache.filterCacheContainsKeyword(keyword));
         assertEquals(keyword, actualTweets.get(0).getMessage());
     }
 

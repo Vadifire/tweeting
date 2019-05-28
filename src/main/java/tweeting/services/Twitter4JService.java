@@ -79,7 +79,7 @@ public class Twitter4JService implements TwitterService {
         }
         try {
             // First attempt to retrieve from filtered cache
-            if (homeTimelineCache.canGetFilteredTimeline(keyword)) {
+            if (homeTimelineCache.filterCacheContainsKeyword(keyword)) {
                 logger.info("Successfully retrieved home timeline filtered by \'" + keyword + "\' from cache.");
                 return Optional.of(homeTimelineCache.getCachedFilteredTimeline(keyword));
             }

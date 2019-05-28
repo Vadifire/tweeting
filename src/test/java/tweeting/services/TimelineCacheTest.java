@@ -19,10 +19,10 @@ import static org.mockito.Mockito.when;
 public class TimelineCacheTest {
 
     // Class under test
-    TimelineCache timelineCache;
+    private TimelineCache timelineCache;
 
     // Dummy vars
-    LinkedList<Tweet> dummyTweets; // Contains messages 0 to TIMELINE_SIZE
+    private LinkedList<Tweet> dummyTweets; // Contains messages 0 to TIMELINE_SIZE
 
     @Before
     public void setUp() {
@@ -46,7 +46,7 @@ public class TimelineCacheTest {
 
         assertTrue(timelineCache.canGetCachedTimeline());
         final Set<String> tweetSet = dummyTweets.stream()
-                .map(tweet -> tweet.getMessage())
+                .map(Tweet::getMessage)
                 .collect(Collectors.toSet());
         assertTrue(cachedTweets.stream()
                 .allMatch(tweet -> tweetSet.contains(tweet.getMessage())));

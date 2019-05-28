@@ -106,7 +106,7 @@ public class Twitter4JServiceTest {
 
     @Test
     public void testGetCachedTweets() throws TwitterServiceResponseException, TwitterException {
-        final List<Tweet> cachedTweets = new LinkedList();
+        final List<Tweet> cachedTweets = new LinkedList<>();
         when(cache.canGetCachedTimeline()).thenReturn(true);
         when(cache.getCachedTimeline()).thenReturn(cachedTweets);
 
@@ -368,7 +368,7 @@ public class Twitter4JServiceTest {
     @Test
     public void testFilterAllResultsExceptFirstNullMessage()
             throws TwitterException, TwitterServiceResponseException, TwitterServiceCallException {
-        String dummyKeyword = dummyStatusList.get(0).getText();
+        final String dummyKeyword = dummyStatusList.get(0).getText();
         when(api.getHomeTimeline()).thenReturn(dummyStatusList);
         when(dummyStatusList.get(0).getText()).thenReturn(null); // Make a Status have null message
 

@@ -47,7 +47,7 @@ public class TimelineCache {
     }
 
     public boolean canGetCachedFilteredTimeline(String keyword) {
-        return (cached && filteredCache.containsKey(keyword));
+        return (filteredCache.containsKey(keyword));
     }
 
     public List<Tweet> getCachedFilteredTimeline(String keyword) {
@@ -55,8 +55,6 @@ public class TimelineCache {
             final NullPointerException e = new NullPointerException();
             logger.error("Null cache retrieved for keyword: " + keyword, e);
             throw e;
-        } else if (!cached) {
-            logger.warn("Home timeline was never retrieved from Twitter.");
         }
         return filteredCache.get(keyword);
     }

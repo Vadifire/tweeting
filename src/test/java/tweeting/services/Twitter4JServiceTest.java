@@ -107,7 +107,7 @@ public class Twitter4JServiceTest {
     @Test
     public void testGetCachedTweets() throws TwitterServiceResponseException, TwitterException {
         final List<Tweet> cachedTweets = new LinkedList<>();
-        when(cache.isFresh()).thenReturn(true);
+        when(cache.isTimelineFresh()).thenReturn(true);
         when(cache.getCachedTimeline()).thenReturn(cachedTweets);
 
         final List<Tweet> actualList = service.getHomeTimeline().get();
@@ -409,7 +409,7 @@ public class Twitter4JServiceTest {
         final Tweet dummyTweet = new Tweet();
         dummyTweet.setMessage(dummyKeyword);
         cachedTweets.add(dummyTweet);
-        when(cache.isFresh()).thenReturn(true);
+        when(cache.isTimelineFresh()).thenReturn(true);
         when(cache.getCachedTimeline()).thenReturn(cachedTweets);
 
         final Optional<List<Tweet>> actualList = service.getFilteredTimeline(dummyKeyword);

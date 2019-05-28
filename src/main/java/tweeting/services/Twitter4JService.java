@@ -53,7 +53,7 @@ public class Twitter4JService implements TwitterService {
 
     @Override
     public Optional<List<Tweet>> getHomeTimeline() throws TwitterServiceResponseException {
-        if (homeTimelineCache.isFresh()) {
+        if (homeTimelineCache.isTimelineFresh()) {
             logger.info("Successfully retrieved home timeline from cache.");
             return Optional.of(homeTimelineCache.getCachedTimeline());
         }
@@ -84,7 +84,7 @@ public class Twitter4JService implements TwitterService {
                 return Optional.of(homeTimelineCache.getCachedFilteredTimeline(keyword));
             }
             // Next, attempt to retrieve timeline from cache and apply filter
-            else if (homeTimelineCache.isFresh()) {
+            else if (homeTimelineCache.isTimelineFresh()) {
                 final List<Tweet> tweets = homeTimelineCache.getCachedTimeline()
                         .stream()
                         .filter(tweet -> StringUtils.containsIgnoreCase(tweet.getMessage(), keyword))

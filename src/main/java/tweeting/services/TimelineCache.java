@@ -33,12 +33,12 @@ public class TimelineCache {
     }
 
     // Fresh condition: Retrieved home timeline from Twitter at least once, or posted at least TIMELINE_SIZE tweets
-    public boolean isFresh() {
+    public boolean isTimelineFresh() {
         return fresh;
     }
 
     public List<Tweet> getCachedTimeline() {
-        if (!isFresh()) {
+        if (!isTimelineFresh()) {
             logger.warn("Home timeline was never retrieved from Twitter.");
         }
         if (statusCache.size() > 0) { // Convert

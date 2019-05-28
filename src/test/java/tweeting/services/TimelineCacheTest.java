@@ -36,7 +36,7 @@ public class TimelineCacheTest {
 
         timelineCache = new TimelineCache(TwitterService.TIMELINE_SIZE);
 
-        assertFalse(timelineCache.isFresh());
+        assertFalse(timelineCache.isTimelineFresh());
     }
 
     @Test
@@ -44,7 +44,7 @@ public class TimelineCacheTest {
         timelineCache.cacheTweets(dummyTweets);
         final List<Tweet> cachedTweets = timelineCache.getCachedTimeline();
 
-        assertTrue(timelineCache.isFresh());
+        assertTrue(timelineCache.isTimelineFresh());
         final Set<String> tweetSet = dummyTweets.stream()
                 .map(Tweet::getMessage)
                 .collect(Collectors.toSet());
@@ -66,7 +66,7 @@ public class TimelineCacheTest {
         final List<Tweet> cachedTweets = timelineCache.getCachedTimeline();
 
 
-        assertTrue(timelineCache.isFresh());
+        assertTrue(timelineCache.isTimelineFresh());
         assertTrue(cachedTweets.stream().allMatch(t -> t.getMessage().equals(dummyMsg)));
     }
 
@@ -76,10 +76,10 @@ public class TimelineCacheTest {
                 .limit(TwitterService.TIMELINE_SIZE - 1)
                 .forEach(tweet -> {
                     timelineCache.pushTweet(tweet);
-                    assertFalse(timelineCache.isFresh());
+                    assertFalse(timelineCache.isTimelineFresh());
                 });
         timelineCache.pushTweet(dummyTweets.getLast());
-        assertTrue(timelineCache.isFresh());
+        assertTrue(timelineCache.isTimelineFresh());
     }
 
     @Test

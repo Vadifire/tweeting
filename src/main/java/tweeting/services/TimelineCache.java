@@ -36,9 +36,11 @@ public class TimelineCache {
 
     public List<Tweet> getCachedTimeline() {
         if (statusCache.size() > 0) { // Convert
-            tweetCache = statusCache.stream()
+            final List<Tweet> convertedTweets = statusCache.stream()
+                    .limit(TwitterService.TIMELINE_SIZE - tweetCache.size())
                     .map(Twitter4JUtil::constructTweet)
                     .collect(Collectors.toList());
+            tweetCache.addAll(convertedTweets);
             statusCache.clear();
         }
         if (!canGetCachedTimeline()) {

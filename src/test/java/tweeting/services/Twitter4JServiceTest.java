@@ -31,7 +31,7 @@ public class Twitter4JServiceTest {
     // Mocked classes
     private Twitter api;
     private TimelineCache timelineCache;
-    private FilteredTimelineCacheTest filteredCache;
+    private FilteredTimelineCache filteredCache;
     private Status mockedStatus;
 
     // Dummy vars
@@ -80,9 +80,8 @@ public class Twitter4JServiceTest {
                 });
 
         api = mock(Twitter.class);
-        timelineCache = mock(TimelineCache.class);
-        when(timelineCache.getCachedTimeline()).thenReturn(null);
-        filteredCache = new FilteredTimelineCacheTest();
+        timelineCache = new TimelineCache();
+        filteredCache = new FilteredTimelineCache();
         service = new Twitter4JService(api, timelineCache, filteredCache);
     }
 
@@ -110,7 +109,7 @@ public class Twitter4JServiceTest {
     @Test
     public void testGetCachedTweets() throws TwitterServiceResponseException, TwitterException {
         final List<Tweet> cachedTweets = new LinkedList<>();
-        when(timelineCache.getCachedTimeline()).thenReturn(cachedTweets);
+        timelineCache.cacheTweets(cachedTweets);
 
         final List<Tweet> actualList = service.getHomeTimeline().get();
 
@@ -395,7 +394,7 @@ public class Twitter4JServiceTest {
         final Tweet dummyTweet = new Tweet();
         dummyTweet.setMessage(dummyKeyword);
         cachedTweets.add(dummyTweet);
-        when(timelineCache.getCachedTimeline()).thenReturn(cachedTweets);
+        timelineCache.cacheTweets(cachedTweets);
 
         final Optional<List<Tweet>> actualList = service.getFilteredTimeline(dummyKeyword);
 

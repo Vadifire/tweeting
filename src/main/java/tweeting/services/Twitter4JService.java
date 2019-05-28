@@ -14,6 +14,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static tweeting.services.Twitter4JUtil.constructTweet;
+import static tweeting.services.Twitter4JUtil.constructTweetList;
 
 @Singleton
 public class Twitter4JService implements TwitterService {
@@ -100,14 +101,11 @@ public class Twitter4JService implements TwitterService {
             if (statuses == null) {
                 return Optional.empty();
             }
-            final List<Tweet> tweets = statuses.stream()
-                    .map(Twitter4JUtil::constructTweet)
-                    .filter(tweet -> StringUtils.containsIgnoreCase(tweet.getMessage(), keyword))
-                    .collect(Collectors.toList());
+            final List<Tweet> tweets = constructTweetList(statuses);
             homeTimelineCache.cacheTweets(tweets);
-            filteredCache.cacheTweets(keyword, tweets);
-            logger.info("Successfully retrieved home timeline from Twitter and filtered by \'" + keyword + "\'.");
-            return Optional.of(tweets);
+            return Optional.of(tweets.stream()
+                    .filter(tweet -> StringUtils.containsIgnoreCase(tweet.getMessage(), keyword))
+                    .collect(Collectors.toList()));
         } catch (TwitterException te) {
             throw createServerException(te);
         }

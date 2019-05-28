@@ -30,7 +30,8 @@ public class Twitter4JServiceTest {
 
     // Mocked classes
     private Twitter api;
-    private TimelineCache cache;
+    private TimelineCache timelineCache;
+    private FilteredTimelineCache filteredCache;
     private Status mockedStatus;
 
     // Dummy vars
@@ -79,8 +80,10 @@ public class Twitter4JServiceTest {
                 });
 
         api = mock(Twitter.class);
-        cache = mock(TimelineCache.class);
-        service = new Twitter4JService(api, cache); // Fine for single-class unit tests (https://dagger.dev/testing.html)
+        timelineCache = mock(TimelineCache.class);
+        when(timelineCache.getCachedTimeline()).thenReturn(null);
+        filteredCache = new FilteredTimelineCache();
+        service = new Twitter4JService(api, timelineCache, filteredCache);
     }
 
     @Test
@@ -107,8 +110,7 @@ public class Twitter4JServiceTest {
     @Test
     public void testGetCachedTweets() throws TwitterServiceResponseException, TwitterException {
         final List<Tweet> cachedTweets = new LinkedList<>();
-        when(cache.canGetCachedTimeline()).thenReturn(true);
-        when(cache.getCachedTimeline()).thenReturn(cachedTweets);
+        when(timelineCache.getCachedTimeline()).thenReturn(cachedTweets);
 
         final List<Tweet> actualList = service.getHomeTimeline().get();
 
@@ -384,22 +386,6 @@ public class Twitter4JServiceTest {
                 .allMatch(tweet -> statusSet.contains(tweet.getMessage())));
     }
 
-    @Test
-    public void testFilterCacheHit()
-            throws TwitterServiceCallException, TwitterServiceResponseException, TwitterException {
-        final String dummyKeyword = "keyword";
-        final List<Tweet> dummyTweetList = new LinkedList<>();
-        final Tweet dummyTweet = new Tweet();
-        dummyTweetList.add(dummyTweet);
-        when(cache.canGetCachedFilteredTimeline(dummyKeyword)).thenReturn(true);
-        when(cache.getCachedFilteredTimeline(dummyKeyword)).thenReturn(dummyTweetList);
-
-        Optional<List<Tweet>> actualList = service.getFilteredTimeline(dummyKeyword);
-
-        verify(api, never()).getHomeTimeline();
-        assertEquals(dummyTweetList.size(), actualList.get().size());
-        assertEquals(actualList.get().get(0), dummyTweet);
-    }
 
     @Test
     public void testMissFilterCacheHitTimelineCache()
@@ -409,8 +395,24 @@ public class Twitter4JServiceTest {
         final Tweet dummyTweet = new Tweet();
         dummyTweet.setMessage(dummyKeyword);
         cachedTweets.add(dummyTweet);
-        when(cache.canGetCachedTimeline()).thenReturn(true);
-        when(cache.getCachedTimeline()).thenReturn(cachedTweets);
+        when(timelineCache.getCachedTimeline()).thenReturn(cachedTweets);
+
+        final Optional<List<Tweet>> actualList = service.getFilteredTimeline(dummyKeyword);
+
+        verify(api, never()).getHomeTimeline();
+        assertEquals(cachedTweets.size(), actualList.get().size());
+        assertEquals(dummyTweet, actualList.get().get(0));
+    }
+
+    @Test
+    public void testFilterCacheHit()
+            throws TwitterServiceCallException, TwitterServiceResponseException, TwitterException {
+        final String dummyKeyword = "keyword";
+        final List<Tweet> cachedTweets = new LinkedList<>();
+        final Tweet dummyTweet = new Tweet();
+        dummyTweet.setMessage(dummyKeyword);
+        cachedTweets.add(dummyTweet);
+        filteredCache.putTweets(dummyKeyword, cachedTweets);
 
         final Optional<List<Tweet>> actualList = service.getFilteredTimeline(dummyKeyword);
 

@@ -10,8 +10,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static junit.framework.TestCase.assertTrue;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 
 public class TimelineCacheTest {
 
@@ -31,9 +30,8 @@ public class TimelineCacheTest {
             dummyTweets.add(tweet);
         }
 
-        timelineCache = new TimelineCache(TwitterService.TIMELINE_SIZE);
+        timelineCache = new TimelineCache();
 
-        assertFalse(timelineCache.canGetCachedTimeline());
     }
 
     @Test
@@ -41,7 +39,6 @@ public class TimelineCacheTest {
         timelineCache.cacheTweets(dummyTweets);
         final List<Tweet> cachedTweets = timelineCache.getCachedTimeline();
 
-        assertTrue(timelineCache.canGetCachedTimeline());
         final Set<String> tweetSet = dummyTweets.stream()
                 .map(Tweet::getMessage)
                 .collect(Collectors.toSet());
@@ -50,47 +47,10 @@ public class TimelineCacheTest {
     }
 
     @Test
-    public void testCacheByPosting() {
-        dummyTweets.stream()
-                .limit(TwitterService.TIMELINE_SIZE - 1)
-                .forEach(tweet -> {
-                    timelineCache.pushTweet(tweet);
-                    assertFalse(timelineCache.canGetCachedTimeline());
-                });
-        timelineCache.pushTweet(dummyTweets.getLast());
-        assertTrue(timelineCache.canGetCachedTimeline());
-    }
-
-
-    @Test
-    public void testOverflowCache() {
-        Tweet extraDummyTweet = new Tweet();
-        extraDummyTweet.setMessage(Integer.toString(TwitterService.MAX_TWEET_LENGTH + 1));
-
+    public void testInvalidate() {
         timelineCache.cacheTweets(dummyTweets);
-        timelineCache.pushTweet(extraDummyTweet);
-        List<Tweet> cachedTweets = timelineCache.getCachedTimeline();
-
-        assertFalse(cachedTweets.contains(dummyTweets.getLast()));
-        assertTrue(cachedTweets.contains(extraDummyTweet));
+        timelineCache.invalidate();
+        assertNull(timelineCache.getCachedTimeline());
     }
 
-    @Test
-    public void testFilteredCache() {
-        final String keyword = dummyTweets.get(0).getMessage();
-        final List<Tweet> filteredList = new LinkedList<>();
-        filteredList.add(dummyTweets.get(0));
-
-        timelineCache.cacheTweets(filteredList);
-        timelineCache.cacheFilteredTimeline(keyword, filteredList);
-        final List<Tweet> actualTweets = timelineCache.getCachedFilteredTimeline(keyword);
-
-        assertTrue(timelineCache.canGetCachedFilteredTimeline(keyword));
-        assertEquals(keyword, actualTweets.get(0).getMessage());
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void testGetNullFilteredCache() {
-        timelineCache.getCachedFilteredTimeline("not in map");
-    }
 }

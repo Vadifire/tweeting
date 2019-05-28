@@ -22,11 +22,13 @@ public class Twitter4JService implements TwitterService {
 
     private static final Logger logger = LoggerFactory.getLogger(Twitter4JService.class);
 
-    private TimelineCache homeTimelineCache;
+    private TimelineCache homeTimelineCache; // Used to avoid making extra API calls to Twitter
+    private FilteredTimelineCache filteredCache; // Used to avoid making extra API calls to Twitter
 
-    public Twitter4JService(Twitter api, TimelineCache homeTimelineCache) {
+    public Twitter4JService(Twitter api, TimelineCache homeTimelineCache, FilteredTimelineCache filteredCache) {
         this.api = api;
         this.homeTimelineCache = homeTimelineCache;
+        this.filteredCache = filteredCache;
     }
 
     @Override
@@ -43,7 +45,8 @@ public class Twitter4JService implements TwitterService {
                     .map(status -> {
                         logger.info("Successfully posted '{}' to Twitter.", message);
                         final Tweet tweet = constructTweet(status);
-                        homeTimelineCache.pushTweet(tweet); // Update cacheTimeline
+                        homeTimelineCache.invalidate();
+                        filteredCache.invalidate();
                         return tweet;
                     });
         } catch (TwitterException te) {
@@ -53,7 +56,7 @@ public class Twitter4JService implements TwitterService {
 
     @Override
     public Optional<List<Tweet>> getHomeTimeline() throws TwitterServiceResponseException {
-        if (homeTimelineCache.canGetCachedTimeline()) {
+        if (homeTimelineCache.getCachedTimeline() != null) {
             logger.info("Successfully retrieved home timeline from cache.");
             return Optional.of(homeTimelineCache.getCachedTimeline());
         }
@@ -65,7 +68,6 @@ public class Twitter4JService implements TwitterService {
                         logger.info("Successfully retrieved home timeline from Twitter.");
                         return tweets;
                     });
-
         } catch (TwitterException te) {
             throw createServerException(te);
         }
@@ -79,17 +81,17 @@ public class Twitter4JService implements TwitterService {
         }
         try {
             // First attempt to retrieve from filtered cache
-            if (homeTimelineCache.canGetCachedFilteredTimeline(keyword)) {
+            if (filteredCache.containsKeyword(keyword)) {
                 logger.info("Successfully retrieved home timeline filtered by \'" + keyword + "\' from cache.");
-                return Optional.of(homeTimelineCache.getCachedFilteredTimeline(keyword));
+                return Optional.of(filteredCache.getTweets(keyword));
             }
             // Next, attempt to retrieve timeline from cache and apply filter
-            else if (homeTimelineCache.canGetCachedTimeline()) {
+            else if (homeTimelineCache.getCachedTimeline() != null) {
                 final List<Tweet> tweets = homeTimelineCache.getCachedTimeline()
                         .stream()
                         .filter(tweet -> StringUtils.containsIgnoreCase(tweet.getMessage(), keyword))
                         .collect(Collectors.toList());
-                homeTimelineCache.cacheFilteredTimeline(keyword, tweets);
+                filteredCache.putTweets(keyword, tweets);
                 logger.info("Successfully retrieved home timeline from cache and filtered by \'" + keyword + "\'.");
                 return Optional.of(tweets);
             }
@@ -102,8 +104,7 @@ public class Twitter4JService implements TwitterService {
                     .map(Twitter4JUtil::constructTweet)
                     .filter(tweet -> StringUtils.containsIgnoreCase(tweet.getMessage(), keyword))
                     .collect(Collectors.toList());
-            homeTimelineCache.cacheTweets(tweets);
-            homeTimelineCache.cacheFilteredTimeline(keyword, tweets);
+            filteredCache.putTweets(keyword, tweets);
             logger.info("Successfully retrieved home timeline from Twitter and filtered by \'" + keyword + "\'.");
             return Optional.of(tweets);
         } catch (TwitterException te) {

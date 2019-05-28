@@ -2,6 +2,7 @@ package tweeting;
 
 import dagger.Module;
 import dagger.Provides;
+import tweeting.services.FilteredTimelineCache;
 import tweeting.services.TimelineCache;
 import tweeting.services.Twitter4JService;
 import tweeting.services.TwitterService;
@@ -15,13 +16,14 @@ import javax.inject.Singleton;
 
 @Module(includes = {
         TwitterAPIModule.class,
-        TimelineCacheModule.class
+        CacheModule.class
 })
 public class Twitter4JModule {
 
     @Provides
     @Singleton
-    TwitterService provideTwitterService(Twitter api, TimelineCache cache) {
-        return new Twitter4JService(api, cache);
+    TwitterService provideTwitterService(Twitter api, TimelineCache timelineCache,
+                                         FilteredTimelineCache filteredTimelineCache) {
+        return new Twitter4JService(api, timelineCache, filteredTimelineCache);
     }
 }

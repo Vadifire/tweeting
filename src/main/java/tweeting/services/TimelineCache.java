@@ -2,7 +2,6 @@ package tweeting.services;
 
 import tweeting.models.Tweet;
 
-import java.util.LinkedList;
 import java.util.List;
 
 public class TimelineCache {
@@ -18,6 +17,6 @@ public class TimelineCache {
     }
 
     public void cacheTweets(List<Tweet> timeline) {
-        this.timelineCache = new LinkedList<>(timeline);
+        this.timelineCache = timeline;
     }
 }

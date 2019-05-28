@@ -31,7 +31,7 @@ public class Twitter4JServiceTest {
     // Mocked classes
     private Twitter api;
     private TimelineCache timelineCache;
-    private FilteredTimelineCache filteredCache;
+    private FilteredTimelineCacheTest filteredCache;
     private Status mockedStatus;
 
     // Dummy vars
@@ -82,7 +82,7 @@ public class Twitter4JServiceTest {
         api = mock(Twitter.class);
         timelineCache = mock(TimelineCache.class);
         when(timelineCache.getCachedTimeline()).thenReturn(null);
-        filteredCache = new FilteredTimelineCache();
+        filteredCache = new FilteredTimelineCacheTest();
         service = new Twitter4JService(api, timelineCache, filteredCache);
     }
 

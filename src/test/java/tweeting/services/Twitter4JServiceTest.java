@@ -411,7 +411,7 @@ public class Twitter4JServiceTest {
         final Tweet dummyTweet = new Tweet();
         dummyTweet.setMessage(dummyKeyword);
         cachedTweets.add(dummyTweet);
-        filteredCache.putTweets(dummyKeyword, cachedTweets);
+        filteredCache.cacheTweets(dummyKeyword, cachedTweets);
 
         final Optional<List<Tweet>> actualList = service.getFilteredTimeline(dummyKeyword);
 

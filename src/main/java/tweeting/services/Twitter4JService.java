@@ -91,7 +91,7 @@ public class Twitter4JService implements TwitterService {
                         .stream()
                         .filter(tweet -> StringUtils.containsIgnoreCase(tweet.getMessage(), keyword))
                         .collect(Collectors.toList());
-                filteredCache.putTweets(keyword, tweets);
+                filteredCache.cacheTweets(keyword, tweets);
                 logger.info("Successfully retrieved home timeline from cache and filtered by \'" + keyword + "\'.");
                 return Optional.of(tweets);
             }
@@ -104,7 +104,8 @@ public class Twitter4JService implements TwitterService {
                     .map(Twitter4JUtil::constructTweet)
                     .filter(tweet -> StringUtils.containsIgnoreCase(tweet.getMessage(), keyword))
                     .collect(Collectors.toList());
-            filteredCache.putTweets(keyword, tweets);
+            homeTimelineCache.cacheTweets(tweets);
+            filteredCache.cacheTweets(keyword, tweets);
             logger.info("Successfully retrieved home timeline from Twitter and filtered by \'" + keyword + "\'.");
             return Optional.of(tweets);
         } catch (TwitterException te) {

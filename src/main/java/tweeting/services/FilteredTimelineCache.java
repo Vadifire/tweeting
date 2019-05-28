@@ -16,7 +16,7 @@ public class FilteredTimelineCache {
         filteredTimelineCache.clear();
     }
 
-    public void putTweets(String keyword, List<Tweet> tweets) {
+    public void cacheTweets(String keyword, List<Tweet> tweets) {
         filteredTimelineCache.put(keyword, tweets);
     }
 

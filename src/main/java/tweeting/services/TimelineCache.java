@@ -55,7 +55,7 @@ public class TimelineCache {
             final NullPointerException e = new NullPointerException();
             logger.error("Null cache retrieved for keyword: " + keyword, e);
             throw e;
-        } else {
+        } else if (!cached) {
             logger.warn("Home timeline was never retrieved from Twitter.");
         }
         return filteredCache.get(keyword);

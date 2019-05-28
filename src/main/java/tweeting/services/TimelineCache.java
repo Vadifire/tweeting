@@ -18,6 +18,8 @@ public class TimelineCache {
     private List<Status> statusCache; // Why? Only perform Status->Tweet conversion when necessary
     private List<Tweet> tweetCache;
 
+    private boolean fresh;
+
     private Map<String, List<Tweet>> filteredCache;
 
     private static final Logger logger = LoggerFactory.getLogger(Twitter4JService.class);
@@ -27,14 +29,18 @@ public class TimelineCache {
         tweetCache = new LinkedList<>(); // Must be a LinkedList
         statusCache = new LinkedList<>();
         filteredCache = new HashMap<>();
+        fresh = false; // Retrieved Tweets from Twitter at least once
     }
 
-    // As long as timeline is full, consider it fresh (no external Twitter updates).
-    public boolean canGetCachedTimeline() {
-        return (tweetCache.size() == cacheSize) || (statusCache.size() == cacheSize);
+    // Fresh condition: Retrieved home timeline from Twitter at least once, or posted at least TIMELINE_SIZE tweets
+    public boolean isFresh() {
+        return fresh;
     }
 
     public List<Tweet> getCachedTimeline() {
+        if (!isFresh()) {
+            logger.warn("Home timeline was never retrieved from Twitter.");
+        }
         if (statusCache.size() > 0) { // Convert
             final List<Tweet> convertedTweets = statusCache.stream()
                     .limit(TwitterService.TIMELINE_SIZE - tweetCache.size())
@@ -43,20 +49,17 @@ public class TimelineCache {
             tweetCache.addAll(convertedTweets);
             statusCache.clear();
         }
-        if (!canGetCachedTimeline()) {
-            if (tweetCache.size() == 0) {
-                logger.warn("Empty timeline was retrieved from cache.");
-            } else {
-                logger.warn("Incomplete timeline was retrieved from cache.");
-            }
-        }
         return tweetCache;
     }
 
     public void cacheTweets(List<Tweet> timeline) {
         this.tweetCache = new LinkedList<>(timeline);
+        fresh = true;
     }
-    public void cacheStatuses(List<Status> timeline) {this.statusCache = new LinkedList<>(timeline);}
+    public void cacheStatuses(List<Status> timeline) {
+        this.statusCache = new LinkedList<>(timeline);
+        fresh = true;
+    }
 
     public boolean canGetFilteredTimeline(String keyword) {
         return (filteredCache.containsKey(keyword));
@@ -81,6 +84,9 @@ public class TimelineCache {
         ((LinkedList<Tweet>)tweetCache).addFirst(tweet);
         if (tweetCache.size() > cacheSize) {
             ((LinkedList<Tweet>)tweetCache).removeLast();
+        }
+        if (tweetCache.size() == TwitterService.TIMELINE_SIZE) {
+            fresh = true;
         }
     }
 

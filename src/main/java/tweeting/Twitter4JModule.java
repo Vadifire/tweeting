@@ -13,13 +13,15 @@ import javax.inject.Singleton;
  * Provides a Twitter4J service for whatever client wants to use it
  */
 
-@Module(includes = TwitterAPIModule.class) // Depends on Twitter API
+@Module(includes = {
+        TwitterAPIModule.class,
+        TimelineCacheModule.class
+})
 public class Twitter4JModule {
 
     @Provides
     @Singleton
-    TwitterService provideTwitterService(Twitter api) {
-        return new Twitter4JService(api, new TimelineCache(TwitterService.TIMELINE_SIZE));
+    TwitterService provideTwitterService(Twitter api, TimelineCache cache) {
+        return new Twitter4JService(api, cache);
     }
-
 }

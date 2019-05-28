@@ -3,7 +3,6 @@ package tweeting.services;
 import org.junit.Before;
 import org.junit.Test;
 import tweeting.models.Tweet;
-import twitter4j.Status;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -13,8 +12,6 @@ import java.util.stream.Collectors;
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class TimelineCacheTest {
 
@@ -36,7 +33,7 @@ public class TimelineCacheTest {
 
         timelineCache = new TimelineCache(TwitterService.TIMELINE_SIZE);
 
-        assertFalse(timelineCache.isTimelineFresh());
+        assertFalse(timelineCache.canGetCachedTimeline());
     }
 
     @Test
@@ -44,7 +41,7 @@ public class TimelineCacheTest {
         timelineCache.cacheTweets(dummyTweets);
         final List<Tweet> cachedTweets = timelineCache.getCachedTimeline();
 
-        assertTrue(timelineCache.isTimelineFresh());
+        assertTrue(timelineCache.canGetCachedTimeline());
         final Set<String> tweetSet = dummyTweets.stream()
                 .map(Tweet::getMessage)
                 .collect(Collectors.toSet());
@@ -53,34 +50,17 @@ public class TimelineCacheTest {
     }
 
     @Test
-    public void testCacheStatuses() {
-        String dummyMsg = "all";
-        LinkedList<Status> statuses = new LinkedList<>();
-        for (int i = 0; i < TwitterService.TIMELINE_SIZE; i++) {
-            final Status mockedStatus = mock(Status.class); // Avoids having to define Status impl
-            when(mockedStatus.getText()).thenReturn(dummyMsg);
-            statuses.add(mockedStatus);
-        }
-
-        timelineCache.cacheStatuses(statuses);
-        final List<Tweet> cachedTweets = timelineCache.getCachedTimeline();
-
-
-        assertTrue(timelineCache.isTimelineFresh());
-        assertTrue(cachedTweets.stream().allMatch(t -> t.getMessage().equals(dummyMsg)));
-    }
-
-    @Test
     public void testCacheByPosting() {
         dummyTweets.stream()
                 .limit(TwitterService.TIMELINE_SIZE - 1)
                 .forEach(tweet -> {
                     timelineCache.pushTweet(tweet);
-                    assertFalse(timelineCache.isTimelineFresh());
+                    assertFalse(timelineCache.canGetCachedTimeline());
                 });
         timelineCache.pushTweet(dummyTweets.getLast());
-        assertTrue(timelineCache.isTimelineFresh());
+        assertTrue(timelineCache.canGetCachedTimeline());
     }
+
 
     @Test
     public void testOverflowCache() {
@@ -101,10 +81,11 @@ public class TimelineCacheTest {
         final List<Tweet> filteredList = new LinkedList<>();
         filteredList.add(dummyTweets.get(0));
 
+        timelineCache.cacheTweets(filteredList);
         timelineCache.cacheFilteredTimeline(keyword, filteredList);
         final List<Tweet> actualTweets = timelineCache.getCachedFilteredTimeline(keyword);
 
-        assertTrue(timelineCache.filterCacheContainsKeyword(keyword));
+        assertTrue(timelineCache.canGetCachedFilteredTimeline(keyword));
         assertEquals(keyword, actualTweets.get(0).getMessage());
     }
 

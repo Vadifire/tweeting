@@ -104,6 +104,7 @@ public class Twitter4JService implements TwitterService {
                     .map(Twitter4JUtil::constructTweet)
                     .collect(Collectors.toList());
             homeTimelineCache.cacheFilteredTimeline(keyword, tweets);
+            logger.info("Successfully retrieved home timeline from Twitter and filtered by \'" + keyword + "\'.");
             return Optional.ofNullable(tweets);
         } catch (TwitterException te) {
             throw createServerException(te);

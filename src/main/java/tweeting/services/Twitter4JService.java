@@ -60,8 +60,8 @@ public class Twitter4JService implements TwitterService {
                 logger.info("Successfully retrieved home timeline from cache.");
                 return cachedTweets.get();
             }
-            final List<Status> statuses = api.getHomeTimeline();
-            final List<Tweet> tweets = statuses.stream()
+            final List<Tweet> tweets = api.getHomeTimeline()
+                    .stream()
                     .map(this::constructTweet)
                     .filter(Objects::nonNull)
                     .collect(Collectors.toList());

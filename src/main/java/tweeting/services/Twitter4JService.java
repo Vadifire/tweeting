@@ -30,7 +30,7 @@ public class Twitter4JService implements TwitterService {
     }
 
     @Override
-    public Tweet postTweet(String message)
+    public Optional<Tweet> postTweet(String message)
             throws TwitterServiceResponseException, TwitterServiceCallException {
         if (StringUtils.isBlank(message)) {
             throw new TwitterServiceCallException(MISSING_TWEET_MESSAGE);
@@ -45,7 +45,7 @@ public class Twitter4JService implements TwitterService {
                         final Tweet tweet = constructTweet(status);
                         homeTimelineCache.invalidate();
                         return tweet;
-                    }).get();
+                    });
         } catch (TwitterException te) {
             throw createServerException(te);
         }
@@ -53,12 +53,12 @@ public class Twitter4JService implements TwitterService {
 
 
     @Override
-    public List<Tweet> getHomeTimeline() throws TwitterServiceResponseException {
+    public Optional<List<Tweet>> getHomeTimeline() throws TwitterServiceResponseException {
         try {
             final Optional<List<Tweet>> cachedTweets = homeTimelineCache.getCachedTimeline("");
             if (cachedTweets.isPresent()) {
                 logger.info("Successfully retrieved home timeline from cache.");
-                return cachedTweets.get();
+                return cachedTweets;
             }
             final List<Tweet> tweets = api.getHomeTimeline()
                     .stream()
@@ -67,7 +67,7 @@ public class Twitter4JService implements TwitterService {
                     .collect(Collectors.toList());
             homeTimelineCache.cacheTimeline("", tweets);
             logger.info("Successfully retrieved home timeline from Twitter.");
-            return tweets;
+            return Optional.of(tweets);
         } catch (TwitterException te) {
             throw createServerException(te);
         }
@@ -75,7 +75,7 @@ public class Twitter4JService implements TwitterService {
 
     //logger.info("Successfully retrieved home timeline filtered by \'" + keyword + "\' from cache.");
     @Override
-    public List<Tweet> getFilteredTimeline(String keyword)
+    public Optional<List<Tweet>> getFilteredTimeline(String keyword)
             throws TwitterServiceResponseException, TwitterServiceCallException {
         if (StringUtils.isBlank(keyword)) {
             throw new TwitterServiceCallException(MISSING_KEYWORD_MESSAGE);
@@ -84,14 +84,15 @@ public class Twitter4JService implements TwitterService {
         final Optional<List<Tweet>> cachedTweets = homeTimelineCache.getCachedTimeline(keyword);
         if (cachedTweets.isPresent()) {
             logger.info("Successfully retrieved filtered home timeline from cache.");
-            return cachedTweets.get();
+            return cachedTweets;
         } // Otherwise, make call to getHomeTimeline()
         final List<Tweet> filteredTweets = getHomeTimeline()
+                .get()
                 .stream()
                 .filter(tweet -> StringUtils.containsIgnoreCase(tweet.getMessage(), keyword))
                 .collect(Collectors.toList());
         homeTimelineCache.cacheTimeline(keyword, filteredTweets);
-        return filteredTweets;
+        return Optional.of(filteredTweets);
     }
 
     private TwitterServiceResponseException createServerException(TwitterException te) {

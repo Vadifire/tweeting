@@ -12,6 +12,7 @@ import tweeting.services.TwitterServiceResponseException;
 
 import javax.ws.rs.core.Response;
 import java.util.LinkedList;
+import java.util.Optional;
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
@@ -47,7 +48,7 @@ public class TwitterResourceTest {
         String message = "No Twitter Exception";
         Tweet tweet = new Tweet();
 
-        when(service.postTweet(any())).thenReturn(tweet);
+        when(service.postTweet(any())).thenReturn(Optional.of(tweet));
 
         Response response = resource.postTweet(message);
 
@@ -108,7 +109,7 @@ public class TwitterResourceTest {
         Tweet dummyTweet = new Tweet();
         dummyList.add(dummyTweet);
 
-        when(service.getHomeTimeline()).thenReturn(dummyList);
+        when(service.getHomeTimeline()).thenReturn(Optional.of(dummyList));
 
         Response response = resource.getHomeTimeline();
 
@@ -158,7 +159,7 @@ public class TwitterResourceTest {
         Tweet dummyTweet = new Tweet();
         dummyList.add(dummyTweet);
 
-        when(service.getFilteredTimeline(dummyKeyword)).thenReturn(dummyList);
+        when(service.getFilteredTimeline(dummyKeyword)).thenReturn(Optional.of(dummyList));
 
         Response response = resource.getFilteredHomeTimeline(dummyKeyword);
 

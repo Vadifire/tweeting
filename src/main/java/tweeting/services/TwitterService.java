@@ -3,6 +3,7 @@ package tweeting.services;
 import tweeting.models.Tweet;
 
 import java.util.List;
+import java.util.Optional;
 
 /*
  * Defines API for Twitter Service without exposing implementation
@@ -18,11 +19,11 @@ public interface TwitterService {
     String MISSING_KEYWORD_MESSAGE = "Could not retrieve filtered timeline because keyword " +
             "parameter is missing.";
 
-    Tweet postTweet(String message) throws TwitterServiceResponseException, TwitterServiceCallException;
+    Optional<Tweet> postTweet(String message) throws TwitterServiceResponseException, TwitterServiceCallException;
 
-    List<Tweet> getHomeTimeline() throws TwitterServiceResponseException;
+    Optional<List<Tweet>> getHomeTimeline() throws TwitterServiceResponseException;
 
-    List<Tweet> getFilteredTimeline(String keyword)
+    Optional<List<Tweet>> getFilteredTimeline(String keyword)
             throws TwitterServiceResponseException, TwitterServiceCallException;
 
 }

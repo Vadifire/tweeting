@@ -17,7 +17,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.Optional;
 
 @Path("/api/1.0/twitter/")
 @Singleton
@@ -44,7 +43,7 @@ public class TwitterResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response postTweet(@FormParam("message") String message) {
         try {
-            return Optional.of(service.postTweet(message))
+            return service.postTweet(message)
                     .map(timeline -> Response.status(Response.Status.CREATED)
                             .entity(timeline)
                             .build())
@@ -78,7 +77,7 @@ public class TwitterResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getHomeTimeline() {
         try {
-            return Optional.of(service.getHomeTimeline())
+            return service.getHomeTimeline()
                     .map(timeline -> Response.ok(timeline)
                             .build())
                     .get();
@@ -107,7 +106,7 @@ public class TwitterResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getFilteredHomeTimeline(@QueryParam("keyword") String keyword) {
         try {
-            return Optional.of(service.getFilteredTimeline(keyword))
+            return service.getFilteredTimeline(keyword)
                     .map(timeline -> Response.ok(timeline)
                             .build())
                     .get();

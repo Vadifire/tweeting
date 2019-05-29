@@ -87,7 +87,7 @@ public class Twitter4JServiceTest {
 
         when(api.getHomeTimeline()).thenReturn(dummyList);
 
-        final List<Tweet> actualList = service.getHomeTimeline();
+        final List<Tweet> actualList = service.getHomeTimeline().get();
 
         verify(api).getHomeTimeline();
         assertNotNull(actualList);
@@ -115,7 +115,7 @@ public class Twitter4JServiceTest {
 
         when(api.getHomeTimeline()).thenReturn(dummyList);
 
-        final List<Tweet> actualList = service.getHomeTimeline();
+        final List<Tweet> actualList = service.getHomeTimeline().get();
 
         verify(api).getHomeTimeline();
         assertNotNull(actualList);
@@ -180,7 +180,7 @@ public class Twitter4JServiceTest {
             TwitterServiceCallException {
         when(api.updateStatus(anyString())).thenReturn(mockedStatus);
 
-        final Tweet tweet = service.postTweet(dummyMessage);
+        final Tweet tweet = service.postTweet(dummyMessage).get();
 
         verify(api).updateStatus(anyString());
         assertNotNull(tweet);
@@ -197,7 +197,7 @@ public class Twitter4JServiceTest {
         when(api.updateStatus(anyString())).thenReturn(mockedStatus);
         when(mockedStatus.getUser()).thenReturn(null);
 
-        final Tweet tweet = service.postTweet(dummyMessage);
+        final Tweet tweet = service.postTweet(dummyMessage).get();
 
         verify(api).updateStatus(anyString());
         assertNotNull(tweet);
@@ -260,7 +260,7 @@ public class Twitter4JServiceTest {
             throws TwitterException, TwitterServiceResponseException, TwitterServiceCallException {
         when(api.getHomeTimeline()).thenReturn(dummyStatusList);
 
-        final List<Tweet> tweetList = service.getFilteredTimeline(repeated);
+        final List<Tweet> tweetList = service.getFilteredTimeline(repeated).get();
 
         assertTrue(dummyStatusList.stream() // Extra validation that all statuses contain repeated base String
                 .allMatch(status -> status.getText().contains(repeated)));
@@ -279,7 +279,7 @@ public class Twitter4JServiceTest {
         // The dummy keyword should guarantee excluding all but the last tweet
         when(api.getHomeTimeline()).thenReturn(dummyStatusList);
 
-        final List<Tweet> tweetList = service.getFilteredTimeline(dummyKeyword);
+        final List<Tweet> tweetList = service.getFilteredTimeline(dummyKeyword).get();
 
         verify(api).getHomeTimeline();
         assertEquals(1, tweetList.size());
@@ -292,7 +292,7 @@ public class Twitter4JServiceTest {
         final String dummyKeyword = dummyStatusList.get(dummyStatusList.size() - 1).getText() + repeated; // filters all
         when(api.getHomeTimeline()).thenReturn(dummyStatusList);
 
-        final List<Tweet> tweetList = service.getFilteredTimeline(dummyKeyword);
+        final List<Tweet> tweetList = service.getFilteredTimeline(dummyKeyword).get();
 
         verify(api).getHomeTimeline();
         assertEquals(0, tweetList.size());
@@ -331,7 +331,7 @@ public class Twitter4JServiceTest {
         when(api.getHomeTimeline()).thenReturn(dummyStatusList);
         when(dummyStatusList.get(0).getText()).thenReturn(null); // Make a Status have null message
 
-        final List<Tweet> tweetList = service.getFilteredTimeline(dummyKeyword);
+        final List<Tweet> tweetList = service.getFilteredTimeline(dummyKeyword).get();
 
         verify(api).getHomeTimeline();
         assertEquals(dummyStatusList.size() - 1, tweetList.size());
@@ -352,7 +352,7 @@ public class Twitter4JServiceTest {
         when(api.getHomeTimeline()).thenReturn(dummyList);
 
         service.getHomeTimeline();
-        final List<Tweet> tweetList = service.getFilteredTimeline(mockedStatus.getText());
+        final List<Tweet> tweetList = service.getFilteredTimeline(mockedStatus.getText()).get();
         assertEquals(1, tweetList.size());
         assertEquals(mockedStatus.getText(), tweetList.get(0).getMessage());
 

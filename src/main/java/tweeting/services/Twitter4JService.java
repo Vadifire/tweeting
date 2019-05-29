@@ -4,17 +4,17 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tweeting.models.Tweet;
+import tweeting.models.TwitterUser;
 import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 
 import javax.inject.Singleton;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import static tweeting.services.Twitter4JUtil.constructTweet;
-import static tweeting.services.Twitter4JUtil.constructTweetList;
 
 @Singleton
 public class Twitter4JService implements TwitterService {
@@ -64,7 +64,7 @@ public class Twitter4JService implements TwitterService {
         try {
             return Optional.ofNullable(api.getHomeTimeline())
                     .map(statuses -> {
-                        final List<Tweet> tweets = Twitter4JUtil.constructTweetList(statuses);
+                        final List<Tweet> tweets = Twitter4JService.constructTweetList(statuses);
                         homeTimelineCache.cacheTweets(tweets);
                         logger.info("Successfully retrieved home timeline from Twitter.");
                         return tweets;
@@ -118,5 +118,32 @@ public class Twitter4JService implements TwitterService {
         } else {
             return new TwitterServiceResponseException(te);
         }
+    }
+
+    public static Tweet constructTweet(Status status) {
+        if (status == null) {
+            return null;
+        }
+        final Tweet tweet = new Tweet();
+        tweet.setMessage(status.getText());
+        if (status.getUser() == null) {
+            logger.warn("Tweet has no user.");
+        } else {
+            final TwitterUser user = new TwitterUser();
+            user.setTwitterHandle(status.getUser().getScreenName());
+            user.setName(status.getUser().getName());
+            user.setProfileImageUrl(status.getUser().getProfileImageURL());
+            tweet.setUser(user);
+        }
+        tweet.setCreatedAt(status.getCreatedAt());
+        return tweet;
+    }
+
+    public static List<Tweet> constructTweetList(List<Status> statuses) {
+        return statuses
+                .stream()
+                .map(Twitter4JService::constructTweet)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toCollection(LinkedList::new));
     }
 }

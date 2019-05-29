@@ -10,7 +10,6 @@ import twitter4j.User;
 import twitter4j.util.CharacterUtil;
 
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -22,7 +21,7 @@ import static junit.framework.TestCase.assertNotNull;
 import static junit.framework.TestCase.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -31,7 +30,6 @@ public class Twitter4JServiceTest {
     // Mocked classes
     private Twitter api;
     private TimelineCache timelineCache;
-    private FilteredTimelineCache filteredCache;
     private Status mockedStatus;
 
     // Dummy vars
@@ -81,8 +79,7 @@ public class Twitter4JServiceTest {
 
         api = mock(Twitter.class);
         timelineCache = new TimelineCache();
-        filteredCache = new FilteredTimelineCache();
-        service = new Twitter4JService(api, timelineCache, filteredCache);
+        service = new Twitter4JService(api);
     }
 
     @Test
@@ -108,13 +105,9 @@ public class Twitter4JServiceTest {
 
     @Test
     public void testGetCachedTweets() throws TwitterServiceResponseException, TwitterException {
-        final List<Tweet> cachedTweets = new LinkedList<>();
-        timelineCache.cacheTweets(cachedTweets);
-
-        final List<Tweet> actualList = service.getHomeTimeline().get();
-
-        verify(api, never()).getHomeTimeline();
-        assertEquals(cachedTweets, actualList);
+        testGetTweetsSuccess();
+        testGetTweetsSuccess();
+        verify(api, times(1)).getHomeTimeline();
     }
 
     @Test
@@ -129,16 +122,6 @@ public class Twitter4JServiceTest {
         verify(api).getHomeTimeline();
         assertNotNull(actualList);
         assertEquals(0, actualList.size());
-    }
-
-    @Test
-    public void testGetTweetsNullTimeline() throws TwitterException, TwitterServiceResponseException {
-        when(api.getHomeTimeline()).thenReturn(null);
-
-        final Optional<List<Tweet>> tweets = service.getHomeTimeline();
-
-        verify(api).getHomeTimeline();
-        assertEquals(Optional.empty(), tweets);
     }
 
     @Test(expected = TwitterServiceResponseException.class)
@@ -294,10 +277,9 @@ public class Twitter4JServiceTest {
 
         assertTrue(dummyStatusList.stream() // Extra validation that all statuses contain repeated base String
                 .allMatch(status -> status.getText().contains(repeated)));
-        verify(api).getHomeTimeline();
         assertEquals(dummyStatusList.size(), tweetList.size());
         final Set<String> statusSet = dummyStatusList.stream()
-                .map(status -> status.getText())
+                .map(Status::getText)
                 .collect(Collectors.toSet());
         assertTrue(tweetList.stream()
                 .allMatch(tweet -> statusSet.contains(tweet.getMessage())));
@@ -356,17 +338,6 @@ public class Twitter4JServiceTest {
     }
 
     @Test
-    public void testFilterNullTimeline()
-            throws TwitterException, TwitterServiceResponseException, TwitterServiceCallException {
-        when(api.getHomeTimeline()).thenReturn(null);
-
-        final Optional<List<Tweet>> tweets = service.getFilteredTimeline("some keyword");
-
-        verify(api).getHomeTimeline();
-        assertEquals(Optional.empty(), tweets);
-    }
-
-    @Test
     public void testFilterAllResultsExceptFirstNullMessage()
             throws TwitterException, TwitterServiceResponseException, TwitterServiceCallException {
         final String dummyKeyword = dummyStatusList.get(0).getText();
@@ -389,35 +360,24 @@ public class Twitter4JServiceTest {
     @Test
     public void testMissFilterCacheHitTimelineCache()
             throws TwitterServiceResponseException, TwitterException, TwitterServiceCallException {
-        final String dummyKeyword = "keyword";
-        final List<Tweet> cachedTweets = new LinkedList<>();
-        final Tweet dummyTweet = new Tweet();
-        dummyTweet.setMessage(dummyKeyword);
-        cachedTweets.add(dummyTweet);
-        timelineCache.cacheTweets(cachedTweets);
+        final ResponseListImpl<Status> dummyList = new ResponseListImpl<>();
+        dummyList.add(mockedStatus);
+        when(api.getHomeTimeline()).thenReturn(dummyList);
 
-        final Optional<List<Tweet>> actualList = service.getFilteredTimeline(dummyKeyword);
+        service.getHomeTimeline();
+        final List<Tweet> tweetList = service.getFilteredTimeline(mockedStatus.getText()).get();
+        assertEquals(1, tweetList.size());
+        assertEquals(mockedStatus.getText(), tweetList.get(0).getMessage());
 
-        verify(api, never()).getHomeTimeline();
-        assertEquals(cachedTweets.size(), actualList.get().size());
-        assertEquals(dummyTweet, actualList.get().get(0));
+        verify(api, times(1)).getHomeTimeline();
     }
 
     @Test
     public void testFilterCacheHit()
             throws TwitterServiceCallException, TwitterServiceResponseException, TwitterException {
-        final String dummyKeyword = "keyword";
-        final List<Tweet> cachedTweets = new LinkedList<>();
-        final Tweet dummyTweet = new Tweet();
-        dummyTweet.setMessage(dummyKeyword);
-        cachedTweets.add(dummyTweet);
-        filteredCache.cacheTweets(dummyKeyword, cachedTweets);
-
-        final Optional<List<Tweet>> actualList = service.getFilteredTimeline(dummyKeyword);
-
-        verify(api, never()).getHomeTimeline();
-        assertEquals(cachedTweets.size(), actualList.get().size());
-        assertEquals(dummyTweet, actualList.get().get(0));
+        testFilterAllResults();
+        testFilterAllResults();
+        verify(api, times(1)).getHomeTimeline();
     }
 
 }

@@ -23,13 +23,11 @@ public class Twitter4JService implements TwitterService {
 
     private static final Logger logger = LoggerFactory.getLogger(Twitter4JService.class);
 
-    private TimelineCache homeTimelineCache; // Used to avoid making extra API calls to Twitter
-    private FilteredTimelineCache filteredCache; // Used to avoid making extra API calls to Twitter
+    private TimelineCache homeTimelineCache;
 
-    public Twitter4JService(Twitter api, TimelineCache homeTimelineCache, FilteredTimelineCache filteredCache) {
+    public Twitter4JService(Twitter api) {
         this.api = api;
-        this.homeTimelineCache = homeTimelineCache;
-        this.filteredCache = filteredCache;
+        homeTimelineCache = new TimelineCache();
     }
 
     @Override
@@ -47,7 +45,6 @@ public class Twitter4JService implements TwitterService {
                         logger.info("Successfully posted '{}' to Twitter.", message);
                         final Tweet tweet = constructTweet(status);
                         homeTimelineCache.invalidate();
-                        filteredCache.invalidate();
                         return tweet;
                     });
         } catch (TwitterException te) {
@@ -55,20 +52,23 @@ public class Twitter4JService implements TwitterService {
         }
     }
 
+
     @Override
     public Optional<List<Tweet>> getHomeTimeline() throws TwitterServiceResponseException {
-        if (homeTimelineCache.getCachedTimeline() != null) {
-            logger.info("Successfully retrieved home timeline from cache.");
-            return Optional.of(homeTimelineCache.getCachedTimeline());
-        }
         try {
-            return Optional.ofNullable(api.getHomeTimeline())
-                    .map(statuses -> {
-                        final List<Tweet> tweets = Twitter4JService.constructTweetList(statuses);
-                        homeTimelineCache.cacheTweets(tweets);
-                        logger.info("Successfully retrieved home timeline from Twitter.");
-                        return tweets;
-                    });
+            final Optional<List<Tweet>> cachedTweets = Optional.ofNullable(homeTimelineCache.getCachedTimeline());
+            if (cachedTweets.isPresent()) {
+                logger.info("Successfully retrieved home timeline from cache.");
+                return cachedTweets;
+            }
+            final List<Status> statuses = api.getHomeTimeline();
+            final List<Tweet> tweets = statuses.stream()
+                    .map(Twitter4JService::constructTweet)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
+            homeTimelineCache.cacheTimeline(tweets);
+            logger.info("Successfully retrieved home timeline from Twitter.");
+            return Optional.of(tweets);
         } catch (TwitterException te) {
             throw createServerException(te);
         }
@@ -81,33 +81,32 @@ public class Twitter4JService implements TwitterService {
             throw new TwitterServiceCallException(MISSING_KEYWORD_MESSAGE);
         }
         try {
-            // First attempt to retrieve from filtered cache
-            if (filteredCache.containsKeyword(keyword)) {
+            if (homeTimelineCache.containsKeyword(keyword)) {
                 logger.info("Successfully retrieved home timeline filtered by \'" + keyword + "\' from cache.");
-                return Optional.of(filteredCache.getTweets(keyword));
+                return Optional.of(homeTimelineCache.getCachedFilteredTimeline(keyword));
             }
-            // Next, attempt to retrieve timeline from cache and apply filter
-            else if (homeTimelineCache.getCachedTimeline() != null) {
-                final List<Tweet> tweets = homeTimelineCache.getCachedTimeline()
+            final List<Tweet> cachedTweets = homeTimelineCache.getCachedTimeline();
+            if (cachedTweets != null) {
+                final List<Tweet> tweets = cachedTweets
                         .stream()
                         .filter(tweet -> StringUtils.containsIgnoreCase(tweet.getMessage(), keyword))
                         .collect(Collectors.toList());
-                filteredCache.cacheTweets(keyword, tweets);
+                homeTimelineCache.cacheFilteredTimeline(keyword, tweets);
                 logger.info("Successfully retrieved home timeline from cache and filtered by \'" + keyword + "\'.");
                 return Optional.of(tweets);
             }
             // Otherwise, need to pull from Twitter.
             final List<Status> statuses = api.getHomeTimeline();
-            if (statuses == null) {
-                return Optional.empty();
-            }
-            List<Tweet> tweets = constructTweetList(statuses);
-            homeTimelineCache.cacheTweets(tweets);
+            List<Tweet> tweets = statuses.stream()
+                    .map(Twitter4JService::constructTweet)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toCollection(LinkedList::new));
+            homeTimelineCache.cacheTimeline(tweets);
             tweets = tweets.stream()
                     .filter(tweet -> StringUtils.containsIgnoreCase(tweet.getMessage(), keyword))
                     .collect(Collectors.toList());
             logger.info("Successfully retrieved home timeline from Twitter and filtered by \'" + keyword + "\'.");
-            filteredCache.cacheTweets(keyword, tweets);
+            homeTimelineCache.cacheFilteredTimeline(keyword, tweets);
             return Optional.of(tweets);
         } catch (TwitterException te) {
             throw createServerException(te);
@@ -142,11 +141,4 @@ public class Twitter4JService implements TwitterService {
         return tweet;
     }
 
-    public static List<Tweet> constructTweetList(List<Status> statuses) {
-        return statuses
-                .stream()
-                .map(Twitter4JService::constructTweet)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toCollection(LinkedList::new));
-    }
 }

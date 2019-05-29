@@ -81,11 +81,10 @@ public class Twitter4JService implements TwitterService {
             throw new TwitterServiceCallException(MISSING_KEYWORD_MESSAGE);
         }
         try {
-
             final Optional<List<Tweet>> cachedFilteredTweets = homeTimelineCache.getCachedFilteredTimeline(keyword);
             if (cachedFilteredTweets.isPresent()) {
                 homeTimelineCache.cacheFilteredTimeline(keyword, cachedFilteredTweets.get());
-                logger.info("Successfully retrieved home timeline from cache and filtered by \'" + keyword + "\'.");
+                logger.info("Successfully retrieved home timeline filtered by \'" + keyword + "\' from cache.");
                 return cachedFilteredTweets;
             }
             final Optional<List<Tweet>> cachedTimeline = homeTimelineCache.getCachedTimeline();

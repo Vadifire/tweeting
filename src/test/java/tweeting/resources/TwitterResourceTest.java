@@ -12,7 +12,6 @@ import tweeting.services.TwitterServiceResponseException;
 
 import javax.ws.rs.core.Response;
 import java.util.LinkedList;
-import java.util.Optional;
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
@@ -48,7 +47,7 @@ public class TwitterResourceTest {
         String message = "No Twitter Exception";
         Tweet tweet = new Tweet();
 
-        when(service.postTweet(any())).thenReturn(Optional.of(tweet));
+        when(service.postTweet(any())).thenReturn(tweet);
 
         Response response = resource.postTweet(message);
 
@@ -57,19 +56,6 @@ public class TwitterResourceTest {
         System.out.println(response.getStatus());
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
         assertEquals(tweet, response.getEntity());
-    }
-
-    @Test
-    public void testTweetEmptyOptional() throws TwitterServiceResponseException,
-            TwitterServiceCallException {
-        when(service.postTweet(dummyMessage)).thenReturn(Optional.empty());
-
-        Response actualResponse = resource.postTweet(dummyMessage);
-
-        verify(service).postTweet(dummyMessage);
-        assertNotNull(actualResponse);
-        Assert.assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), actualResponse.getStatus());
-        Assert.assertEquals(TwitterService.SERVICE_UNAVAILABLE_MESSAGE, actualResponse.getEntity().toString());
     }
 
     @Test
@@ -122,7 +108,7 @@ public class TwitterResourceTest {
         Tweet dummyTweet = new Tweet();
         dummyList.add(dummyTweet);
 
-        when(service.getHomeTimeline()).thenReturn(Optional.of(dummyList));
+        when(service.getHomeTimeline()).thenReturn(dummyList);
 
         Response response = resource.getHomeTimeline();
 
@@ -133,17 +119,6 @@ public class TwitterResourceTest {
         assertEquals(dummyList, response.getEntity()); // Verify correct content
     }
 
-    @Test
-    public void testTimelineEmptyOptional() throws TwitterServiceResponseException {
-        when(service.getHomeTimeline()).thenReturn(Optional.empty());
-
-        Response actualResponse = resource.getHomeTimeline();
-
-        verify(service).getHomeTimeline();
-        assertNotNull(actualResponse);
-        Assert.assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), actualResponse.getStatus());
-        Assert.assertEquals(TwitterService.SERVICE_UNAVAILABLE_MESSAGE, actualResponse.getEntity().toString());
-    }
 
     @Test
     public void testTimelineResponseException() throws TwitterServiceResponseException {
@@ -183,7 +158,7 @@ public class TwitterResourceTest {
         Tweet dummyTweet = new Tweet();
         dummyList.add(dummyTweet);
 
-        when(service.getFilteredTimeline(dummyKeyword)).thenReturn(Optional.of(dummyList));
+        when(service.getFilteredTimeline(dummyKeyword)).thenReturn(dummyList);
 
         Response response = resource.getFilteredHomeTimeline(dummyKeyword);
 
@@ -194,18 +169,6 @@ public class TwitterResourceTest {
         TestCase.assertEquals(dummyList, response.getEntity());
     }
 
-    @Test
-    public void testFilterEmptyOptional() throws TwitterServiceResponseException,
-            TwitterServiceCallException {
-        when(service.getFilteredTimeline(dummyKeyword)).thenReturn(Optional.empty());
-
-        Response actualResponse = resource.getFilteredHomeTimeline(dummyKeyword);
-
-        verify(service).getFilteredTimeline(dummyKeyword);
-        assertNotNull(actualResponse);
-        Assert.assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), actualResponse.getStatus());
-        Assert.assertEquals(TwitterService.SERVICE_UNAVAILABLE_MESSAGE, actualResponse.getEntity().toString());
-    }
 
     @Test
     public void testFilterCallException() throws TwitterServiceResponseException,

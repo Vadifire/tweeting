@@ -4,6 +4,7 @@ import tweeting.models.Tweet;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 public class TimelineCache {
 
@@ -28,16 +29,12 @@ public class TimelineCache {
         filteredTimelineCache.put(keyword, tweets);
     }
 
-    public List<Tweet> getCachedTimeline() {
-        return timelineCache;
+    public Optional<List<Tweet>> getCachedTimeline() {
+        return Optional.ofNullable(timelineCache);
     }
 
-    public boolean containsKeyword(String keyword) {
-        return filteredTimelineCache.containsKey(keyword);
-    }
-
-    public List<Tweet> getCachedFilteredTimeline(String keyword) {
-        return filteredTimelineCache.get(keyword);
+    public Optional<List<Tweet>> getCachedFilteredTimeline(String keyword) {
+        return Optional.ofNullable(filteredTimelineCache.get(keyword));
     }
 
 }

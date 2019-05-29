@@ -8,8 +8,6 @@ import java.util.Optional;
 
 public class TimelineCache {
 
-    private List<Tweet> timelineCache;
-
     private HashMap<String, List<Tweet>> filteredTimelineCache; // Store filter results
 
     public TimelineCache() {
@@ -18,7 +16,6 @@ public class TimelineCache {
 
     public void invalidate() {
         filteredTimelineCache.clear();
-        timelineCache = null;
     }
 
     public void cacheTimeline(String keyword, List<Tweet> tweets) {

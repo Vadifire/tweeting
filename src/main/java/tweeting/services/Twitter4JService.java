@@ -24,6 +24,8 @@ public class Twitter4JService implements TwitterService {
 
     private TimelineCache homeTimelineCache;
 
+    private static final String EMPTY_FILTER = "";
+
     public Twitter4JService(Twitter api) {
         this.api = api;
         homeTimelineCache = new TimelineCache();
@@ -55,7 +57,7 @@ public class Twitter4JService implements TwitterService {
     @Override
     public Optional<List<Tweet>> getHomeTimeline() throws TwitterServiceResponseException {
         try {
-            final Optional<List<Tweet>> cachedTweets = homeTimelineCache.getCachedTimeline("");
+            final Optional<List<Tweet>> cachedTweets = homeTimelineCache.getCachedTimeline(EMPTY_FILTER);
             if (cachedTweets.isPresent()) {
                 logger.info("Successfully retrieved home timeline from cache.");
                 return cachedTweets;
@@ -65,7 +67,7 @@ public class Twitter4JService implements TwitterService {
                     .map(this::constructTweet)
                     .filter(Objects::nonNull)
                     .collect(Collectors.toList());
-            homeTimelineCache.cacheTimeline("", tweets);
+            homeTimelineCache.cacheTimeline(EMPTY_FILTER, tweets);
             logger.info("Successfully retrieved home timeline from Twitter.");
             return Optional.of(tweets);
         } catch (TwitterException te) {

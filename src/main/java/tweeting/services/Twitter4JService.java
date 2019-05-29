@@ -87,11 +87,11 @@ public class Twitter4JService implements TwitterService {
             return cachedTweets.get();
         } // Otherwise, make call to getHomeTimeline()
         final List<Tweet> filteredTweets = getHomeTimeline()
-                    .stream()
-                    .filter(tweet -> StringUtils.containsIgnoreCase(tweet.getMessage(), keyword))
-                    .collect(Collectors.toList());
-            homeTimelineCache.cacheTimeline(keyword, filteredTweets);
-            return filteredTweets;
+                .stream()
+                .filter(tweet -> StringUtils.containsIgnoreCase(tweet.getMessage(), keyword))
+                .collect(Collectors.toList());
+        homeTimelineCache.cacheTimeline(keyword, filteredTweets);
+        return filteredTweets;
     }
 
     private TwitterServiceResponseException createServerException(TwitterException te) {

@@ -102,11 +102,14 @@ public class Twitter4JService implements TwitterService {
             final List<Status> statuses = api.getHomeTimeline();
             List<Tweet> tweets = statuses.stream()
                     .filter(Objects::nonNull)
-                    .filter(status -> StringUtils.containsIgnoreCase(status.getText(), keyword))
                     .map(Twitter4JService::constructTweet)
                     .collect(Collectors.toList());
+            homeTimelineCache.cacheTimeline(tweets); // Cache result from API call
+            tweets = tweets.stream()
+                    .filter(tweet -> StringUtils.containsIgnoreCase(tweet.getMessage(), keyword))
+                    .collect(Collectors.toList());
             logger.info("Successfully retrieved home timeline from Twitter and filtered by \'" + keyword + "\'.");
-            homeTimelineCache.cacheFilteredTimeline(keyword, tweets);
+            homeTimelineCache.cacheFilteredTimeline(keyword, tweets); // Cache result from filter
             return Optional.of(tweets);
         } catch (TwitterException te) {
             throw createServerException(te);

@@ -75,7 +75,6 @@ public class Twitter4JService implements TwitterService {
         }
     }
 
-    //logger.info("Successfully retrieved home timeline filtered by \'" + keyword + "\' from cache.");
     @Override
     public Optional<List<Tweet>> getFilteredTimeline(String keyword)
             throws TwitterServiceResponseException, TwitterServiceCallException {

@@ -103,6 +103,7 @@ public class Twitter4JService implements TwitterService {
             }
             final List<Tweet> tweets = constructTweetList(statuses);
             homeTimelineCache.cacheTweets(tweets);
+            logger.info("Successfully retrieved home timeline from Twitter and filtered by \'" + keyword + "\'.");
             return Optional.of(tweets.stream()
                     .filter(tweet -> StringUtils.containsIgnoreCase(tweet.getMessage(), keyword))
                     .collect(Collectors.toList()));

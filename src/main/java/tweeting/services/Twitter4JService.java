@@ -85,7 +85,7 @@ public class Twitter4JService implements TwitterService {
         if (cachedTweets.isPresent()) {
             logger.info("Successfully retrieved filtered home timeline from cache.");
             return cachedTweets.get();
-        } // Otherwise, make call to Twitter
+        } // Otherwise, make call to getHomeTimeline()
         final List<Tweet> filteredTweets = getHomeTimeline()
                     .stream()
                     .filter(tweet -> StringUtils.containsIgnoreCase(tweet.getMessage(), keyword))

@@ -10,7 +10,6 @@ import twitter4j.Twitter;
 import twitter4j.TwitterException;
 
 import javax.inject.Singleton;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -98,12 +97,9 @@ public class Twitter4JService implements TwitterService {
             // Otherwise, need to pull from Twitter.
             final List<Status> statuses = api.getHomeTimeline();
             List<Tweet> tweets = statuses.stream()
-                    .map(Twitter4JService::constructTweet)
                     .filter(Objects::nonNull)
-                    .collect(Collectors.toCollection(LinkedList::new));
-            homeTimelineCache.cacheTimeline(tweets);
-            tweets = tweets.stream()
-                    .filter(tweet -> StringUtils.containsIgnoreCase(tweet.getMessage(), keyword))
+                    .filter(status -> StringUtils.containsIgnoreCase(status.getText(), keyword))
+                    .map(Twitter4JService::constructTweet)
                     .collect(Collectors.toList());
             logger.info("Successfully retrieved home timeline from Twitter and filtered by \'" + keyword + "\'.");
             homeTimelineCache.cacheFilteredTimeline(keyword, tweets);

@@ -21,19 +21,11 @@ public class TimelineCache {
         timelineCache = null;
     }
 
-    public void cacheTimeline(List<Tweet> timeline) {
-        this.timelineCache = timeline;
-    }
-
-    public void cacheFilteredTimeline(String keyword, List<Tweet> tweets) {
+    public void cacheTimeline(String keyword, List<Tweet> tweets) {
         filteredTimelineCache.put(keyword, tweets);
     }
 
-    public Optional<List<Tweet>> getCachedTimeline() {
-        return Optional.ofNullable(timelineCache);
-    }
-
-    public Optional<List<Tweet>> getCachedFilteredTimeline(String keyword) {
+    public Optional<List<Tweet>> getCachedTimeline(String keyword) {
         return Optional.ofNullable(filteredTimelineCache.get(keyword));
     }
 

@@ -11,7 +11,6 @@ import twitter4j.util.CharacterUtil;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -19,6 +18,7 @@ import java.util.stream.Stream;
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
 import static junit.framework.TestCase.assertTrue;
+import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -29,7 +29,6 @@ public class Twitter4JServiceTest {
 
     // Mocked classes
     private Twitter api;
-    private TimelineCache timelineCache;
     private Status mockedStatus;
 
     // Dummy vars
@@ -78,7 +77,6 @@ public class Twitter4JServiceTest {
                 });
 
         api = mock(Twitter.class);
-        timelineCache = new TimelineCache();
         service = new Twitter4JService(api);
     }
 
@@ -89,7 +87,7 @@ public class Twitter4JServiceTest {
 
         when(api.getHomeTimeline()).thenReturn(dummyList);
 
-        final List<Tweet> actualList = service.getHomeTimeline().get();
+        final List<Tweet> actualList = service.getHomeTimeline();
 
         verify(api).getHomeTimeline();
         assertNotNull(actualList);
@@ -117,7 +115,7 @@ public class Twitter4JServiceTest {
 
         when(api.getHomeTimeline()).thenReturn(dummyList);
 
-        final List<Tweet> actualList = service.getHomeTimeline().get();
+        final List<Tweet> actualList = service.getHomeTimeline();
 
         verify(api).getHomeTimeline();
         assertNotNull(actualList);
@@ -182,7 +180,7 @@ public class Twitter4JServiceTest {
             TwitterServiceCallException {
         when(api.updateStatus(anyString())).thenReturn(mockedStatus);
 
-        final Tweet tweet = service.postTweet(dummyMessage).get();
+        final Tweet tweet = service.postTweet(dummyMessage);
 
         verify(api).updateStatus(anyString());
         assertNotNull(tweet);
@@ -194,28 +192,17 @@ public class Twitter4JServiceTest {
     }
 
     @Test
-    public void testPostNullTweet()
-            throws TwitterException, TwitterServiceResponseException, TwitterServiceCallException {
-        when(api.updateStatus(anyString())).thenReturn(null);
-
-        final Optional<Tweet> tweet = service.postTweet(dummyMessage);
-
-        verify(api).updateStatus(anyString());
-        assertEquals(Optional.empty(), tweet);
-    }
-
-    @Test
     public void testPostTweetNullUser()
             throws TwitterException, TwitterServiceResponseException, TwitterServiceCallException {
         when(api.updateStatus(anyString())).thenReturn(mockedStatus);
         when(mockedStatus.getUser()).thenReturn(null);
 
-        final Tweet tweet = service.postTweet(dummyMessage).get();
+        final Tweet tweet = service.postTweet(dummyMessage);
 
         verify(api).updateStatus(anyString());
         assertNotNull(tweet);
         assertEquals(dummyMessage, tweet.getMessage());
-        assertEquals(null, tweet.getUser());
+        assertNull(tweet.getUser());
         assertEquals(dummyDate, tweet.getCreatedAt());
     }
 
@@ -273,7 +260,7 @@ public class Twitter4JServiceTest {
             throws TwitterException, TwitterServiceResponseException, TwitterServiceCallException {
         when(api.getHomeTimeline()).thenReturn(dummyStatusList);
 
-        final List<Tweet> tweetList = service.getFilteredTimeline(repeated).get();
+        final List<Tweet> tweetList = service.getFilteredTimeline(repeated);
 
         assertTrue(dummyStatusList.stream() // Extra validation that all statuses contain repeated base String
                 .allMatch(status -> status.getText().contains(repeated)));
@@ -292,7 +279,7 @@ public class Twitter4JServiceTest {
         // The dummy keyword should guarantee excluding all but the last tweet
         when(api.getHomeTimeline()).thenReturn(dummyStatusList);
 
-        final List<Tweet> tweetList = service.getFilteredTimeline(dummyKeyword).get();
+        final List<Tweet> tweetList = service.getFilteredTimeline(dummyKeyword);
 
         verify(api).getHomeTimeline();
         assertEquals(1, tweetList.size());
@@ -305,7 +292,7 @@ public class Twitter4JServiceTest {
         final String dummyKeyword = dummyStatusList.get(dummyStatusList.size() - 1).getText() + repeated; // filters all
         when(api.getHomeTimeline()).thenReturn(dummyStatusList);
 
-        final List<Tweet> tweetList = service.getFilteredTimeline(dummyKeyword).get();
+        final List<Tweet> tweetList = service.getFilteredTimeline(dummyKeyword);
 
         verify(api).getHomeTimeline();
         assertEquals(0, tweetList.size());
@@ -344,13 +331,13 @@ public class Twitter4JServiceTest {
         when(api.getHomeTimeline()).thenReturn(dummyStatusList);
         when(dummyStatusList.get(0).getText()).thenReturn(null); // Make a Status have null message
 
-        final List<Tweet> tweetList = service.getFilteredTimeline(dummyKeyword).get();
+        final List<Tweet> tweetList = service.getFilteredTimeline(dummyKeyword);
 
         verify(api).getHomeTimeline();
         assertEquals(dummyStatusList.size() - 1, tweetList.size());
         Set<String> statusSet = dummyStatusList.stream()
                 .filter(tweet -> tweet.getText() != null) // Ignore any null messages
-                .map(status -> status.getText())
+                .map(Status::getText)
                 .collect(Collectors.toSet());
         assertTrue(tweetList.stream()
                 .allMatch(tweet -> statusSet.contains(tweet.getMessage())));
@@ -365,7 +352,7 @@ public class Twitter4JServiceTest {
         when(api.getHomeTimeline()).thenReturn(dummyList);
 
         service.getHomeTimeline();
-        final List<Tweet> tweetList = service.getFilteredTimeline(mockedStatus.getText()).get();
+        final List<Tweet> tweetList = service.getFilteredTimeline(mockedStatus.getText());
         assertEquals(1, tweetList.size());
         assertEquals(mockedStatus.getText(), tweetList.get(0).getMessage());
 

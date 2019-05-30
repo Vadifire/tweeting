@@ -36,7 +36,6 @@ public class LogFilter implements Filter {
     }
 
     public void init(FilterConfig config) {
-
     }
 
     public void destroy() {

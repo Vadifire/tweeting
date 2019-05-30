@@ -5,6 +5,7 @@ import java.util.Date;
 public class Tweet {
 
     private String message;
+    private String url;
     private TwitterUser user;
     private Date createdAt;
 
@@ -30,5 +31,13 @@ public class Tweet {
 
     public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 }

@@ -4,6 +4,7 @@ import com.codahale.metrics.health.HealthCheck;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import org.eclipse.jetty.servlets.CrossOriginFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tweeting.conf.TweetingConfiguration;
@@ -12,6 +13,7 @@ import tweeting.util.LogFilter;
 
 import javax.inject.Inject;
 import javax.servlet.DispatcherType;
+import javax.servlet.FilterRegistration;
 import java.util.EnumSet;
 
 public class TweetingApplication extends Application<TweetingConfiguration> {
@@ -33,10 +35,10 @@ public class TweetingApplication extends Application<TweetingConfiguration> {
     }
 
     @Inject
-    LogFilter logFilter;
+    HealthCheck healthCheck;
 
     @Inject
-    HealthCheck healthCheck;
+    LogFilter logFilter;
 
     @Override
     public void run(TweetingConfiguration config, Environment env) {
@@ -48,27 +50,32 @@ public class TweetingApplication extends Application<TweetingConfiguration> {
                     .configuration(config)
                     .build();
             TwitterResource twitterResource = comp.buildTwitterResource();
-            logFilter = comp.buildLogFilter();
             healthCheck = comp.buildAliveHealthCheck();
+            logFilter = comp.buildLogFilter();
 
             logger.info("Twitter credentials have been configured using the {} configuration file.",
                     getConfigFileName());
 
-            logger.debug("Adding log filter");
             env.servlets().addFilter("Log Filter", logFilter)
                     .addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/*");
             env.admin().addFilter("AdminFilter", new LogFilter()).addMappingForUrlPatterns(
                     null, false, "/*");
-            logger.debug("Log Filter has been set to: {}", logFilter.getClass().getName());
+            logger.info("Log Filter has been set to: {}", logFilter.getClass().getName());
 
-            logger.debug("Registering health check");
-            String healthCheckName = "Alive Health Check";
-            env.healthChecks().register(healthCheckName, healthCheck);
-            logger.debug("Health check has been registered: {}", healthCheck.getClass().getName());
+            final FilterRegistration.Dynamic cors =
+                    env.servlets().addFilter("CORS", CrossOriginFilter.class);
+            cors.setInitParameter(CrossOriginFilter.ALLOWED_ORIGINS_PARAM, "*");
+            cors.setInitParameter(CrossOriginFilter.ALLOWED_METHODS_PARAM, "GET, POST");
+            cors.addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class), true, "/*");
+            logger.info("Configured CORS policy: " + cors.getInitParameters());
 
-            logger.debug("Registering Resource");
+            env.healthChecks().register("Alive Health Check", healthCheck);
+            logger.info("Health check has been registered: {}", healthCheck.getClass().getName());
+
             env.jersey().register(twitterResource);
-            logger.debug("Registered resource: {}", twitterResource.getClass().getName());
+            logger.info("Registered resource: {}", twitterResource.getClass().getName());
+
+
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             System.exit(1);

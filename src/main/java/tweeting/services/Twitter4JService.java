@@ -119,6 +119,7 @@ public class Twitter4JService implements TwitterService {
             user.setName(status.getUser().getName());
             user.setProfileImageUrl(status.getUser().getProfileImageURL());
             tweet.setUser(user);
+            tweet.setUrl(TWITTER_BASE_URL + status.getUser().getScreenName() + STATUS_DIRECTORY + status.getId());
         }
         tweet.setCreatedAt(status.getCreatedAt());
         return tweet;

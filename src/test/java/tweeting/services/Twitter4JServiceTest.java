@@ -34,9 +34,11 @@ public class Twitter4JServiceTest {
     // Dummy vars
     private String dummyName;
     private String dummyScreenName;
-    private String dummyURL;
+    private String dummyUserUrl;
     private String dummyMessage;
     private Date dummyDate;
+    private long dummyId;
+    private String dummyTweetUrl;
     // Status List must conform to [a, aa, aaa...] pattern where a is some repeated base String.
     private ResponseListImpl<Status> dummyStatusList;
     private String repeated; // Must have length > 0
@@ -52,15 +54,18 @@ public class Twitter4JServiceTest {
         dummyDate = new Date();
         dummyName = "name";
         dummyScreenName = "screen name";
-        dummyURL = "url";
+        dummyUserUrl = "url";
+        dummyId = 1;
+        dummyTweetUrl = TwitterService.TWITTER_BASE_URL + dummyScreenName + TwitterService.STATUS_DIRECTORY + dummyId;
 
         /* Avoids Mock Exceptions */
         when(mockedStatus.getText()).thenReturn(dummyMessage);
         when(mockedStatus.getCreatedAt()).thenReturn(dummyDate);
         when(mockedStatus.getUser()).thenReturn(mockedUser);
+        when(mockedStatus.getId()).thenReturn(dummyId);
         when(mockedUser.getName()).thenReturn(dummyName);
         when(mockedUser.getScreenName()).thenReturn(dummyScreenName);
-        when(mockedUser.getProfileImageURL()).thenReturn(dummyURL);
+        when(mockedUser.getProfileImageURL()).thenReturn(dummyUserUrl);
 
         /* For Filtered Timeline Tests */
         dummyStatusList = new ResponseListImpl<>();
@@ -98,7 +103,8 @@ public class Twitter4JServiceTest {
         assertEquals(dummyName, tweet.getUser().getName());
         assertEquals(dummyScreenName, tweet.getUser().getTwitterHandle());
         assertEquals(dummyDate, tweet.getCreatedAt());
-        assertEquals(dummyURL, tweet.getUser().getProfileImageUrl());
+        assertEquals(dummyUserUrl, tweet.getUser().getProfileImageUrl());
+        assertEquals(dummyTweetUrl, tweet.getUrl());
     }
 
     @Test
@@ -188,7 +194,8 @@ public class Twitter4JServiceTest {
         assertEquals(dummyName, tweet.getUser().getName());
         assertEquals(dummyScreenName, tweet.getUser().getTwitterHandle());
         assertEquals(dummyDate, tweet.getCreatedAt());
-        assertEquals(dummyURL, tweet.getUser().getProfileImageUrl());
+        assertEquals(dummyUserUrl, tweet.getUser().getProfileImageUrl());
+        assertEquals(dummyTweetUrl, tweet.getUrl());
     }
 
     @Test

@@ -12,6 +12,9 @@ public interface TwitterService {
 
     int MAX_TWEET_LENGTH = 280; // Already available in twitter4j.util.CharacterUtil, but want to decouple
 
+    String TWITTER_BASE_URL = "https://twitter.com/";
+    String STATUS_DIRECTORY = "/status/";
+
     String SERVICE_UNAVAILABLE_MESSAGE = "Service is temporarily unavailable.";
     String MISSING_TWEET_MESSAGE = "Could not post tweet because message parameter is missing.";
     String TOO_LONG_TWEET_MESSAGE = "Could not post tweet because message is " +

@@ -65,7 +65,7 @@ public class Twitter4JServiceTest {
         when(mockedStatus.getId()).thenReturn(dummyId);
         when(mockedUser.getName()).thenReturn(dummyName);
         when(mockedUser.getScreenName()).thenReturn(dummyScreenName);
-        when(mockedUser.getProfileImageURL()).thenReturn(dummyUserUrl);
+        when(mockedUser.get400x400ProfileImageURL()).thenReturn(dummyUserUrl);
 
         /* For Filtered Timeline Tests */
         dummyStatusList = new ResponseListImpl<>();

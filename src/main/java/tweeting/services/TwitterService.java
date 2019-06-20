@@ -26,6 +26,8 @@ public interface TwitterService {
 
     Optional<List<Tweet>> getHomeTimeline() throws TwitterServiceResponseException;
 
+    Optional<List<Tweet>> getUserTimeline() throws TwitterServiceResponseException;
+
     Optional<List<Tweet>> getFilteredTimeline(String keyword)
             throws TwitterServiceResponseException, TwitterServiceCallException;
 

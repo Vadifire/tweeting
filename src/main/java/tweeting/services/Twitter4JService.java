@@ -22,13 +22,14 @@ public class Twitter4JService implements TwitterService {
 
     private static final Logger logger = LoggerFactory.getLogger(Twitter4JService.class);
 
-    private TimelineCache homeTimelineCache;
+    private TimelineCache homeTimelineCache, userTimelineCache;
 
     private static final String EMPTY_FILTER = "";
 
     public Twitter4JService(Twitter api) {
         this.api = api;
         homeTimelineCache = new TimelineCache();
+        userTimelineCache = new TimelineCache();
     }
 
     @Override
@@ -46,6 +47,7 @@ public class Twitter4JService implements TwitterService {
                         logger.info("Successfully posted '{}' to Twitter.", message);
                         final Tweet tweet = constructTweet(status);
                         homeTimelineCache.invalidate();
+                        userTimelineCache.invalidate();
                         return tweet;
                     });
         } catch (TwitterException te) {
@@ -69,6 +71,27 @@ public class Twitter4JService implements TwitterService {
                     .collect(Collectors.toList());
             homeTimelineCache.cacheTimeline(EMPTY_FILTER, tweets);
             logger.info("Successfully retrieved home timeline from Twitter.");
+            return Optional.of(tweets);
+        } catch (TwitterException te) {
+            throw createServerException(te);
+        }
+    }
+
+    @Override
+    public Optional<List<Tweet>> getUserTimeline() throws TwitterServiceResponseException {
+        try {
+            final Optional<List<Tweet>> cachedTweets = userTimelineCache.getCachedTimeline(EMPTY_FILTER);
+            if (cachedTweets.isPresent()) {
+                logger.info("Successfully retrieved user timeline from cache.");
+                return cachedTweets;
+            }
+            final List<Tweet> tweets = api.getUserTimeline()
+                    .stream()
+                    .map(this::constructTweet)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
+            userTimelineCache.cacheTimeline(EMPTY_FILTER, tweets);
+            logger.info("Successfully retrieved user timeline from Twitter.");
             return Optional.of(tweets);
         } catch (TwitterException te) {
             throw createServerException(te);

@@ -32,6 +32,8 @@ public class TwitterResourceTest {
     // Dummy variables to test with
     private String dummyMessage, dummyErrorMessage, dummyKeyword;
 
+    private LinkedList<Tweet> dummyList;
+
     @Before
     public void setUp() {
 
@@ -41,6 +43,10 @@ public class TwitterResourceTest {
 
         service = mock(Twitter4JService.class);
         resource = new TwitterResource(service); // Fine for single-class unit tests (https://dagger.dev/testing.html)
+
+        dummyList = new LinkedList<>();
+        Tweet dummyTweet = new Tweet();
+        dummyList.add(dummyTweet);
     }
 
     @Test
@@ -90,14 +96,13 @@ public class TwitterResourceTest {
 
     @Test
     public void testTweetGeneralException() throws TwitterServiceResponseException, TwitterServiceCallException {
-        String message = "Twitter Exception";
         RuntimeException dummyException = new RuntimeException();
 
         when(service.postTweet(any())).thenThrow(dummyException);
 
-        Response actualResponse = resource.postTweet(message);
+        Response actualResponse = resource.postTweet(dummyErrorMessage);
 
-        verify(service).postTweet(message);
+        verify(service).postTweet(dummyErrorMessage);
         assertNotNull(actualResponse);
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), actualResponse.getStatus());
         assertEquals(TwitterService.SERVICE_UNAVAILABLE_MESSAGE, actualResponse.getEntity().toString());
@@ -107,10 +112,6 @@ public class TwitterResourceTest {
 
     @Test
     public void testHomeTimelineSuccess() throws TwitterServiceResponseException {
-        LinkedList<Tweet> dummyList = new LinkedList<>();
-        Tweet dummyTweet = new Tweet();
-        dummyList.add(dummyTweet);
-
         when(service.getHomeTimeline()).thenReturn(Optional.of(dummyList));
 
         Response response = resource.getHomeTimeline();
@@ -125,7 +126,6 @@ public class TwitterResourceTest {
 
     @Test
     public void testHomeTimelineResponseException() throws TwitterServiceResponseException {
-        String dummyErrorMessage = "some message";
         TwitterServiceResponseException dummyException = new TwitterServiceResponseException(dummyErrorMessage,
                 null);
 
@@ -157,10 +157,6 @@ public class TwitterResourceTest {
     
     @Test
     public void testUserTimelineSuccess() throws TwitterServiceResponseException {
-        LinkedList<Tweet> dummyList = new LinkedList<>();
-        Tweet dummyTweet = new Tweet();
-        dummyList.add(dummyTweet);
-
         when(service.getUserTimeline()).thenReturn(Optional.of(dummyList));
 
         Response response = resource.getUserTimeline();
@@ -175,7 +171,6 @@ public class TwitterResourceTest {
 
     @Test
     public void testUserTimelineResponseException() throws TwitterServiceResponseException {
-        String dummyErrorMessage = "some message";
         TwitterServiceResponseException dummyException = new TwitterServiceResponseException(dummyErrorMessage,
                 null);
 
@@ -206,10 +201,6 @@ public class TwitterResourceTest {
     @Test
     public void testFilterSuccess() throws TwitterServiceResponseException,
             TwitterServiceCallException {
-        LinkedList<Tweet> dummyList = new LinkedList<>();
-        Tweet dummyTweet = new Tweet();
-        dummyList.add(dummyTweet);
-
         when(service.getFilteredTimeline(dummyKeyword)).thenReturn(Optional.of(dummyList));
 
         Response response = resource.getFilteredHomeTimeline(dummyKeyword);
@@ -225,7 +216,6 @@ public class TwitterResourceTest {
     @Test
     public void testFilterCallException() throws TwitterServiceResponseException,
             TwitterServiceCallException {
-        String dummyErrorMessage = "some message";
         TwitterServiceCallException dummyException = new TwitterServiceCallException(dummyErrorMessage);
 
         when(service.getFilteredTimeline(dummyKeyword)).thenThrow(dummyException);
@@ -241,7 +231,6 @@ public class TwitterResourceTest {
     @Test
     public void testFilterResponseException() throws TwitterServiceResponseException,
             TwitterServiceCallException {
-        String dummyErrorMessage = "some message";
         TwitterServiceResponseException dummyException = new TwitterServiceResponseException(dummyErrorMessage,
                 null);
 

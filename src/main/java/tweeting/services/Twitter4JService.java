@@ -22,14 +22,14 @@ public class Twitter4JService implements TwitterService {
 
     private static final Logger logger = LoggerFactory.getLogger(Twitter4JService.class);
 
-    private TimelineCache homeTimelineCache, userTimelineCache;
+    private TimelineCache cache;
 
-    private static final String EMPTY_FILTER = "";
+    private static final String USER_CACHE = "user";
+    private static final String HOME_CACHE = "home";
 
     public Twitter4JService(Twitter api) {
         this.api = api;
-        homeTimelineCache = new TimelineCache();
-        userTimelineCache = new TimelineCache();
+        cache = new TimelineCache();
     }
 
     @Override
@@ -46,8 +46,7 @@ public class Twitter4JService implements TwitterService {
                     .map(status -> {
                         logger.info("Successfully posted '{}' to Twitter.", message);
                         final Tweet tweet = constructTweet(status);
-                        homeTimelineCache.invalidate();
-                        userTimelineCache.invalidate();
+                        cache.invalidate();
                         return tweet;
                     });
         } catch (TwitterException te) {
@@ -59,7 +58,7 @@ public class Twitter4JService implements TwitterService {
     @Override
     public Optional<List<Tweet>> getHomeTimeline() throws TwitterServiceResponseException {
         try {
-            final Optional<List<Tweet>> cachedTweets = homeTimelineCache.getCachedTimeline(EMPTY_FILTER);
+            final Optional<List<Tweet>> cachedTweets = cache.getCachedTimeline(HOME_CACHE);
             if (cachedTweets.isPresent()) {
                 logger.info("Successfully retrieved home timeline from cache.");
                 return cachedTweets;
@@ -69,7 +68,7 @@ public class Twitter4JService implements TwitterService {
                     .map(this::constructTweet)
                     .filter(Objects::nonNull)
                     .collect(Collectors.toList());
-            homeTimelineCache.cacheTimeline(EMPTY_FILTER, tweets);
+            cache.cacheTimeline(HOME_CACHE, tweets);
             logger.info("Successfully retrieved home timeline from Twitter.");
             return Optional.of(tweets);
         } catch (TwitterException te) {
@@ -80,7 +79,7 @@ public class Twitter4JService implements TwitterService {
     @Override
     public Optional<List<Tweet>> getUserTimeline() throws TwitterServiceResponseException {
         try {
-            final Optional<List<Tweet>> cachedTweets = userTimelineCache.getCachedTimeline(EMPTY_FILTER);
+            final Optional<List<Tweet>> cachedTweets = cache.getCachedTimeline(USER_CACHE);
             if (cachedTweets.isPresent()) {
                 logger.info("Successfully retrieved user timeline from cache.");
                 return cachedTweets;
@@ -90,7 +89,7 @@ public class Twitter4JService implements TwitterService {
                     .map(this::constructTweet)
                     .filter(Objects::nonNull)
                     .collect(Collectors.toList());
-            userTimelineCache.cacheTimeline(EMPTY_FILTER, tweets);
+            cache.cacheTimeline(USER_CACHE, tweets);
             logger.info("Successfully retrieved user timeline from Twitter.");
             return Optional.of(tweets);
         } catch (TwitterException te) {
@@ -105,7 +104,7 @@ public class Twitter4JService implements TwitterService {
             throw new TwitterServiceCallException(MISSING_KEYWORD_MESSAGE);
         }
         // Try to pull filtered result from cache.
-        final Optional<List<Tweet>> cachedTweets = homeTimelineCache.getCachedTimeline(keyword);
+        final Optional<List<Tweet>> cachedTweets = cache.getCachedTimeline(keyword);
         if (cachedTweets.isPresent()) {
             logger.info("Successfully retrieved filtered home timeline from cache.");
             return cachedTweets;
@@ -115,7 +114,7 @@ public class Twitter4JService implements TwitterService {
                 .stream()
                 .filter(tweet -> StringUtils.containsIgnoreCase(tweet.getMessage(), keyword))
                 .collect(Collectors.toList());
-        homeTimelineCache.cacheTimeline(keyword, filteredTweets);
+        cache.cacheTimeline(keyword, filteredTweets);
         return Optional.of(filteredTweets);
     }
 

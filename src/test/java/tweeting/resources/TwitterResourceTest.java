@@ -134,7 +134,7 @@ public class TwitterResourceTest {
 
         Response actualResponse = resource.getHomeTimeline();
 
-        verify(service).getHomeTimeline(); // Verify we have actually made the call to getFilteredHomeTimeline()
+        verify(service).getHomeTimeline(); // Verify we have actually made the call to getHomeTimeline()
         assertTimelineSuccess(actualResponse);
     }
 
@@ -170,7 +170,7 @@ public class TwitterResourceTest {
 
         Response actualResponse = resource.getUserTimeline();
 
-        verify(service).getUserTimeline(); // Verify we have actually made the call to getFilteredUserTimeline()
+        verify(service).getUserTimeline(); // Verify we have actually made the call to getUserTimeline()
         assertTimelineSuccess(actualResponse);
     }
 

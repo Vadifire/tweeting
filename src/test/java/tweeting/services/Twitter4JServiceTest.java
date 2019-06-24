@@ -30,6 +30,7 @@ public class Twitter4JServiceTest {
     // Mocked classes
     private Twitter api;
     private Status mockedStatus;
+    private TwitterException twitterException;
 
     // Dummy vars
     private String dummyName;
@@ -49,6 +50,7 @@ public class Twitter4JServiceTest {
     @Before
     public void setUp() {
         mockedStatus = mock(Status.class); // Avoids having to define Status impl
+        twitterException = mock(TwitterException.class);
         User mockedUser = mock(User.class); // Avoids having to define User impl
         dummyMessage = "some message";
         dummyDate = new Date();
@@ -139,9 +141,8 @@ public class Twitter4JServiceTest {
     @Test(expected = TwitterServiceResponseException.class)
     public void testGetHomeTimelineServerException() throws TwitterException, TwitterServiceResponseException {
         final String errorMessage = "some error message";
-        final TwitterException te = mock(TwitterException.class);
-        when(api.getHomeTimeline()).thenThrow(te);
-        when(te.getErrorMessage()).thenReturn(errorMessage);
+        when(api.getHomeTimeline()).thenThrow(twitterException);
+        when(twitterException.getErrorMessage()).thenReturn(errorMessage);
         try {
             service.getHomeTimeline();
         } catch (TwitterServiceResponseException e) {
@@ -152,9 +153,8 @@ public class Twitter4JServiceTest {
 
     @Test(expected = TwitterServiceResponseException.class)
     public void testGetHomeTimelineNetworkException() throws TwitterException, TwitterServiceResponseException {
-        final TwitterException te = mock(TwitterException.class);
-        when(api.getHomeTimeline()).thenThrow(te);
-        when(te.isCausedByNetworkIssue()).thenReturn(true);
+        when(api.getHomeTimeline()).thenThrow(twitterException);
+        when(twitterException.isCausedByNetworkIssue()).thenReturn(true);
         try {
             service.getHomeTimeline();
         } catch (TwitterServiceResponseException e) {
@@ -165,9 +165,8 @@ public class Twitter4JServiceTest {
 
     @Test(expected = TwitterServiceResponseException.class)
     public void testGetHomeTimelineBadAuthException() throws TwitterException, TwitterServiceResponseException {
-        final TwitterException te = mock(TwitterException.class);
-        when(api.getHomeTimeline()).thenThrow(te);
-        when(te.getErrorCode()).thenReturn(TwitterErrorCode.BAD_AUTH_DATA.getCode());
+        when(api.getHomeTimeline()).thenThrow(twitterException);
+        when(twitterException.getErrorCode()).thenReturn(TwitterErrorCode.BAD_AUTH_DATA.getCode());
         try {
             service.getHomeTimeline();
         } catch (TwitterServiceResponseException e) {
@@ -178,9 +177,8 @@ public class Twitter4JServiceTest {
 
     @Test(expected = TwitterServiceResponseException.class)
     public void testGetHomeTimelineCouldNotAuthException() throws TwitterException, TwitterServiceResponseException {
-        final TwitterException te = mock(TwitterException.class);
-        when(api.getHomeTimeline()).thenThrow(te);
-        when(te.getErrorCode()).thenReturn(TwitterErrorCode.COULD_NOT_AUTH.getCode());
+        when(api.getHomeTimeline()).thenThrow(twitterException);
+        when(twitterException.getErrorCode()).thenReturn(TwitterErrorCode.COULD_NOT_AUTH.getCode());
         try {
             service.getHomeTimeline();
         } catch (TwitterServiceResponseException e) {
@@ -230,9 +228,8 @@ public class Twitter4JServiceTest {
     @Test(expected = TwitterServiceResponseException.class)
     public void testGetUserTimelineServerException() throws TwitterException, TwitterServiceResponseException {
         final String errorMessage = "some error message";
-        final TwitterException te = mock(TwitterException.class);
-        when(api.getUserTimeline()).thenThrow(te);
-        when(te.getErrorMessage()).thenReturn(errorMessage);
+        when(api.getUserTimeline()).thenThrow(twitterException);
+        when(twitterException.getErrorMessage()).thenReturn(errorMessage);
         try {
             service.getUserTimeline();
         } catch (TwitterServiceResponseException e) {
@@ -243,9 +240,8 @@ public class Twitter4JServiceTest {
 
     @Test(expected = TwitterServiceResponseException.class)
     public void testGetUserTimelineNetworkException() throws TwitterException, TwitterServiceResponseException {
-        final TwitterException te = mock(TwitterException.class);
-        when(api.getUserTimeline()).thenThrow(te);
-        when(te.isCausedByNetworkIssue()).thenReturn(true);
+        when(api.getUserTimeline()).thenThrow(twitterException);
+        when(twitterException.isCausedByNetworkIssue()).thenReturn(true);
         try {
             service.getUserTimeline();
         } catch (TwitterServiceResponseException e) {
@@ -256,9 +252,8 @@ public class Twitter4JServiceTest {
 
     @Test(expected = TwitterServiceResponseException.class)
     public void testGetUserTimelineBadAuthException() throws TwitterException, TwitterServiceResponseException {
-        final TwitterException te = mock(TwitterException.class);
-        when(api.getUserTimeline()).thenThrow(te);
-        when(te.getErrorCode()).thenReturn(TwitterErrorCode.BAD_AUTH_DATA.getCode());
+        when(api.getUserTimeline()).thenThrow(twitterException);
+        when(twitterException.getErrorCode()).thenReturn(TwitterErrorCode.BAD_AUTH_DATA.getCode());
         try {
             service.getUserTimeline();
         } catch (TwitterServiceResponseException e) {
@@ -269,9 +264,8 @@ public class Twitter4JServiceTest {
 
     @Test(expected = TwitterServiceResponseException.class)
     public void testGetUserTimelineCouldNotAuthException() throws TwitterException, TwitterServiceResponseException {
-        final TwitterException te = mock(TwitterException.class);
-        when(api.getUserTimeline()).thenThrow(te);
-        when(te.getErrorCode()).thenReturn(TwitterErrorCode.COULD_NOT_AUTH.getCode());
+        when(api.getUserTimeline()).thenThrow(twitterException);
+        when(twitterException.getErrorCode()).thenReturn(TwitterErrorCode.COULD_NOT_AUTH.getCode());
         try {
             service.getUserTimeline();
         } catch (TwitterServiceResponseException e) {
@@ -345,9 +339,8 @@ public class Twitter4JServiceTest {
     public void testPostTweetServerException()
             throws TwitterException, TwitterServiceResponseException, TwitterServiceCallException {
         final String errorMessage = "some error message";
-        final TwitterException te = mock(TwitterException.class);
-        when(api.updateStatus(anyString())).thenThrow(te);
-        when(te.getErrorMessage()).thenReturn(errorMessage);
+        when(api.updateStatus(anyString())).thenThrow(twitterException);
+        when(twitterException.getErrorMessage()).thenReturn(errorMessage);
         try {
             service.postTweet("some message");
         } catch (TwitterServiceResponseException e) {
@@ -414,9 +407,8 @@ public class Twitter4JServiceTest {
     public void testFilterServerException()
             throws TwitterException, TwitterServiceResponseException, TwitterServiceCallException {
         final String errorMessage = "some error message";
-        final TwitterException te = mock(TwitterException.class);
-        when(api.getHomeTimeline()).thenThrow(te);
-        when(te.getErrorMessage()).thenReturn(errorMessage);
+        when(api.getHomeTimeline()).thenThrow(twitterException);
+        when(twitterException.getErrorMessage()).thenReturn(errorMessage);
         try {
             service.getFilteredTimeline("some keyword");
         } catch (TwitterServiceResponseException e) {

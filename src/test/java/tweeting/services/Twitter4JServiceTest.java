@@ -85,7 +85,19 @@ public class Twitter4JServiceTest {
         service = new Twitter4JService(api);
     }
 
-    //TODO: reuse home/user testcode
+    /* Utility methods to reduce duplicate code */
+
+    public void assertTweetIsDummy(Tweet tweet) {
+        assertNotNull(tweet);
+        assertEquals(dummyMessage, tweet.getMessage());
+        assertEquals(dummyName, tweet.getUser().getName());
+        assertEquals(dummyScreenName, tweet.getUser().getTwitterHandle());
+        assertEquals(dummyDate, tweet.getCreatedAt());
+        assertEquals(dummyUserUrl, tweet.getUser().getProfileImageUrl());
+        assertEquals(dummyTweetUrl, tweet.getUrl());
+    }
+
+    /* End of utility methods */
 
     @Test
     public void testGetHomeTimelineSuccess() throws TwitterException, TwitterServiceResponseException {
@@ -100,13 +112,7 @@ public class Twitter4JServiceTest {
         assertNotNull(actualList);
         assertEquals(dummyList.size(), actualList.size());
         final Tweet tweet = actualList.get(0); // Test tweet is correctly constructed
-        assertNotNull(tweet);
-        assertEquals(dummyMessage, tweet.getMessage());
-        assertEquals(dummyName, tweet.getUser().getName());
-        assertEquals(dummyScreenName, tweet.getUser().getTwitterHandle());
-        assertEquals(dummyDate, tweet.getCreatedAt());
-        assertEquals(dummyUserUrl, tweet.getUser().getProfileImageUrl());
-        assertEquals(dummyTweetUrl, tweet.getUrl());
+        assertTweetIsDummy(tweet);
     }
 
     @Test
@@ -197,13 +203,7 @@ public class Twitter4JServiceTest {
         assertNotNull(actualList);
         assertEquals(dummyList.size(), actualList.size());
         final Tweet tweet = actualList.get(0); // Test tweet is correctly constructed
-        assertNotNull(tweet);
-        assertEquals(dummyMessage, tweet.getMessage());
-        assertEquals(dummyName, tweet.getUser().getName());
-        assertEquals(dummyScreenName, tweet.getUser().getTwitterHandle());
-        assertEquals(dummyDate, tweet.getCreatedAt());
-        assertEquals(dummyUserUrl, tweet.getUser().getProfileImageUrl());
-        assertEquals(dummyTweetUrl, tweet.getUrl());
+        assertTweetIsDummy(tweet);
     }
 
     @Test
@@ -289,13 +289,7 @@ public class Twitter4JServiceTest {
         final Tweet tweet = service.postTweet(dummyMessage).get();
 
         verify(api).updateStatus(anyString());
-        assertNotNull(tweet);
-        assertEquals(dummyMessage, tweet.getMessage());
-        assertEquals(dummyName, tweet.getUser().getName());
-        assertEquals(dummyScreenName, tweet.getUser().getTwitterHandle());
-        assertEquals(dummyDate, tweet.getCreatedAt());
-        assertEquals(dummyUserUrl, tweet.getUser().getProfileImageUrl());
-        assertEquals(dummyTweetUrl, tweet.getUrl());
+        assertTweetIsDummy(tweet);
     }
 
     @Test

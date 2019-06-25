@@ -104,7 +104,7 @@ public class Twitter4JService implements TwitterService {
         if (StringUtils.isBlank(keyword)) {
             throw new TwitterServiceCallException(MISSING_KEYWORD_MESSAGE);
         }
-        // Try to pull filtered result from timelineCache.
+        // Try to pull filtered result from homeTimelineCache.
         final Optional<List<Tweet>> cachedTweets = homeTimelineCache.getCachedTimeline(keyword);
         if (cachedTweets.isPresent()) {
             logger.info("Successfully retrieved filtered home timeline from cache.");

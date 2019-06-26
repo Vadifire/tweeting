@@ -8,22 +8,22 @@ import java.util.Optional;
 
 public class TimelineCache {
 
-    private HashMap<String, List<Tweet>> filteredTimelineCache; // Store filter results
+    private HashMap<String, List<Tweet>> timelineCache;
 
     public TimelineCache() {
-        filteredTimelineCache = new HashMap<>();
+        timelineCache = new HashMap<>();
     }
 
     public void invalidate() {
-        filteredTimelineCache.clear();
+        timelineCache.clear();
     }
 
-    public void cacheTimeline(String keyword, List<Tweet> tweets) {
-        filteredTimelineCache.put(keyword, tweets);
+    public void cacheTimeline(String key, List<Tweet> tweets) {
+        timelineCache.put(key, tweets);
     }
 
-    public Optional<List<Tweet>> getCachedTimeline(String keyword) {
-        return Optional.ofNullable(filteredTimelineCache.get(keyword));
+    public Optional<List<Tweet>> getCachedTimeline(String key) {
+        return Optional.ofNullable(timelineCache.get(key));
     }
 
 }

@@ -96,6 +96,34 @@ public class TwitterResource {
 
     /*
      * How to use:
+     * curl -i -X GET http://HOST:PORT/api/1.0/twitter/timeline/user
+     *
+     * Replace HOST and PORT with configured values
+     */
+    @Path("timeline/user")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getUserTimeline() {
+        try {
+            return service.getUserTimeline()
+                    .map(timeline -> Response.ok(timeline)
+                            .build())
+                    .get();
+        } catch (TwitterServiceResponseException e) {
+            logger.error("Sending 500 Internal Server error", e);
+            return (Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(e.getMessage()))
+                    .build();
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            return (Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(TwitterService.SERVICE_UNAVAILABLE_MESSAGE))
+                    .build();
+        }
+    }
+
+    /*
+     * How to use:
      * curl -i -X GET http://HOST:PORT/api/1.0/twitter/timeline/filter?keyword=KEYWORD
      *
      * Replace 'KEYWORD' with desired keyword to filter by. Replace HOST and PORT with configured values

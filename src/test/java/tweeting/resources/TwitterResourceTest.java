@@ -1,7 +1,5 @@
 package tweeting.resources;
 
-import junit.framework.TestCase;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import tweeting.models.Tweet;
@@ -30,7 +28,9 @@ public class TwitterResourceTest {
     private TwitterResource resource;
 
     // Dummy variables to test with
-    private String dummyMessage, dummyErrorMessage, dummyKeyword;
+    private String dummyMessage, dummyKeyword;
+    private String dummyErrorMessage; // Invariant: Error message in case of TwitterService Call/Response Exceptions
+    private LinkedList<Tweet> dummyList; // Invariant: returned by getTimeline methods
 
     @Before
     public void setUp() {
@@ -41,7 +41,39 @@ public class TwitterResourceTest {
 
         service = mock(Twitter4JService.class);
         resource = new TwitterResource(service); // Fine for single-class unit tests (https://dagger.dev/testing.html)
+
+        dummyList = new LinkedList<>();
+        Tweet dummyTweet = new Tweet();
+        dummyList.add(dummyTweet);
     }
+
+    /* Utility methods to reduce duplicate code */
+
+    public void assertCallException(Response response) { // 400 Error Code signalled by service
+        assertNotNull(response);
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+        assertEquals(dummyErrorMessage, response.getEntity().toString());
+    }
+
+    public void assertResponseException(Response response) { // 500 Error Code signalled by service
+        assertNotNull(response);
+        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
+        assertEquals(dummyErrorMessage, response.getEntity().toString());
+    }
+
+    public void assertGeneralException(Response response) { // 500 Error Code, Unexpected Exception
+        assertNotNull(response);
+        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
+        assertEquals(TwitterService.SERVICE_UNAVAILABLE_MESSAGE, response.getEntity().toString());
+    }
+
+    public void assertTimelineSuccess(Response response) {
+        assertNotNull(response);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus()); // Verify correct response code
+        assertEquals(dummyList, response.getEntity()); // Verify correct content
+    }
+
+    /* End of utility methods */
 
     @Test
     public void testTweetSuccess() throws TwitterServiceResponseException, TwitterServiceCallException {
@@ -68,9 +100,7 @@ public class TwitterResourceTest {
         Response actualResponse = resource.postTweet(dummyMessage);
 
         verify(service).postTweet(dummyMessage);
-        assertNotNull(actualResponse);
-        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), actualResponse.getStatus());
-        assertEquals(dummyErrorMessage, actualResponse.getEntity().toString());
+        assertCallException(actualResponse);
     }
 
     @Test
@@ -83,47 +113,34 @@ public class TwitterResourceTest {
         Response actualResponse = resource.postTweet(dummyMessage);
 
         verify(service).postTweet(dummyMessage);
-        assertNotNull(actualResponse);
-        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), actualResponse.getStatus());
-        assertEquals(dummyErrorMessage, actualResponse.getEntity().toString());
+        assertResponseException(actualResponse);
     }
 
     @Test
     public void testTweetGeneralException() throws TwitterServiceResponseException, TwitterServiceCallException {
-        String message = "Twitter Exception";
         RuntimeException dummyException = new RuntimeException();
 
         when(service.postTweet(any())).thenThrow(dummyException);
 
-        Response actualResponse = resource.postTweet(message);
+        Response actualResponse = resource.postTweet(dummyErrorMessage);
 
-        verify(service).postTweet(message);
-        assertNotNull(actualResponse);
-        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), actualResponse.getStatus());
-        assertEquals(TwitterService.SERVICE_UNAVAILABLE_MESSAGE, actualResponse.getEntity().toString());
+        verify(service).postTweet(dummyErrorMessage);
+        assertGeneralException(actualResponse);
     }
 
     @Test
-    public void testTimelineSuccess() throws TwitterServiceResponseException {
-        LinkedList<Tweet> dummyList = new LinkedList<>();
-        Tweet dummyTweet = new Tweet();
-        dummyList.add(dummyTweet);
-
+    public void testHomeTimelineSuccess() throws TwitterServiceResponseException {
         when(service.getHomeTimeline()).thenReturn(Optional.of(dummyList));
 
-        Response response = resource.getHomeTimeline();
+        Response actualResponse = resource.getHomeTimeline();
 
-        verify(service).getHomeTimeline(); // Verify we have actually made the call to getFilteredHomeTimeline()
-
-        assertNotNull(response);
-        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus()); // Verify correct response code
-        assertEquals(dummyList, response.getEntity()); // Verify correct content
+        verify(service).getHomeTimeline(); // Verify we have actually made the call to getHomeTimeline()
+        assertTimelineSuccess(actualResponse);
     }
 
 
     @Test
-    public void testTimelineResponseException() throws TwitterServiceResponseException {
-        String dummyErrorMessage = "some message";
+    public void testHomeTimelineResponseException() throws TwitterServiceResponseException {
         TwitterServiceResponseException dummyException = new TwitterServiceResponseException(dummyErrorMessage,
                 null);
 
@@ -132,13 +149,11 @@ public class TwitterResourceTest {
         Response actualResponse = resource.getHomeTimeline();
 
         verify(service).getHomeTimeline();
-        assertNotNull(actualResponse);
-        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), actualResponse.getStatus());
-        assertEquals(dummyErrorMessage, actualResponse.getEntity().toString());
+        assertResponseException(actualResponse);
     }
 
     @Test
-    public void testTimelineCallException() throws TwitterServiceResponseException {
+    public void testHomeTimelineGeneralException() throws TwitterServiceResponseException {
         RuntimeException dummyException = new RuntimeException();
 
         when(service.getHomeTimeline()).thenThrow(dummyException);
@@ -146,35 +161,60 @@ public class TwitterResourceTest {
         Response actualResponse = resource.getHomeTimeline();
 
         verify(service).getHomeTimeline();
-        assertNotNull(actualResponse);
-        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), actualResponse.getStatus());
-        assertEquals(TwitterService.SERVICE_UNAVAILABLE_MESSAGE, actualResponse.getEntity().toString());
+        assertGeneralException(actualResponse);
+    }
+
+    @Test
+    public void testUserTimelineSuccess() throws TwitterServiceResponseException {
+        when(service.getUserTimeline()).thenReturn(Optional.of(dummyList));
+
+        Response actualResponse = resource.getUserTimeline();
+
+        verify(service).getUserTimeline(); // Verify we have actually made the call to getUserTimeline()
+        assertTimelineSuccess(actualResponse);
     }
 
 
     @Test
+    public void testUserTimelineResponseException() throws TwitterServiceResponseException {
+        TwitterServiceResponseException dummyException = new TwitterServiceResponseException(dummyErrorMessage,
+                null);
+
+        when(service.getUserTimeline()).thenThrow(dummyException);
+
+        Response actualResponse = resource.getUserTimeline();
+
+        verify(service).getUserTimeline();
+        assertResponseException(actualResponse);
+    }
+
+    @Test
+    public void testUserTimelineGeneralException() throws TwitterServiceResponseException {
+        RuntimeException dummyException = new RuntimeException();
+
+        when(service.getUserTimeline()).thenThrow(dummyException);
+
+        Response actualResponse = resource.getUserTimeline();
+
+        verify(service).getUserTimeline();
+        assertGeneralException(actualResponse);
+    }
+
+    @Test
     public void testFilterSuccess() throws TwitterServiceResponseException,
             TwitterServiceCallException {
-        LinkedList<Tweet> dummyList = new LinkedList<>();
-        Tweet dummyTweet = new Tweet();
-        dummyList.add(dummyTweet);
-
         when(service.getFilteredTimeline(dummyKeyword)).thenReturn(Optional.of(dummyList));
 
-        Response response = resource.getFilteredHomeTimeline(dummyKeyword);
+        Response actualResponse = resource.getFilteredHomeTimeline(dummyKeyword);
 
         verify(service).getFilteredTimeline(dummyKeyword);
-
-        assertNotNull(response);
-        TestCase.assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        TestCase.assertEquals(dummyList, response.getEntity());
+        assertTimelineSuccess(actualResponse);
     }
 
 
     @Test
     public void testFilterCallException() throws TwitterServiceResponseException,
             TwitterServiceCallException {
-        String dummyErrorMessage = "some message";
         TwitterServiceCallException dummyException = new TwitterServiceCallException(dummyErrorMessage);
 
         when(service.getFilteredTimeline(dummyKeyword)).thenThrow(dummyException);
@@ -182,15 +222,12 @@ public class TwitterResourceTest {
         Response actualResponse = resource.getFilteredHomeTimeline(dummyKeyword);
 
         verify(service).getFilteredTimeline(dummyKeyword);
-        assertNotNull(actualResponse);
-        Assert.assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), actualResponse.getStatus());
-        Assert.assertEquals(dummyErrorMessage, actualResponse.getEntity().toString());
+        assertCallException(actualResponse);
     }
 
     @Test
     public void testFilterResponseException() throws TwitterServiceResponseException,
             TwitterServiceCallException {
-        String dummyErrorMessage = "some message";
         TwitterServiceResponseException dummyException = new TwitterServiceResponseException(dummyErrorMessage,
                 null);
 
@@ -199,9 +236,7 @@ public class TwitterResourceTest {
         Response actualResponse = resource.getFilteredHomeTimeline(dummyKeyword);
 
         verify(service).getFilteredTimeline(dummyKeyword);
-        assertNotNull(actualResponse);
-        Assert.assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), actualResponse.getStatus());
-        Assert.assertEquals(dummyErrorMessage, actualResponse.getEntity().toString());
+        assertResponseException(actualResponse);
     }
 
     @Test
@@ -214,9 +249,7 @@ public class TwitterResourceTest {
         Response actualResponse = resource.getFilteredHomeTimeline(dummyKeyword);
 
         verify(service).getFilteredTimeline(dummyKeyword);
-        assertNotNull(actualResponse);
-        Assert.assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), actualResponse.getStatus()); // Verify code
-        Assert.assertEquals(TwitterService.SERVICE_UNAVAILABLE_MESSAGE, actualResponse.getEntity().toString());
+        assertGeneralException(actualResponse);
     }
 
 }

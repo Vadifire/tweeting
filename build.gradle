@@ -24,8 +24,6 @@ plugins {
     id 'java'
 
     id "net.ltgt.apt-idea" version "0.18"
-
-    id "com.github.johnrengelman.shadow" version "5.1.0"
 }
 
 repositories {
@@ -54,12 +52,6 @@ dependencies {
 
     // implementation: used for compile and run time
     // testImplementation: (^ equivalent, but for tests)
-}
-
-apply plugin: 'com.github.johnrengelman.shadow'
-
-shadowJar {
-    mergeServiceFiles()
 }
 
 // Display test results for individual unit tests

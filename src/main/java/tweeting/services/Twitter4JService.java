@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import tweeting.models.Tweet;
 import tweeting.models.TwitterUser;
 import twitter4j.Status;
+import twitter4j.StatusUpdate;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 
@@ -55,6 +56,33 @@ public class Twitter4JService implements TwitterService {
         }
     }
 
+    @Override
+    public Optional<Tweet> replyToTweet(Long parentId, String message)
+            throws TwitterServiceResponseException, TwitterServiceCallException {
+        if (StringUtils.isBlank(message)) { // TODO: refactor
+            throw new TwitterServiceCallException(MISSING_TWEET_MESSAGE);
+        }
+        else if (message.length() > MAX_TWEET_LENGTH) {
+            throw new TwitterServiceCallException(TOO_LONG_TWEET_MESSAGE);
+        } else if (parentId == null) {
+            throw new TwitterServiceCallException(MISSING_PARENT_MESSAGE);
+        }
+        try {
+           final StatusUpdate reply = new StatusUpdate(message);
+           reply.setInReplyToStatusId(parentId);
+           System.out.println("Replying");
+           return Optional.ofNullable(api.updateStatus(reply))
+                   .map(status -> {
+                       logger.info("Successfully posted '{}' to Twitter", message);
+                       final Tweet tweet = constructTweet(status);
+                       homeTimelineCache.invalidate();
+                       userTimelineCache.invalidate();
+                       return tweet;
+                   });
+        } catch (TwitterException te) {
+            throw createServerException(te);
+        }
+    }
 
     @Override
     public Optional<List<Tweet>> getHomeTimeline() throws TwitterServiceResponseException {
@@ -134,6 +162,8 @@ public class Twitter4JService implements TwitterService {
         }
         final Tweet tweet = new Tweet();
         tweet.setMessage(status.getText());
+        final long id =  status.getId();
+        tweet.setId(Long.toString(id));
         if (status.getUser() == null) {
             logger.warn("Tweet has no user.");
         } else {
@@ -142,7 +172,7 @@ public class Twitter4JService implements TwitterService {
             user.setName(status.getUser().getName());
             user.setProfileImageUrl(status.getUser().get400x400ProfileImageURL());
             tweet.setUser(user);
-            tweet.setUrl(TWITTER_BASE_URL + status.getUser().getScreenName() + STATUS_DIRECTORY + status.getId());
+            tweet.setUrl(TWITTER_BASE_URL + status.getUser().getScreenName() + STATUS_DIRECTORY + id);
         }
         tweet.setCreatedAt(status.getCreatedAt());
         return tweet;

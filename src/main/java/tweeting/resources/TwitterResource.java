@@ -66,6 +66,35 @@ public class TwitterResource {
         }
     }
 
+    @Path("tweet/reply")
+    @POST
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response replyToTweet(@FormParam("parentId") Long parentId, @FormParam("message") String message) {
+        try { //TODO: reuse
+            return service.replyToTweet(parentId, message)
+                    .map(timeline -> Response.status(Response.Status.CREATED)
+                            .entity(timeline)
+                            .build())
+                    .get();
+        } catch (TwitterServiceCallException e) {
+            logger.debug("Sending 400 Bad Request error", e);
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity(e.getMessage())
+                    .build();
+        } catch (TwitterServiceResponseException e) {
+            logger.error("Sending 500 Internal Server error", e);
+            return (Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(e.getMessage()))
+                    .build();
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            return (Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(TwitterService.SERVICE_UNAVAILABLE_MESSAGE))
+                    .build();
+        }
+    }
+
     /*
      * How to use:
      * curl -i -X GET http://HOST:PORT/api/1.0/twitter/timeline

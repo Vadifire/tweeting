@@ -6,6 +6,7 @@ public class Tweet {
 
     private String message;
     private String url;
+    private String id;
     private TwitterUser user;
     private Date createdAt;
 
@@ -40,4 +41,13 @@ public class Tweet {
     public void setUrl(String url) {
         this.url = url;
     }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
 }

@@ -14,7 +14,6 @@ import java.util.Optional;
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -31,11 +30,13 @@ public class TwitterResourceTest {
     private String dummyMessage, dummyKeyword;
     private String dummyErrorMessage; // Invariant: Error message in case of TwitterService Call/Response Exceptions
     private LinkedList<Tweet> dummyList; // Invariant: returned by getTimeline methods
+    private Long dummyId;
 
     @Before
     public void setUp() {
 
         dummyMessage = "some message";
+        dummyId = 123L;
         dummyErrorMessage = "some error message";
         dummyKeyword = "keyword";
 
@@ -77,16 +78,14 @@ public class TwitterResourceTest {
 
     @Test
     public void testTweetSuccess() throws TwitterServiceResponseException, TwitterServiceCallException {
-        String message = "No Twitter Exception";
         Tweet tweet = new Tweet();
 
-        when(service.postTweet(any())).thenReturn(Optional.of(tweet));
+        when(service.postTweet(dummyMessage)).thenReturn(Optional.of(tweet));
 
-        Response response = resource.postTweet(message);
+        Response response = resource.postTweet(dummyMessage);
 
-        verify(service).postTweet(message);
+        verify(service).postTweet(dummyMessage);
         assertNotNull(response);
-        System.out.println(response.getStatus());
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
         assertEquals(tweet, response.getEntity());
     }
@@ -95,7 +94,7 @@ public class TwitterResourceTest {
     public void testTweetCallException() throws TwitterServiceResponseException, TwitterServiceCallException {
         TwitterServiceCallException dummyException = new TwitterServiceCallException(dummyErrorMessage);
 
-        when(service.postTweet(any())).thenThrow(dummyException);
+        when(service.postTweet(dummyMessage)).thenThrow(dummyException);
 
         Response actualResponse = resource.postTweet(dummyMessage);
 
@@ -108,7 +107,7 @@ public class TwitterResourceTest {
         TwitterServiceResponseException dummyException = new TwitterServiceResponseException(dummyErrorMessage,
                 null);
 
-        when(service.postTweet(any())).thenThrow(dummyException);
+        when(service.postTweet(dummyMessage)).thenThrow(dummyException);
 
         Response actualResponse = resource.postTweet(dummyMessage);
 
@@ -120,11 +119,62 @@ public class TwitterResourceTest {
     public void testTweetGeneralException() throws TwitterServiceResponseException, TwitterServiceCallException {
         RuntimeException dummyException = new RuntimeException();
 
-        when(service.postTweet(any())).thenThrow(dummyException);
+        when(service.postTweet(dummyMessage)).thenThrow(dummyException);
 
         Response actualResponse = resource.postTweet(dummyErrorMessage);
 
         verify(service).postTweet(dummyErrorMessage);
+        assertGeneralException(actualResponse);
+    }
+
+
+    @Test
+    public void testReplySuccess() throws TwitterServiceResponseException, TwitterServiceCallException {
+        Tweet tweet = new Tweet();
+        when(service.replyToTweet(dummyId, dummyMessage)).thenReturn(Optional.of(tweet));
+
+        Response response = resource.replyToTweet(dummyId, dummyMessage);
+
+        verify(service).replyToTweet(dummyId, dummyMessage);
+        assertNotNull(response);
+        assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
+        assertEquals(tweet, response.getEntity());
+    }
+
+    @Test
+    public void testReplyCallException() throws TwitterServiceResponseException, TwitterServiceCallException {
+        TwitterServiceCallException dummyException = new TwitterServiceCallException(dummyErrorMessage);
+
+        when(service.replyToTweet(dummyId, dummyMessage)).thenThrow(dummyException);
+
+        Response actualResponse = resource.replyToTweet(dummyId, dummyMessage);
+
+        verify(service).replyToTweet(dummyId, dummyMessage);
+        assertCallException(actualResponse);
+    }
+
+    @Test
+    public void testReplyResponseException() throws TwitterServiceResponseException, TwitterServiceCallException {
+        TwitterServiceResponseException dummyException = new TwitterServiceResponseException(dummyErrorMessage,
+                null);
+
+        when(service.replyToTweet(dummyId, dummyMessage)).thenThrow(dummyException);
+
+        Response actualResponse = resource.replyToTweet(dummyId, dummyMessage);
+
+        verify(service).replyToTweet(dummyId, dummyMessage);
+        assertResponseException(actualResponse);
+    }
+
+    @Test
+    public void testReplyGeneralException() throws TwitterServiceResponseException, TwitterServiceCallException {
+        RuntimeException dummyException = new RuntimeException();
+
+        when(service.replyToTweet(dummyId, dummyMessage)).thenThrow(dummyException);
+
+        Response actualResponse = resource.replyToTweet(dummyId, dummyErrorMessage);
+
+        verify(service).replyToTweet(dummyId, dummyErrorMessage);
         assertGeneralException(actualResponse);
     }
 

@@ -39,7 +39,7 @@ public class Twitter4JServiceTest {
     private String dummyUserUrl;
     private String dummyMessage;
     private Date dummyDate;
-    private long dummyId;
+    private long dummyId, dummyParentId;
     private String dummyTweetUrl;
     // Status List must conform to [a, aa, aaa...] pattern where a is some repeated base String.
     private ResponseListImpl<Status> dummyStatusList;
@@ -59,6 +59,7 @@ public class Twitter4JServiceTest {
         dummyScreenName = "screen name";
         dummyUserUrl = "url";
         dummyId = 123;
+        dummyParentId = 321;
         dummyTweetUrl = TwitterService.TWITTER_BASE_URL + dummyScreenName + TwitterService.STATUS_DIRECTORY + dummyId;
 
         /* Avoids Mock Exceptions */
@@ -66,6 +67,7 @@ public class Twitter4JServiceTest {
         when(mockedStatus.getCreatedAt()).thenReturn(dummyDate);
         when(mockedStatus.getUser()).thenReturn(mockedUser);
         when(mockedStatus.getId()).thenReturn(dummyId);
+        when(mockedStatus.getInReplyToStatusId()).thenReturn(dummyParentId);
         when(mockedUser.getName()).thenReturn(dummyName);
         when(mockedUser.getScreenName()).thenReturn(dummyScreenName);
         when(mockedUser.get400x400ProfileImageURL()).thenReturn(dummyUserUrl);
@@ -99,6 +101,8 @@ public class Twitter4JServiceTest {
         assertEquals(dummyUserUrl, tweet.getUser().getProfileImageUrl());
         assertEquals(dummyTweetUrl, tweet.getUrl());
         assertEquals(dummyId, Long.parseLong(tweet.getId()));
+        assertEquals(dummyParentId, Long.parseLong(tweet.getParentId()));
+
     }
 
     /* End of utility methods */
@@ -356,7 +360,7 @@ public class Twitter4JServiceTest {
             TwitterServiceCallException {
         when(api.updateStatus(any(StatusUpdate.class))).thenReturn(mockedStatus);
 
-        final Tweet tweet = service.replyToTweet(dummyId, dummyMessage).get();
+        final Tweet tweet = service.replyToTweet(dummyParentId, dummyMessage).get();
 
         verify(api).updateStatus(any(StatusUpdate.class));
         assertTweetIsDummy(tweet);
@@ -368,7 +372,7 @@ public class Twitter4JServiceTest {
         when(api.updateStatus(any(StatusUpdate.class))).thenReturn(mockedStatus);
         when(mockedStatus.getUser()).thenReturn(null);
 
-        final Tweet tweet = service.replyToTweet(dummyId, dummyMessage).get();
+        final Tweet tweet = service.replyToTweet(dummyParentId, dummyMessage).get();
 
         verify(api).updateStatus(any(StatusUpdate.class));
         assertNotNull(tweet);
@@ -380,7 +384,7 @@ public class Twitter4JServiceTest {
     @Test(expected = TwitterServiceCallException.class)
     public void testReplyNullMessage() throws TwitterServiceResponseException, TwitterServiceCallException {
         try {
-            service.replyToTweet(dummyId,null);
+            service.replyToTweet(dummyParentId,null);
         } catch (TwitterServiceCallException e) {
             assertEquals(TwitterService.MISSING_TWEET_MESSAGE, e.getMessage());
             throw e;
@@ -400,7 +404,7 @@ public class Twitter4JServiceTest {
     @Test(expected = TwitterServiceCallException.class)
     public void testReplyTweetBlank() throws TwitterServiceResponseException, TwitterServiceCallException {
         try {
-            service.replyToTweet(dummyId,"");
+            service.replyToTweet(dummyParentId,"");
         } catch (TwitterServiceCallException e) {
             assertEquals(TwitterService.MISSING_TWEET_MESSAGE, e.getMessage());
             throw e;
@@ -414,7 +418,7 @@ public class Twitter4JServiceTest {
             Stream.generate(() -> "a")
                     .limit(CharacterUtil.MAX_TWEET_LENGTH + 1)
                     .forEach(sb::append);
-            service.replyToTweet(dummyId, sb.toString());
+            service.replyToTweet(dummyParentId, sb.toString());
         } catch (TwitterServiceCallException e) {
             assertEquals(TwitterService.TOO_LONG_TWEET_MESSAGE, e.getMessage());
             throw e;
@@ -428,7 +432,7 @@ public class Twitter4JServiceTest {
         when(api.updateStatus(any(StatusUpdate.class))).thenThrow(twitterException);
         when(twitterException.getErrorMessage()).thenReturn(errorMessage);
         try {
-            service.replyToTweet(dummyId, "some message");
+            service.replyToTweet(dummyParentId, "some message");
         } catch (TwitterServiceResponseException e) {
             assertEquals(errorMessage, e.getMessage());
             throw e;

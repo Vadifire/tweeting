@@ -164,6 +164,7 @@ public class Twitter4JService implements TwitterService {
             tweet.setUrl(TWITTER_BASE_URL + status.getUser().getScreenName() + STATUS_DIRECTORY + id);
         }
         tweet.setCreatedAt(status.getCreatedAt());
+        tweet.setParentId(Long.toString(status.getInReplyToStatusId()));
         return tweet;
     }
 

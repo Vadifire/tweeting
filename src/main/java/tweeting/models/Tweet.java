@@ -7,6 +7,7 @@ public class Tweet {
     private String message;
     private String url;
     private String id;
+    private String parentId;
     private TwitterUser user;
     private Date createdAt;
 
@@ -50,4 +51,11 @@ public class Tweet {
         this.id = id;
     }
 
+    public String getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(String parentId) {
+        this.parentId = parentId;
+    }
 }

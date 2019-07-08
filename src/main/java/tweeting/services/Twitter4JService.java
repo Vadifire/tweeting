@@ -44,9 +44,9 @@ public class Twitter4JService implements TwitterService {
         }
         try {
             return Optional.ofNullable(api.updateStatus(statusUpdate))
-                    .map(status -> {
+                    .map(statusResponse -> {
                         logger.info("Successfully posted '{}' to Twitter.", message);
-                        final Tweet tweet = constructTweet(status);
+                        final Tweet tweet = constructTweet(statusResponse);
                         homeTimelineCache.invalidate();
                         userTimelineCache.invalidate();
                         return tweet;
@@ -66,11 +66,11 @@ public class Twitter4JService implements TwitterService {
     public Optional<Tweet> replyToTweet(Long parentId, String message)
             throws TwitterServiceResponseException, TwitterServiceCallException {
          if (parentId == null) {
-            throw new TwitterServiceCallException(MISSING_PARENT_MESSAGE);
+            throw new TwitterServiceCallException(MISSING_PARENT_ID_MESSAGE);
         }
-        final StatusUpdate reply = new StatusUpdate(message);
-        reply.setInReplyToStatusId(parentId);
-        return updateStatus(reply);
+        final StatusUpdate status = new StatusUpdate(message);
+        status.setInReplyToStatusId(parentId);
+        return updateStatus(status);
     }
 
     @Override
@@ -152,7 +152,7 @@ public class Twitter4JService implements TwitterService {
         final Tweet tweet = new Tweet();
         tweet.setMessage(status.getText());
         final long id =  status.getId();
-        tweet.setId(Long.toString(id));
+        tweet.setTweetId(Long.toString(id));
         if (status.getUser() == null) {
             logger.warn("Tweet has no user.");
         } else {

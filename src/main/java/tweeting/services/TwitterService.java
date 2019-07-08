@@ -21,11 +21,11 @@ public interface TwitterService {
             "longer than " + MAX_TWEET_LENGTH + " characters.";
     String MISSING_KEYWORD_MESSAGE = "Could not retrieve filtered timeline because keyword " +
             "parameter is missing.";
-    String MISSING_PARENT_MESSAGE = "Could not reply to tweet because no parent ID was specified.";
+    String MISSING_PARENT_ID_MESSAGE = "Could not reply to tweet because no parent ID was specified.";
 
     Optional<Tweet> postTweet(String message) throws TwitterServiceResponseException, TwitterServiceCallException;
 
-    Optional<Tweet> replyToTweet(Long parentID, String message)
+    Optional<Tweet> replyToTweet(Long parentId, String message)
             throws TwitterServiceResponseException, TwitterServiceCallException;
 
     Optional<List<Tweet>> getHomeTimeline() throws TwitterServiceResponseException;

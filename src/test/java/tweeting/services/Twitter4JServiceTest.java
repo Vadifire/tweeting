@@ -100,7 +100,7 @@ public class Twitter4JServiceTest {
         assertEquals(dummyDate, tweet.getCreatedAt());
         assertEquals(dummyUserUrl, tweet.getUser().getProfileImageUrl());
         assertEquals(dummyTweetUrl, tweet.getUrl());
-        assertEquals(dummyId, Long.parseLong(tweet.getId()));
+        assertEquals(dummyId, Long.parseLong(tweet.getTweetId()));
         assertEquals(dummyParentId, Long.parseLong(tweet.getParentId()));
 
     }
@@ -396,7 +396,7 @@ public class Twitter4JServiceTest {
         try {
             service.replyToTweet(null, dummyMessage);
         } catch (TwitterServiceCallException e) {
-            assertEquals(TwitterService.MISSING_PARENT_MESSAGE, e.getMessage());
+            assertEquals(TwitterService.MISSING_PARENT_ID_MESSAGE, e.getMessage());
             throw e;
         }
     }

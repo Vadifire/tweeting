@@ -71,7 +71,7 @@ public class TwitterResource {
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
     public Response replyToTweet(@FormParam("parentId") Long parentId, @FormParam("message") String message) {
-        try { //TODO: reuse
+        try {
             return service.replyToTweet(parentId, message)
                     .map(timeline -> Response.status(Response.Status.CREATED)
                             .entity(timeline)

@@ -33,9 +33,9 @@ public class Twitter4JService implements TwitterService {
         userTimelineCache = new TimelineCache();
     }
 
-    @Override
-    public Optional<Tweet> postTweet(String message)
+    private Optional<Tweet> updateStatus(StatusUpdate statusUpdate)
             throws TwitterServiceResponseException, TwitterServiceCallException {
+        final String message = statusUpdate.getStatus();
         if (StringUtils.isBlank(message)) {
             throw new TwitterServiceCallException(MISSING_TWEET_MESSAGE);
         }
@@ -43,7 +43,7 @@ public class Twitter4JService implements TwitterService {
             throw new TwitterServiceCallException(TOO_LONG_TWEET_MESSAGE);
         }
         try {
-            return Optional.ofNullable(api.updateStatus(message))
+            return Optional.ofNullable(api.updateStatus(statusUpdate))
                     .map(status -> {
                         logger.info("Successfully posted '{}' to Twitter.", message);
                         final Tweet tweet = constructTweet(status);
@@ -57,31 +57,20 @@ public class Twitter4JService implements TwitterService {
     }
 
     @Override
+    public Optional<Tweet> postTweet(String message)
+            throws TwitterServiceResponseException, TwitterServiceCallException {
+        return updateStatus(new StatusUpdate(message));
+    }
+
+    @Override
     public Optional<Tweet> replyToTweet(Long parentId, String message)
             throws TwitterServiceResponseException, TwitterServiceCallException {
-        if (StringUtils.isBlank(message)) { // TODO: refactor
-            throw new TwitterServiceCallException(MISSING_TWEET_MESSAGE);
-        }
-        else if (message.length() > MAX_TWEET_LENGTH) {
-            throw new TwitterServiceCallException(TOO_LONG_TWEET_MESSAGE);
-        } else if (parentId == null) {
+         if (parentId == null) {
             throw new TwitterServiceCallException(MISSING_PARENT_MESSAGE);
         }
-        try {
-           final StatusUpdate reply = new StatusUpdate(message);
-           reply.setInReplyToStatusId(parentId);
-           System.out.println("Replying");
-           return Optional.ofNullable(api.updateStatus(reply))
-                   .map(status -> {
-                       logger.info("Successfully posted '{}' to Twitter", message);
-                       final Tweet tweet = constructTweet(status);
-                       homeTimelineCache.invalidate();
-                       userTimelineCache.invalidate();
-                       return tweet;
-                   });
-        } catch (TwitterException te) {
-            throw createServerException(te);
-        }
+        final StatusUpdate reply = new StatusUpdate(message);
+        reply.setInReplyToStatusId(parentId);
+        return updateStatus(reply);
     }
 
     @Override

@@ -21,7 +21,6 @@ import static junit.framework.TestCase.assertNotNull;
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -281,23 +280,23 @@ public class Twitter4JServiceTest {
     @Test
     public void testPostTweetSuccess() throws TwitterException, TwitterServiceResponseException,
             TwitterServiceCallException {
-        when(api.updateStatus(anyString())).thenReturn(mockedStatus);
+        when(api.updateStatus(any(StatusUpdate.class))).thenReturn(mockedStatus);
 
         final Tweet tweet = service.postTweet(dummyMessage).get();
 
-        verify(api).updateStatus(anyString());
+        verify(api).updateStatus(any(StatusUpdate.class));
         assertTweetIsDummy(tweet);
     }
 
     @Test
     public void testPostTweetNullUser()
             throws TwitterException, TwitterServiceResponseException, TwitterServiceCallException {
-        when(api.updateStatus(anyString())).thenReturn(mockedStatus);
+        when(api.updateStatus(any(StatusUpdate.class))).thenReturn(mockedStatus);
         when(mockedStatus.getUser()).thenReturn(null);
 
         final Tweet tweet = service.postTweet(dummyMessage).get();
 
-        verify(api).updateStatus(anyString());
+        verify(api).updateStatus(any(StatusUpdate.class));
         assertNotNull(tweet);
         assertEquals(dummyMessage, tweet.getMessage());
         assertNull(tweet.getUser());
@@ -342,7 +341,7 @@ public class Twitter4JServiceTest {
     public void testPostTweetServerException()
             throws TwitterException, TwitterServiceResponseException, TwitterServiceCallException {
         final String errorMessage = "some error message";
-        when(api.updateStatus(anyString())).thenThrow(twitterException);
+        when(api.updateStatus(any(StatusUpdate.class))).thenThrow(twitterException);
         when(twitterException.getErrorMessage()).thenReturn(errorMessage);
         try {
             service.postTweet("some message");
@@ -391,7 +390,7 @@ public class Twitter4JServiceTest {
     @Test(expected = TwitterServiceCallException.class)
     public void testReplyNullParent() throws TwitterServiceResponseException, TwitterServiceCallException {
         try {
-            service.replyToTweet(null,dummyMessage);
+            service.replyToTweet(null, dummyMessage);
         } catch (TwitterServiceCallException e) {
             assertEquals(TwitterService.MISSING_PARENT_MESSAGE, e.getMessage());
             throw e;

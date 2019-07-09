@@ -44,9 +44,9 @@ public class Twitter4JService implements TwitterService {
         }
         try {
             return Optional.ofNullable(api.updateStatus(statusUpdate))
-                    .map(statusResponse -> {
+                    .map(updatedStatus -> {
                         logger.info("Successfully posted '{}' to Twitter.", message);
-                        final Tweet tweet = constructTweet(statusResponse);
+                        final Tweet tweet = constructTweet(updatedStatus);
                         homeTimelineCache.invalidate();
                         userTimelineCache.invalidate();
                         return tweet;

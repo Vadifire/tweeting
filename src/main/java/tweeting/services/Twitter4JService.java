@@ -37,10 +37,10 @@ public class Twitter4JService implements TwitterService {
             throws TwitterServiceResponseException, TwitterServiceCallException {
         final String message = statusUpdate.getStatus();
         if (StringUtils.isBlank(message)) {
-            throw new TwitterServiceCallException(MISSING_TWEET_MESSAGE);
+            throw new TwitterServiceCallException(MISSING_TWEET_ERROR_MESSAGE);
         }
         else if (message.length() > MAX_TWEET_LENGTH) {
-            throw new TwitterServiceCallException(TOO_LONG_TWEET_MESSAGE);
+            throw new TwitterServiceCallException(TOO_LONG_TWEET_ERROR_MESSAGE);
         }
         try {
             return Optional.ofNullable(api.updateStatus(statusUpdate))
@@ -66,7 +66,7 @@ public class Twitter4JService implements TwitterService {
     public Optional<Tweet> replyToTweet(Long parentId, String message)
             throws TwitterServiceResponseException, TwitterServiceCallException {
          if (parentId == null) {
-            throw new TwitterServiceCallException(MISSING_PARENT_ID_MESSAGE);
+            throw new TwitterServiceCallException(MISSING_PARENT_ID_ERROR_MESSAGE);
         }
         final StatusUpdate status = new StatusUpdate(message);
         status.setInReplyToStatusId(parentId);
@@ -119,7 +119,7 @@ public class Twitter4JService implements TwitterService {
     public Optional<List<Tweet>> getFilteredTimeline(String keyword)
             throws TwitterServiceResponseException, TwitterServiceCallException {
         if (StringUtils.isBlank(keyword)) {
-            throw new TwitterServiceCallException(MISSING_KEYWORD_MESSAGE);
+            throw new TwitterServiceCallException(MISSING_KEYWORD_ERROR_MESSAGE);
         }
         // Try to pull filtered result from homeTimelineCache.
         final Optional<List<Tweet>> cachedTweets = homeTimelineCache.getCachedItems(keyword);
@@ -139,7 +139,7 @@ public class Twitter4JService implements TwitterService {
     private TwitterServiceResponseException createServerException(TwitterException te) {
         if (te.isCausedByNetworkIssue() || te.getErrorCode() == TwitterErrorCode.BAD_AUTH_DATA.getCode() ||
                 te.getErrorCode() == TwitterErrorCode.COULD_NOT_AUTH.getCode()) {
-            return new TwitterServiceResponseException(SERVICE_UNAVAILABLE_MESSAGE, te);
+            return new TwitterServiceResponseException(SERVICE_UNAVAILABLE_ERROR_MESSAGE, te);
         } else {
             return new TwitterServiceResponseException(te);
         }

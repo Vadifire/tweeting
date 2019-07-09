@@ -65,7 +65,7 @@ public class TwitterResourceTest {
     public void assertGeneralException(Response response) { // 500 Error Code, Unexpected Exception
         assertNotNull(response);
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
-        assertEquals(TwitterService.SERVICE_UNAVAILABLE_MESSAGE, response.getEntity().toString());
+        assertEquals(TwitterService.SERVICE_UNAVAILABLE_ERROR_MESSAGE, response.getEntity().toString());
     }
 
     public void assertTimelineSuccess(Response response) {

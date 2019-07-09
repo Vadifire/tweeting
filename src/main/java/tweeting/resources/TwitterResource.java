@@ -61,7 +61,7 @@ public class TwitterResource {
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return (Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity(TwitterService.SERVICE_UNAVAILABLE_MESSAGE))
+                    .entity(TwitterService.SERVICE_UNAVAILABLE_ERROR_MESSAGE))
                     .build();
         }
     }
@@ -90,7 +90,7 @@ public class TwitterResource {
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return (Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity(TwitterService.SERVICE_UNAVAILABLE_MESSAGE))
+                    .entity(TwitterService.SERVICE_UNAVAILABLE_ERROR_MESSAGE))
                     .build();
         }
     }
@@ -118,7 +118,7 @@ public class TwitterResource {
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return (Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity(TwitterService.SERVICE_UNAVAILABLE_MESSAGE))
+                    .entity(TwitterService.SERVICE_UNAVAILABLE_ERROR_MESSAGE))
                     .build();
         }
     }
@@ -146,7 +146,7 @@ public class TwitterResource {
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return (Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity(TwitterService.SERVICE_UNAVAILABLE_MESSAGE))
+                    .entity(TwitterService.SERVICE_UNAVAILABLE_ERROR_MESSAGE))
                     .build();
         }
     }
@@ -180,7 +180,7 @@ public class TwitterResource {
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return (Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity(TwitterService.SERVICE_UNAVAILABLE_MESSAGE)
+                    .entity(TwitterService.SERVICE_UNAVAILABLE_ERROR_MESSAGE)
                     .build());
         }
     }

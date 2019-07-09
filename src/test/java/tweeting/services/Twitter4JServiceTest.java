@@ -164,7 +164,7 @@ public class Twitter4JServiceTest {
         try {
             service.getHomeTimeline();
         } catch (TwitterServiceResponseException e) {
-            assertEquals(TwitterService.SERVICE_UNAVAILABLE_MESSAGE, e.getMessage());
+            assertEquals(TwitterService.SERVICE_UNAVAILABLE_ERROR_MESSAGE, e.getMessage());
             throw e;
         }
     }
@@ -176,7 +176,7 @@ public class Twitter4JServiceTest {
         try {
             service.getHomeTimeline();
         } catch (TwitterServiceResponseException e) {
-            assertEquals(TwitterService.SERVICE_UNAVAILABLE_MESSAGE, e.getMessage());
+            assertEquals(TwitterService.SERVICE_UNAVAILABLE_ERROR_MESSAGE, e.getMessage());
             throw e;
         }
     }
@@ -188,7 +188,7 @@ public class Twitter4JServiceTest {
         try {
             service.getHomeTimeline();
         } catch (TwitterServiceResponseException e) {
-            assertEquals(TwitterService.SERVICE_UNAVAILABLE_MESSAGE, e.getMessage());
+            assertEquals(TwitterService.SERVICE_UNAVAILABLE_ERROR_MESSAGE, e.getMessage());
             throw e;
         }
     }
@@ -251,7 +251,7 @@ public class Twitter4JServiceTest {
         try {
             service.getUserTimeline();
         } catch (TwitterServiceResponseException e) {
-            assertEquals(TwitterService.SERVICE_UNAVAILABLE_MESSAGE, e.getMessage());
+            assertEquals(TwitterService.SERVICE_UNAVAILABLE_ERROR_MESSAGE, e.getMessage());
             throw e;
         }
     }
@@ -263,7 +263,7 @@ public class Twitter4JServiceTest {
         try {
             service.getUserTimeline();
         } catch (TwitterServiceResponseException e) {
-            assertEquals(TwitterService.SERVICE_UNAVAILABLE_MESSAGE, e.getMessage());
+            assertEquals(TwitterService.SERVICE_UNAVAILABLE_ERROR_MESSAGE, e.getMessage());
             throw e;
         }
     }
@@ -275,7 +275,7 @@ public class Twitter4JServiceTest {
         try {
             service.getUserTimeline();
         } catch (TwitterServiceResponseException e) {
-            assertEquals(TwitterService.SERVICE_UNAVAILABLE_MESSAGE, e.getMessage());
+            assertEquals(TwitterService.SERVICE_UNAVAILABLE_ERROR_MESSAGE, e.getMessage());
             throw e;
         }
     }
@@ -312,7 +312,7 @@ public class Twitter4JServiceTest {
         try {
             service.postTweet(null);
         } catch (TwitterServiceCallException e) {
-            assertEquals(TwitterService.MISSING_TWEET_MESSAGE, e.getMessage());
+            assertEquals(TwitterService.MISSING_TWEET_ERROR_MESSAGE, e.getMessage());
             throw e;
         }
     }
@@ -322,7 +322,7 @@ public class Twitter4JServiceTest {
         try {
             service.postTweet("");
         } catch (TwitterServiceCallException e) {
-            assertEquals(TwitterService.MISSING_TWEET_MESSAGE, e.getMessage());
+            assertEquals(TwitterService.MISSING_TWEET_ERROR_MESSAGE, e.getMessage());
             throw e;
         }
     }
@@ -336,7 +336,7 @@ public class Twitter4JServiceTest {
                     .forEach(sb::append);
             service.postTweet(sb.toString());
         } catch (TwitterServiceCallException e) {
-            assertEquals(TwitterService.TOO_LONG_TWEET_MESSAGE, e.getMessage());
+            assertEquals(TwitterService.TOO_LONG_TWEET_ERROR_MESSAGE, e.getMessage());
             throw e;
         }
     }
@@ -386,7 +386,7 @@ public class Twitter4JServiceTest {
         try {
             service.replyToTweet(dummyParentId,null);
         } catch (TwitterServiceCallException e) {
-            assertEquals(TwitterService.MISSING_TWEET_MESSAGE, e.getMessage());
+            assertEquals(TwitterService.MISSING_TWEET_ERROR_MESSAGE, e.getMessage());
             throw e;
         }
     }
@@ -396,7 +396,7 @@ public class Twitter4JServiceTest {
         try {
             service.replyToTweet(null, dummyMessage);
         } catch (TwitterServiceCallException e) {
-            assertEquals(TwitterService.MISSING_PARENT_ID_MESSAGE, e.getMessage());
+            assertEquals(TwitterService.MISSING_PARENT_ID_ERROR_MESSAGE, e.getMessage());
             throw e;
         }
     }
@@ -406,7 +406,7 @@ public class Twitter4JServiceTest {
         try {
             service.replyToTweet(dummyParentId,"");
         } catch (TwitterServiceCallException e) {
-            assertEquals(TwitterService.MISSING_TWEET_MESSAGE, e.getMessage());
+            assertEquals(TwitterService.MISSING_TWEET_ERROR_MESSAGE, e.getMessage());
             throw e;
         }
     }
@@ -420,7 +420,7 @@ public class Twitter4JServiceTest {
                     .forEach(sb::append);
             service.replyToTweet(dummyParentId, sb.toString());
         } catch (TwitterServiceCallException e) {
-            assertEquals(TwitterService.TOO_LONG_TWEET_MESSAGE, e.getMessage());
+            assertEquals(TwitterService.TOO_LONG_TWEET_ERROR_MESSAGE, e.getMessage());
             throw e;
         }
     }
@@ -489,7 +489,7 @@ public class Twitter4JServiceTest {
         try {
             service.getFilteredTimeline(null);
         } catch (TwitterServiceCallException e) {
-            assertEquals(TwitterService.MISSING_KEYWORD_MESSAGE, e.getMessage());
+            assertEquals(TwitterService.MISSING_KEYWORD_ERROR_MESSAGE, e.getMessage());
             throw e;
         }
     }

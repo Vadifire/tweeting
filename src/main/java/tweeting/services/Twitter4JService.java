@@ -25,7 +25,7 @@ public class Twitter4JService implements TwitterService {
 
     private Cache<Tweet> homeTimelineCache, userTimelineCache;
 
-    private static final String NO_FILTER_KEY = "";
+    private static final String UNFILTERED_CACHE_KEY = "";
 
     public Twitter4JService(Twitter api) {
         this.api = api;
@@ -76,7 +76,7 @@ public class Twitter4JService implements TwitterService {
     @Override
     public Optional<List<Tweet>> getHomeTimeline() throws TwitterServiceResponseException {
         try {
-            final Optional<List<Tweet>> cachedTweets = homeTimelineCache.getCachedItems(NO_FILTER_KEY);
+            final Optional<List<Tweet>> cachedTweets = homeTimelineCache.getCachedItems(UNFILTERED_CACHE_KEY);
             if (cachedTweets.isPresent()) {
                 logger.info("Successfully retrieved home timeline from cache.");
                 return cachedTweets;
@@ -86,7 +86,7 @@ public class Twitter4JService implements TwitterService {
                     .map(this::constructTweet)
                     .filter(Objects::nonNull)
                     .collect(Collectors.toList());
-            homeTimelineCache.cacheItems(NO_FILTER_KEY, tweets);
+            homeTimelineCache.cacheItems(UNFILTERED_CACHE_KEY, tweets);
             logger.info("Successfully retrieved home timeline from Twitter.");
             return Optional.of(tweets);
         } catch (TwitterException te) {
@@ -97,7 +97,7 @@ public class Twitter4JService implements TwitterService {
     @Override
     public Optional<List<Tweet>> getUserTimeline() throws TwitterServiceResponseException {
         try {
-            final Optional<List<Tweet>> cachedTweets = userTimelineCache.getCachedItems(NO_FILTER_KEY);
+            final Optional<List<Tweet>> cachedTweets = userTimelineCache.getCachedItems(UNFILTERED_CACHE_KEY);
             if (cachedTweets.isPresent()) {
                 logger.info("Successfully retrieved user timeline from cache.");
                 return cachedTweets;
@@ -107,7 +107,7 @@ public class Twitter4JService implements TwitterService {
                     .map(this::constructTweet)
                     .filter(Objects::nonNull)
                     .collect(Collectors.toList());
-            userTimelineCache.cacheItems(NO_FILTER_KEY, tweets);
+            userTimelineCache.cacheItems(UNFILTERED_CACHE_KEY, tweets);
             logger.info("Successfully retrieved user timeline from Twitter.");
             return Optional.of(tweets);
         } catch (TwitterException te) {

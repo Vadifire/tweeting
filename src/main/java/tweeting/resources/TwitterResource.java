@@ -44,8 +44,8 @@ public class TwitterResource {
     public Response postTweet(@FormParam("message") String message) {
         try {
             return service.postTweet(message)
-                    .map(timeline -> Response.status(Response.Status.CREATED)
-                            .entity(timeline)
+                    .map(tweet -> Response.status(Response.Status.CREATED)
+                            .entity(tweet)
                             .build())
                     .get();
         } catch (TwitterServiceCallException e) {
@@ -61,7 +61,36 @@ public class TwitterResource {
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return (Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity(TwitterService.SERVICE_UNAVAILABLE_MESSAGE))
+                    .entity(TwitterService.SERVICE_UNAVAILABLE_ERROR_MESSAGE))
+                    .build();
+        }
+    }
+
+    @Path("tweet/reply")
+    @POST
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response replyToTweet(@FormParam("parentId") Long parentId, @FormParam("message") String message) {
+        try {
+            return service.replyToTweet(parentId, message)
+                    .map(tweet -> Response.status(Response.Status.CREATED)
+                            .entity(tweet)
+                            .build())
+                    .get();
+        } catch (TwitterServiceCallException e) {
+            logger.debug("Sending 400 Bad Request error", e);
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity(e.getMessage())
+                    .build();
+        } catch (TwitterServiceResponseException e) {
+            logger.error("Sending 500 Internal Server error", e);
+            return (Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(e.getMessage()))
+                    .build();
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            return (Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(TwitterService.SERVICE_UNAVAILABLE_ERROR_MESSAGE))
                     .build();
         }
     }
@@ -89,7 +118,7 @@ public class TwitterResource {
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return (Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity(TwitterService.SERVICE_UNAVAILABLE_MESSAGE))
+                    .entity(TwitterService.SERVICE_UNAVAILABLE_ERROR_MESSAGE))
                     .build();
         }
     }
@@ -117,7 +146,7 @@ public class TwitterResource {
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return (Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity(TwitterService.SERVICE_UNAVAILABLE_MESSAGE))
+                    .entity(TwitterService.SERVICE_UNAVAILABLE_ERROR_MESSAGE))
                     .build();
         }
     }
@@ -135,7 +164,7 @@ public class TwitterResource {
     public Response getFilteredHomeTimeline(@QueryParam("keyword") String keyword) {
         try {
             return service.getFilteredTimeline(keyword)
-                    .map(timeline -> Response.ok(timeline)
+                    .map(filteredTweets -> Response.ok(filteredTweets)
                             .build())
                     .get();
         } catch (TwitterServiceCallException e) {
@@ -151,7 +180,7 @@ public class TwitterResource {
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return (Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity(TwitterService.SERVICE_UNAVAILABLE_MESSAGE)
+                    .entity(TwitterService.SERVICE_UNAVAILABLE_ERROR_MESSAGE)
                     .build());
         }
     }

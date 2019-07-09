@@ -32,8 +32,7 @@ repositories {
 
 dependencies {
     // Include dependencies for compile and run time
-    implementation 'com.google.guava:guava:27.0.1-jre',
-            'org.twitter4j:twitter4j-core:4.0.7',
+    implementation 'org.twitter4j:twitter4j-core:4.0.7',
             'io.dropwizard:dropwizard-core:1.0.2',
             'ch.qos.logback:logback-classic:1.3.0-alpha4',
             'ch.qos.logback:logback-access:1.3.0-alpha4',
@@ -51,12 +50,9 @@ dependencies {
     annotationProcessor 'com.google.dagger:dagger-compiler:2.16'
     testAnnotationProcessor "com.google.dagger:dagger-compiler:2.16"
 
-
-
     // implementation: used for compile and run time
     // testImplementation: (^ equivalent, but for tests)
 }
-
 
 // Display test results for individual unit tests
 test {

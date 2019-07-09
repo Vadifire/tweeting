@@ -15,14 +15,18 @@ public interface TwitterService {
     String TWITTER_BASE_URL = "https://twitter.com/";
     String STATUS_DIRECTORY = "/status/";
 
-    String SERVICE_UNAVAILABLE_MESSAGE = "Service is temporarily unavailable.";
-    String MISSING_TWEET_MESSAGE = "Could not post tweet because message parameter is missing.";
-    String TOO_LONG_TWEET_MESSAGE = "Could not post tweet because message is " +
+    String SERVICE_UNAVAILABLE_ERROR_MESSAGE = "Service is temporarily unavailable.";
+    String MISSING_TWEET_ERROR_MESSAGE = "Could not post tweet because message parameter is missing.";
+    String TOO_LONG_TWEET_ERROR_MESSAGE = "Could not post tweet because message is " +
             "longer than " + MAX_TWEET_LENGTH + " characters.";
-    String MISSING_KEYWORD_MESSAGE = "Could not retrieve filtered timeline because keyword " +
+    String MISSING_KEYWORD_ERROR_MESSAGE = "Could not retrieve filtered timeline because keyword " +
             "parameter is missing.";
+    String MISSING_PARENT_ID_ERROR_MESSAGE = "Could not reply to tweet because no parent ID was specified.";
 
     Optional<Tweet> postTweet(String message) throws TwitterServiceResponseException, TwitterServiceCallException;
+
+    Optional<Tweet> replyToTweet(Long parentId, String message)
+            throws TwitterServiceResponseException, TwitterServiceCallException;
 
     Optional<List<Tweet>> getHomeTimeline() throws TwitterServiceResponseException;
 
@@ -30,5 +34,4 @@ public interface TwitterService {
 
     Optional<List<Tweet>> getFilteredTimeline(String keyword)
             throws TwitterServiceResponseException, TwitterServiceCallException;
-
 }

@@ -78,7 +78,7 @@ public class Twitter4JService implements TwitterService {
         try {
             final Optional<List<Tweet>> cachedTweets = homeTimelineCache.getCachedItems(EMPTY_FILTER);
             if (cachedTweets.isPresent()) {
-                logger.info("Successfully retrieved home timeline from cacheItems.");
+                logger.info("Successfully retrieved home timeline from cache.");
                 return cachedTweets;
             }
             final List<Tweet> tweets = api.getHomeTimeline()
@@ -99,7 +99,7 @@ public class Twitter4JService implements TwitterService {
         try {
             final Optional<List<Tweet>> cachedTweets = userTimelineCache.getCachedItems(EMPTY_FILTER);
             if (cachedTweets.isPresent()) {
-                logger.info("Successfully retrieved user timeline from cacheItems.");
+                logger.info("Successfully retrieved user timeline from cache.");
                 return cachedTweets;
             }
             final List<Tweet> tweets = api.getUserTimeline()
@@ -124,7 +124,7 @@ public class Twitter4JService implements TwitterService {
         // Try to pull filtered result from homeTimelineCache.
         final Optional<List<Tweet>> cachedTweets = homeTimelineCache.getCachedItems(keyword);
         if (cachedTweets.isPresent()) {
-            logger.info("Successfully retrieved filtered home timeline from cacheItems.");
+            logger.info("Successfully retrieved filtered home timeline from timeline.");
             return cachedTweets;
         } // Otherwise, make call to getHomeTimeline()
         final List<Tweet> filteredTweets = getHomeTimeline()

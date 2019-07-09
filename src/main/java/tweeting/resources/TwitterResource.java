@@ -44,8 +44,8 @@ public class TwitterResource {
     public Response postTweet(@FormParam("message") String message) {
         try {
             return service.postTweet(message)
-                    .map(timeline -> Response.status(Response.Status.CREATED)
-                            .entity(timeline)
+                    .map(tweet -> Response.status(Response.Status.CREATED)
+                            .entity(tweet)
                             .build())
                     .get();
         } catch (TwitterServiceCallException e) {
@@ -73,8 +73,8 @@ public class TwitterResource {
     public Response replyToTweet(@FormParam("parentId") Long parentId, @FormParam("message") String message) {
         try {
             return service.replyToTweet(parentId, message)
-                    .map(timeline -> Response.status(Response.Status.CREATED)
-                            .entity(timeline)
+                    .map(tweet -> Response.status(Response.Status.CREATED)
+                            .entity(tweet)
                             .build())
                     .get();
         } catch (TwitterServiceCallException e) {
@@ -164,7 +164,7 @@ public class TwitterResource {
     public Response getFilteredHomeTimeline(@QueryParam("keyword") String keyword) {
         try {
             return service.getFilteredTimeline(keyword)
-                    .map(timeline -> Response.ok(timeline)
+                    .map(filteredTweets -> Response.ok(filteredTweets)
                             .build())
                     .get();
         } catch (TwitterServiceCallException e) {
